@@ -99,11 +99,15 @@ body.swapping main,body.swapping aside,body.swapping .refs,body.swapping .coloph
 .masthead{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:60}
 .masthead-in{max-width:1360px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap}
 .wordmark{display:flex;align-items:center;gap:9px;margin-right:auto;min-width:0}
-.seal{width:29px;height:29px;flex:none;border-radius:8px;background:var(--seal-bg);color:var(--seal-ink);
-      display:grid;place-items:center;font-size:16px;line-height:1;font-weight:600;
+.seal{width:32px;height:32px;flex:none;border-radius:8px;background:var(--seal-bg);color:var(--seal-ink);
+      display:grid;place-items:center;font-size:17.5px;line-height:1;font-weight:600;
       box-shadow:inset 0 0 0 1px var(--seal-line)}
-.wordmark h1{font-family:var(--font-display);font-weight:700;font-size:14.5px;margin:0;letter-spacing:-.02em;line-height:1.25}
-.wordmark p{margin:0;font-size:11px;color:var(--ink-3);line-height:1.35}
+/* The masthead was titling the page at 14.5px while the card headings under
+   it ran at 15.5px, so the top of the page read as the smallest thing on it.
+   It now sits just above the card titles, with the strapline lifted off the
+   11px floor that made it look like a footnote on a phone. */
+.wordmark h1{font-family:var(--font-display);font-weight:700;font-size:16.5px;margin:0;letter-spacing:-.02em;line-height:1.24}
+.wordmark p{margin:0;font-size:12px;color:var(--ink-3);line-height:1.4}
 .mast-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .btn{font:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);padding:5px 10px;border-radius:var(--radius-s);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;line-height:1.5}
 .btn:hover{border-color:var(--brand);color:var(--brand)}
@@ -117,7 +121,7 @@ select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid
    buttons shuffled sideways the moment the language changed. */
 .mast-tools>*{height:var(--ctl-h);box-sizing:border-box}
 .seg{display:inline-flex;align-items:stretch;border:1px solid var(--line-2);border-radius:var(--radius-s);background:var(--surface-2);padding:2px;gap:2px}
-.seg-b{font:inherit;font-family:var(--font-body);font-size:12px;font-weight:600;line-height:1;
+.seg-b{font:inherit;font-family:var(--font-body);font-size:12.5px;font-weight:600;line-height:1;
        border:0;background:transparent;color:var(--ink-2);cursor:pointer;border-radius:calc(var(--radius-s) - 2px);
        display:inline-flex;align-items:center;justify-content:center;padding:0 11px;white-space:nowrap;
        transition:background .14s ease,color .14s ease}
@@ -148,14 +152,14 @@ select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid
   .masthead{position:static}
   .masthead-in{padding:9px 14px;gap:9px}
   .wordmark{margin-right:0;width:100%}
-  .wordmark p{font-size:10.5px}
+  .wordmark p{font-size:11.8px}
   .mast-tools{width:100%;justify-content:flex-start}
   .mast-tools select.mast,.mast-tools .btn{flex:1 1 auto;min-height:36px}
   select.mast{max-width:none}
   #ay{flex:1 1 100%;order:-1}
 }
 @media (max-width:420px){
-  .mast-tools .btn{padding:6px 8px;font-size:12px}
+  .mast-tools .btn{padding:6px 10px;font-size:12.5px}
   .mast-tools{gap:6px}
   .mast-tools .seg{flex:0 0 auto}
   #langSeg{flex:1 1 auto}
@@ -640,6 +644,14 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
   .pd-refs .disclaimer p{margin:0 0 6px} .pd-refs .disclaimer p:last-child{margin:0}
   .pd-refs .disclaimer b{color:var(--relief);font-family:var(--font-display)}
 
+  /* On paper the screen's masked corner-arrow does not reproduce reliably, so
+     printed links carry a real arrow glyph instead — it survives into the PDF
+     text layer and tells the reader the name is clickable. */
+  #printDoc a{color:inherit;text-decoration:none;border-bottom:.5pt solid currentColor}
+  #printDoc a::after{content:"\2197";-webkit-mask:none;mask:none;background:none;
+                     display:inline;width:auto;height:auto;margin-left:.15em;
+                     font-size:.85em;line-height:1;opacity:.8;vertical-align:baseline}
+  .pd-foot a{color:inherit;text-decoration:none;border-bottom:.5pt solid currentColor}
   .pd-foot{margin-top:14px;padding-top:8px;border-top:.7pt solid var(--line-2);
            font-size:8pt;color:var(--ink-3);line-height:1.6;break-inside:avoid}
   .pd-foot b{color:var(--ink-2)}
@@ -699,7 +711,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 <div class="shell">
 <main>
   <div class="lede">
-    <h2 data-bn="আয়ের খাত অনুযায়ী ধাপে ধাপে হিসাব করুন">Work through the return, head by head</h2>
+    <h2 data-bn="আয়ের উৎস অনুযায়ী ধাপে ধাপে হিসাব করুন">Work through the return, head by head</h2>
     <p data-bn="আয়বর্ষে আপনি যা যা পেয়েছেন, তা এখানে লিখুন। লেখার সঙ্গে সঙ্গেই হিসাব বদলে যাবে, আর প্রতিটি লাইনে কোন নিয়ম থেকে অঙ্কটা এল তা দেখানো থাকবে — ফলে নিজের রিটার্নের সঙ্গে মিলিয়ে নিতে পারবেন।">Enter what you received during the income year. The computation updates as you type, and every line shows the rule it comes from — so you can check the arithmetic against your own return.</p>
   </div>
 
@@ -1409,7 +1421,7 @@ const BN_D = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
 const bnDigits = s => String(s).replace(/[0-9]/g, d => BN_D[+d]);
 
 const T = {
-  headsOfIncome:["Heads of income","আয়ের খাতসমূহ"],
+  headsOfIncome:["Heads of income","আয়ের উৎসসমূহ"],
   empGross:["1 · Employment, gross","১ · চাকরি, মোট"],
   empExcl:["Less exclusion — lower of ⅓ or {0}","বাদ অব্যাহতি — এক-তৃতীয়াংশ বা {0}, যেটি কম"],
   empNet:["Income from employment","চাকরি থেকে আয়"],
@@ -1535,7 +1547,7 @@ const T = {
   pTaxpayer:["Taxpayer","করদাতা"],
   pIncomeYear:["Income year","আয়বর্ষ"],
   pLaw:["Governing law","প্রযোজ্য আইন"],
-  printFoot:["Computation aid only — not legal, tax, financial or investment advice. Verify against the current NBR Paripatra and take professional advice before filing. A project by Sajeeb, built with Claude.","শুধু হিসাব করার সহায়ক — আইনি, কর, আর্থিক বা বিনিয়োগ পরামর্শ নয়। জমা দেওয়ার আগে সর্বশেষ এনবিআর পরিপত্রের সঙ্গে মিলিয়ে নিন ও পেশাদার পরামর্শ নিন। সজীবের একটি প্রকল্প, ক্লড দিয়ে তৈরি।"]
+  printFoot:["Computation aid only — not legal, tax, financial or investment advice. Verify against the current NBR Paripatra and take professional advice before filing. A project by <a href=\"https://github.com/bajeess\" target=\"_blank\" rel=\"noopener\">Sajeeb</a>, built with Claude.","শুধু হিসাব করার সহায়ক — আইনি, কর, আর্থিক বা বিনিয়োগ পরামর্শ নয়। জমা দেওয়ার আগে সর্বশেষ এনবিআর পরিপত্রের সঙ্গে মিলিয়ে নিন ও পেশাদার পরামর্শ নিন। <a href=\"https://github.com/bajeess\" target=\"_blank\" rel=\"noopener\">সজীবের</a> একটি প্রকল্প, ক্লড দিয়ে তৈরি।"]
 };
 function t(key){
   let s = T[key][LANG === "bn" ? 1 : 0];
