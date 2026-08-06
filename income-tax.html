@@ -166,6 +166,23 @@ select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid
 
 /* ---------- Layout ---------- */
 .shell{max-width:1360px;margin:0 auto;padding:24px 22px 30px;display:grid;grid-template-columns:minmax(0,1fr) 462px;gap:28px;align-items:start}
+@media (max-width:1080px),(pointer:coarse){
+  /* Fingers are not cursors: every control in the masthead gets a real tap
+     target, and form fields go to 16px so iOS Safari stops zooming the page
+     each time one is focused. */
+  :root{--ctl-h:42px;--field-h:44px}
+  .seg{padding:3px}
+  .seg-b{min-height:34px;padding:0 13px}
+  .seg-ico .seg-b{width:38px}
+  .f input,.f select{font-size:16px}
+  .btn{min-height:42px}
+  summary{min-height:46px}
+  /* Checkboxes get a larger box and a full-width label row, so the whole line
+     is tappable rather than a 19px square. */
+  .chk input[type=checkbox],input[type=checkbox]{width:22px;height:22px}
+  .chk{min-height:44px;align-items:center}
+  select#ay{font-size:16px}
+}
 @media (max-width:1080px){.shell{grid-template-columns:minmax(0,1fr);padding-bottom:26px}body{padding-bottom:64px}}
 
 .yearbar{background:var(--income-soft);border-bottom:1px solid var(--income-line)}
@@ -331,6 +348,11 @@ input:focus,select:focus{border-color:var(--brand)}
 .ref-grid.balanced .ref-col>.ref-card{flex:1 1 auto}
 @media (max-width:1180px){.ref-grid{columns:2}}
 @media (max-width:760px){.ref-grid{columns:1}}
+@media (max-width:430px){
+  .ref-card{padding:13px 12px}
+  .ref-card table{font-size:11.5px}
+  .ref-card table th,.ref-card table td{padding:5px 4px}
+}
 .ref-wide{margin-top:16px}
 .ref-wide .ref-card{margin-bottom:0}
 /* This card carries far more than the others, so as a normal grid item it
@@ -384,7 +406,12 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
    each card carries the mark, the network and the handle, and lifts toward
    its own brand colour on hover. One shared grid keeps them equal in width
    and height in both languages. */
-.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-top:16px;max-width:560px}
+/* min(168px,100%) keeps the track from ever demanding more than the space
+   actually available; without it Chrome resolves this grid's min-content as
+   all three columns at once, which pinned the whole page to 524px and made
+   every phone scroll sideways. */
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr));gap:10px;margin-top:16px;max-width:560px;min-width:0}
+.colophon-in>*{min-width:0}
 .lnk{display:flex;align-items:center;gap:10px;text-decoration:none;padding:11px 13px;
      border-radius:var(--radius);border:1px solid var(--line-2);color:var(--ink);
      background:var(--surface);position:relative;overflow:hidden;
