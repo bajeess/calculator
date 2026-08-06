@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Income Tax Calculator — Bangladeshi individuals, Assessment year 2026-27</title>
+<!-- Rate card and rules verified against the enacted Finance Act 2026 and the current NBR position. -->
+<meta name="description" content="Offline income tax calculator for individual taxpayers in Bangladesh, in English and Bangla. Income Tax Act 2023 as amended by the Finance Act 2026 — head-wise income, investment rebate, minimum tax, surcharge and a step-by-step computation.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B6B4F'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='40' font-weight='bold' fill='%23fff' text-anchor='middle'%3E%E0%A7%B3%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B6B4F'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='40' font-weight='bold' fill='%23fff' text-anchor='middle'%3E%E0%A7%B3%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Baloo+Da+2:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   Brand hue is bottle green. Four semantic hues carry meaning:
+   blue = income, amber = statutory relief, rust = tax charged,
+   green = anything in the taxpayer's favour. The slab ladder
+   runs a cool-to-hot ramp so the marginal band is visible.
+   ============================================================ */
+:root{
+  --paper:#F5F6F9; --surface:#FFFFFF; --surface-2:#EDF0F5;
+  --ink:#14181F; --ink-2:#4E5763; --ink-3:#6A727E;
+  --brand:#0F6B4E; --brand-soft:#E2F0EA; --brand-line:#B5D6C7;
+  --income:#1C6FA8; --income-soft:#E3EFF7; --income-line:#B2D2E7;
+  --relief:#9A6A05; --relief-soft:#FAEFD6; --relief-line:#E5C98D;
+  --charge:#B02532; --charge-soft:#FCE8EA; --charge-line:#EFB7BD;
+  --credit:#0F6B4E; --credit-soft:#E2F0EA;
+  --seal-bg:#0F6B4E; --seal-ink:#FFFFFF; --seal-line:rgba(255,255,255,.18);
+  --sheet-head:#1A1E2B; --sheet-head-ink:#F2F4F8;
+  --line:#DDE2EA; --line-2:#C6CDD8;
+  --s0:#6E7885; --s5:#1C8A70; --s10:#12775A; --s15:#4A7A26; --s20:#846A0E; --s25:#9C531B; --s30:#B03A32; --s35:#8C2450;
+  --shadow:0 1px 2px rgba(20,24,31,.05), 0 8px 24px -12px rgba(20,24,31,.18);
+  --radius:10px; --radius-s:6px;
+  --font-display:'Space Grotesk','Baloo Da 2','Noto Sans Bengali',ui-sans-serif,system-ui,sans-serif;
+  --font-body:'Public Sans','Baloo Da 2','Noto Sans Bengali',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono','Noto Sans Bengali',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+;--ext-ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h12v12h-2.6V7.45L5.9 19.95 4.05 18.1 16.55 5.6H9z'/%3E%3C/svg%3E");--field-h:38px;--ctl-h:32px;--btn-w:78px}
+/* Four themes on two axes: bright or dark, and full colour or tinted. The two
+   full-colour themes let each meaning carry its own hue — blue for income,
+   amber for relief, red for a charge, green for a credit — while the two
+   tinted themes hold the same meanings at low chroma for anyone who finds the
+   full palette noisy. Every theme sets the identical variable set, so nothing
+   downstream needs to know which one is active. */
+[data-theme="paper"]{            /* warm cream ground, ink-blue brand, accents at full strength */
+  --paper:#F1E7D4; --surface:#FBF4E6; --surface-2:#E9DCC4;
+  --ink:#2A2318; --ink-2:#5A4F3E; --ink-3:#736452;
+  --brand:#1C6446; --brand-soft:#E1EDE4; --brand-line:#B2D0BC;
+  --income:#1F5C90; --income-soft:#E1ECF6; --income-line:#AECAE2;
+  --relief:#9A6512; --relief-soft:#F7E9CC; --relief-line:#DEC08A;
+  --charge:#A32C2C; --charge-soft:#F8E3DF; --charge-line:#E0B3AC;
+  --credit:#1F6B4A; --credit-soft:#E2EFE5;
+  --seal-bg:#1C6446; --seal-ink:#FBF4E6; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#2E2719; --sheet-head-ink:#F6EEDF;
+  --line:#DCCDB2; --line-2:#C5B294;
+  --s0:#7A6E5C; --s5:#20805E; --s10:#1F7D5A; --s15:#4B6D2C; --s20:#82550C; --s25:#96491A; --s30:#A32C2C; --s35:#87335C;
+  --shadow:0 1px 2px rgba(42,35,24,.06), 0 8px 24px -12px rgba(42,35,24,.20);
+}
+[data-theme="midnight"]{         /* neutral ink ground, no hue in the greys; colour only in the accents */
+  --paper:#0B0B0C; --surface:#141517; --surface-2:#1D1F22;
+  --ink:#EDEEF0; --ink-2:#A9ACB2; --ink-3:#8B929E;
+  --brand:#3ED9A4; --brand-soft:#10231C; --brand-line:#215040;
+  --income:#68B6F5; --income-soft:#101C26; --income-line:#204154;
+  --relief:#F3C04C; --relief-soft:#241F10; --relief-line:#4E4118;
+  --charge:#FF7E82; --charge-soft:#251517; --charge-line:#512C2F;
+  --credit:#3ED9A4; --credit-soft:#10231C;
+  --seal-bg:#3ED9A4; --seal-ink:#0B0B0C; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#191B1E; --sheet-head-ink:#F1F2F4;
+  --line:#212326; --line-2:#31343A;
+  --s0:#828A98; --s5:#57E7BE; --s10:#3ED9A4; --s15:#93DE5F; --s20:#F3C04C; --s25:#FF974E; --s30:#FF7071; --s35:#F268AA;
+  --shadow:0 1px 2px rgba(0,0,0,.6), 0 10px 30px -12px rgba(0,0,0,.85);
+}
+[data-theme="graphite"]{         /* deep petrol — a cool blue-slate dark, softer than true ink */
+  --paper:#0D1519; --surface:#152026; --surface-2:#1D2C34;
+  --ink:#E6EEF1; --ink-2:#A5B6BD; --ink-3:#8298A1;
+  --brand:#4FD1A6; --brand-soft:#122822; --brand-line:#255043;
+  --income:#63B9E8; --income-soft:#102630; --income-line:#22485C;
+  --relief:#EEC069; --relief-soft:#23241A; --relief-line:#4C482B;
+  --charge:#F0868C; --charge-soft:#2A1D22; --charge-line:#553339;
+  --credit:#4FD1A6; --credit-soft:#132A26;
+  --seal-bg:#4FD1A6; --seal-ink:#0D1519; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#16242B; --sheet-head-ink:#EDF4F7;
+  --line:#1E2C33; --line-2:#2C3E47;
+  --s0:#8A9AA3; --s5:#66E0BB; --s10:#4FD1A6; --s15:#9BD66C; --s20:#EEC069; --s25:#EE9A62; --s30:#F0868C; --s35:#DA7FB4;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -12px rgba(0,0,0,.72);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+/* One typographic system for both languages. The Bengali face sits in
+   every stack from the start, so switching language never reflows the
+   Latin metrics, and no rule keys off [data-lang]. */
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.62;-webkit-font-smoothing:antialiased}
+main,aside,.refs,.colophon,.band{transition:opacity .16s ease}
+body.swapping main,body.swapping aside,body.swapping .refs,body.swapping .colophon,body.swapping .band{opacity:.28}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}body.swapping *{opacity:1!important}}
+
+/* ---------- Masthead ---------- */
+.masthead{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:60}
+.masthead-in{max-width:1360px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap}
+.wordmark{display:flex;align-items:center;gap:9px;margin-right:auto;min-width:0}
+.seal{width:29px;height:29px;flex:none;border-radius:8px;background:var(--seal-bg);color:var(--seal-ink);
+      display:grid;place-items:center;font-size:16px;line-height:1;font-weight:600;
+      box-shadow:inset 0 0 0 1px var(--seal-line)}
+.wordmark h1{font-family:var(--font-display);font-weight:700;font-size:14.5px;margin:0;letter-spacing:-.02em;line-height:1.25}
+.wordmark p{margin:0;font-size:11px;color:var(--ink-3);line-height:1.35}
+.mast-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.btn{font:inherit;font-size:12.5px;font-weight:500;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);padding:5px 10px;border-radius:var(--radius-s);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;line-height:1.5}
+.btn:hover{border-color:var(--brand);color:var(--brand)}
+.btn.accent{border-color:var(--brand-line);background:var(--brand-soft);color:var(--brand);font-weight:600}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid var(--line-2);border-radius:var(--radius-s);background:var(--surface);color:var(--ink);cursor:pointer;font-family:var(--font-body);max-width:250px}
+
+/* Every control in the masthead is built to one height and, where its label
+   changes with the language, to one width as well. Bengali and English glyphs
+   have different natural widths, so without a fixed track the toggles and
+   buttons shuffled sideways the moment the language changed. */
+.mast-tools>*{height:var(--ctl-h);box-sizing:border-box}
+.seg{display:inline-flex;align-items:stretch;border:1px solid var(--line-2);border-radius:var(--radius-s);background:var(--surface-2);padding:2px;gap:2px}
+.seg-b{font:inherit;font-family:var(--font-body);font-size:12px;font-weight:600;line-height:1;
+       border:0;background:transparent;color:var(--ink-2);cursor:pointer;border-radius:calc(var(--radius-s) - 2px);
+       display:inline-flex;align-items:center;justify-content:center;padding:0 11px;white-space:nowrap;
+       transition:background .14s ease,color .14s ease}
+.seg-ico .seg-b svg{width:16px;height:16px;fill:currentColor;display:block}
+/* Icon controls carry their own hue rather than a uniform grey, so the row
+   reads as a set of distinct actions instead of a strip of glyphs. */
+#themeSeg .seg-b[data-theme-val="light"]{color:var(--s20)}
+#themeSeg .seg-b[data-theme-val="paper"]{color:var(--s25)}
+#themeSeg .seg-b[data-theme-val="midnight"]{color:var(--income)}
+#themeSeg .seg-b[data-theme-val="graphite"]{color:var(--s5)}
+#actionSeg #sampleBtn{color:var(--relief)}
+#actionSeg #resetBtn{color:var(--charge)}
+#themeSeg .seg-b[aria-pressed="true"],#actionSeg .seg-b:hover{filter:saturate(1.25)}
+.btn .btn-ic{width:15px;height:15px;flex:none}
+/* Icon-only controls carry their meaning in a tooltip and an aria-label, and
+   the label follows the language like everything else. */
+.seg-b[title]{position:relative}
+.seg-b:hover{color:var(--ink)}
+.seg-b[aria-pressed="true"]{background:var(--surface);color:var(--brand);font-weight:700;box-shadow:0 1px 2px rgba(16,30,25,.16),inset 0 0 0 1px var(--brand-line)}
+#langSeg .seg-b{min-width:52px}
+.seg-ico .seg-b{padding:0;width:30px}
+.seg-ico .seg-b svg{width:15px;height:15px;fill:currentColor;display:block}
+.btn{min-width:var(--btn-w);justify-content:center}
+/* Narrow screens: title shrinks, controls stay on one line and scroll if needed */
+/* Narrow: the header stops sticking so it never eats the viewport,
+   and every control wraps into view rather than scrolling out of reach. */
+@media (max-width:900px){
+  .masthead{position:static}
+  .masthead-in{padding:9px 14px;gap:9px}
+  .wordmark{margin-right:0;width:100%}
+  .wordmark p{font-size:10.5px}
+  .mast-tools{width:100%;justify-content:flex-start}
+  .mast-tools select.mast,.mast-tools .btn{flex:1 1 auto;min-height:36px}
+  select.mast{max-width:none}
+  #ay{flex:1 1 100%;order:-1}
+}
+@media (max-width:420px){
+  .mast-tools .btn{padding:6px 8px;font-size:12px}
+  .mast-tools{gap:6px}
+  .mast-tools .seg{flex:0 0 auto}
+  #langSeg{flex:1 1 auto}
+  #langSeg .seg-b{flex:1 1 0;min-width:0}
+  .mast-tools .btn{flex:1 1 calc(50% - 3px);min-width:0}
+  #ay{flex:1 1 100%;order:-1}
+}
+
+/* ---------- Layout ---------- */
+.shell{max-width:1360px;margin:0 auto;padding:24px 22px 30px;display:grid;grid-template-columns:minmax(0,1fr) 462px;gap:28px;align-items:start}
+@media (max-width:1080px){.shell{grid-template-columns:minmax(0,1fr);padding-bottom:26px}body{padding-bottom:64px}}
+
+.yearbar{background:var(--income-soft);border-bottom:1px solid var(--income-line)}
+.yearbar-in{max-width:1360px;margin:0 auto;padding:9px 22px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.8px;color:var(--income)}
+.yb-chip{font-weight:600;background:var(--income);color:var(--surface);padding:3px 11px;border-radius:20px;white-space:nowrap}
+.yb-arrow{opacity:.55;font-size:14px}
+.yb-txt{color:var(--ink-2)}
+.yb-txt b{color:var(--ink);font-family:var(--font-mono);font-size:12.5px;font-weight:600}
+.yb-note{color:var(--ink-3);font-size:11.8px;padding-left:10px;border-left:1px solid var(--income-line);margin-left:2px}
+@media (max-width:760px){
+  .yearbar-in{padding:9px 14px;gap:7px}
+  .yb-note{border-left:none;padding-left:0;margin-left:0;flex:1 1 100%;line-height:1.45}
+}
+.lede{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:var(--radius);padding:17px 22px;margin-bottom:20px;box-shadow:var(--shadow)}
+.lede h2{font-family:var(--font-display);font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0 0 5px;line-height:1.3}
+.lede p{margin:0;color:var(--ink-2);font-size:14px;max-width:72ch}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+.card>summary{list-style:none;cursor:pointer;padding:13px 20px;display:flex;align-items:center;gap:13px;border-bottom:1px solid transparent;transition:background .15s ease;-webkit-tap-highlight-color:transparent}
+.card>summary:hover{background:var(--surface-2)}
+.card[open]>summary{border-bottom-color:var(--line);background:var(--surface-2)}
+.card[open]>summary .chev{color:var(--brand)}
+.card>summary::-webkit-details-marker{display:none}
+/* Each head carries its own hue so the cards are tellable apart at a glance.
+   The tint and border are mixed from that hue against the live surface, which
+   means one rule works in all four themes without a per-theme override. */
+.head-no{width:28px;height:28px;flex:none;border-radius:7px;display:grid;place-items:center;
+  --tone:var(--income);
+  background:color-mix(in srgb, var(--tone) 11%, var(--surface));
+  color:var(--tone);
+  border:1px solid color-mix(in srgb, var(--tone) 40%, var(--surface))}
+.t-brand{--tone:var(--brand)} .t-income{--tone:var(--income)} .t-relief{--tone:var(--relief)}
+.t-charge{--tone:var(--charge)} .t-credit{--tone:var(--credit)}
+.t-olive{--tone:var(--s15)} .t-amber{--tone:var(--s20)} .t-clay{--tone:var(--s25)}
+.t-plum{--tone:var(--s35)} .t-teal{--tone:var(--s5)}
+.head-no svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+
+
+.head-txt{min-width:0;flex:1}
+.head-txt h3{font-family:var(--font-display);font-size:15.5px;font-weight:600;margin:0;letter-spacing:-.01em;line-height:1.35}
+.head-fig{font-family:var(--font-mono);font-size:13.5px;font-weight:500;color:var(--income);white-space:nowrap;font-variant-numeric:tabular-nums}
+.head-fig.util{color:var(--ink-3)} .head-fig.give{color:var(--brand)} .head-fig.paid{color:var(--relief)}
+.chev{width:9px;height:9px;border-right:1.8px solid var(--ink-3);border-bottom:1.8px solid var(--ink-3);transform:rotate(45deg);margin-top:-4px;flex:none;transition:transform .18s}
+.card[open] .chev{transform:rotate(-135deg);margin-top:2px}
+.card-body{padding:6px 20px 20px;overflow:hidden}
+.note{font-size:12.8px;color:var(--ink-2);background:var(--surface-2);border-left:2px solid var(--income-line);padding:9px 12px;border-radius:0 5px 5px 0;margin:12px 0 4px;line-height:1.6}
+.note b{color:var(--ink)}
+.note.relief{border-left-color:var(--relief);background:var(--relief-soft)}
+.note.give{border-left-color:var(--brand);background:var(--brand-soft)}
+
+/* ---------- Fields ---------- */
+.grid{display:grid;gap:12px 16px;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));margin-top:14px}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(282px,1fr))}
+/* Fields are pushed to the foot of their box and the label reserves two
+   lines. Bengali labels often wrap where the English fits on one line, and
+   without the reserved space the inputs in a row sat at different heights
+   depending on the language. */
+.f{display:flex;flex-direction:column;gap:4px;min-width:0;justify-content:flex-end}
+.f label{font-size:12.8px;color:var(--ink-2);font-weight:500;display:block;line-height:1.45;
+         min-height:calc(1.45em * 2);display:flex;align-items:flex-end;flex-wrap:wrap;gap:0 5px}
+.f label .hint{color:var(--ink-3);font-weight:400;font-size:11.5px}
+.f .money{position:relative;display:flex;align-items:center}
+.f .money::before{content:'৳';position:absolute;left:10px;color:var(--income);font-family:var(--font-mono);font-size:13px;pointer-events:none}
+input[type=number],input[type=text],select{font:inherit;font-family:var(--font-mono);font-size:14px;width:100%;padding:8px 10px;border:1px solid var(--line-2);border-radius:var(--radius-s);background:var(--surface);color:var(--ink);text-align:right;-moz-appearance:textfield}
+.f .money input{padding-left:24px}
+select{font-family:var(--font-body);text-align:left;padding-right:8px}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input:focus,select:focus{border-color:var(--brand)}
+.check{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--ink-2);padding:7px 0;line-height:1.5}
+.check input{width:16px;height:16px;flex:none;margin-top:3px;accent-color:var(--brand)}
+.subhead{font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--ink-3);margin:22px 0 0;padding-bottom:6px;border-bottom:1px solid var(--line);letter-spacing:.02em}
+.subhead:first-child{margin-top:8px}
+
+/* ---------- Computation sheet ---------- */
+.sheet{background:var(--surface);border:1px solid var(--line-2);border-radius:var(--radius);box-shadow:var(--shadow)}
+/* The masthead is sticky and its height changes as the controls rewrap
+   (83px at desktop, more as it wraps), so the sheet header cannot park at a
+   fixed offset without sliding underneath it. --mast-h is measured in JS and
+   kept up to date on resize; the fallback covers the interval before the
+   first measurement. */
+.sheet-top{padding:14px 20px 13px;background:var(--sheet-head);color:var(--sheet-head-ink);border-radius:var(--radius) var(--radius) 0 0;position:sticky;top:calc(var(--mast-h, 84px) + 8px);z-index:20}
+@media (max-width:1080px){.sheet-top{position:static}}
+.sheet-top .kicker{font-size:11px;opacity:.78;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px}
+.tag.pay{background:var(--charge);color:#fff} .tag.ref{background:var(--brand);color:#fff}
+.sheet-top .amt{font-family:var(--font-mono);font-size:31px;font-weight:600;letter-spacing:-.02em;line-height:1.2;margin-top:3px}
+.sheet-top .sub{font-size:12.5px;opacity:.8;margin-top:1px}
+.stat-strip{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.stat-strip div{padding:9px 10px;text-align:center;border-right:1px solid var(--line)}
+.stat-strip div:last-child{border-right:none}
+.stat-strip .k{font-size:11px;color:var(--ink-3);line-height:1.3}
+.stat-strip .v{font-family:var(--font-mono);font-size:15px;font-weight:600;margin-top:1px;font-variant-numeric:tabular-nums}
+.stat-strip .v.i{color:var(--income)} .stat-strip .v.c{color:var(--charge)}
+.ledger{padding:6px 18px 18px}
+.lg-h{font-family:var(--font-display);font-size:11.5px;font-weight:600;color:var(--ink-3);margin:15px 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1px solid var(--line);padding-top:11px;letter-spacing:.02em}
+.lg-h:first-child{margin-top:4px;border-top:none;padding-top:2px}
+.lg-h .tick{font-weight:400;font-size:11px;font-family:var(--font-mono)}
+.row{display:flex;align-items:baseline;gap:8px;padding:3.5px 0;font-size:13.2px;line-height:1.45}
+.row .lbl{color:var(--ink-2);flex:none;max-width:64%}
+.row .dots{flex:1;border-bottom:1px dotted var(--line-2);transform:translateY(-3px)}
+.row .val{flex:none;font-family:var(--font-mono);font-size:13.2px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.row.sub .lbl{padding-left:12px;color:var(--ink-3);font-size:12.4px}
+.row.sub .val{color:var(--ink-3);font-size:12.4px}
+.row.tot{border-top:1px solid var(--line-2);margin-top:4px;padding-top:6px}
+.row.tot .lbl,.row.tot .val{font-weight:600;color:var(--ink)}
+.row.income .val{color:var(--income)}
+.row.relief .val,.row.relief .lbl{color:var(--relief)}
+.row.credit .val,.row.credit .lbl{color:var(--credit)}
+.row.charge .val{color:var(--charge)}
+.row.muted .lbl,.row.muted .val{color:var(--ink-3)}
+.row.grand{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);margin:8px 0 0;padding:8px 0;font-size:14.5px}
+.row.grand .lbl{color:var(--ink);font-weight:600}
+.row.grand .val{font-weight:600;font-size:15.5px}
+.row.grand.pay .val{color:var(--charge)} .row.grand.ref .val{color:var(--credit)}
+.row.grand + .lg-h{margin-top:6px;padding-top:11px;border-top-color:transparent}
+
+/* One grid for the whole ladder, with each rung contributing its cells
+   directly. Sizing the two numeric columns to content stops large figures
+   from spilling out of a fixed width — the last band is unbounded, so at
+   crore-scale incomes a fixed column overflowed — and because every rung
+   shares the one grid, the columns still line up down the ladder. */
+.ladder{margin:6px 0 2px;display:grid;grid-template-columns:34px minmax(24px,1fr) auto auto;gap:3px 8px;align-items:center}
+.rung{display:contents}
+.rung .rate{font-family:var(--font-mono);font-weight:600;text-align:right;color:var(--rc,var(--ink-2));font-size:12px}
+.rung .bar{height:16px;background:var(--surface-2);border-radius:3px;position:relative;overflow:hidden}
+.rung .fill{position:absolute;inset:0 auto 0 0;background:var(--rc,var(--brand));border-radius:3px;transition:width .28s ease}
+.rung .amt,.rung .tax{font-family:var(--font-mono);font-size:11.5px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink-2)}
+.rung .tax{color:var(--ink);font-weight:500}
+.rung.empty>*{opacity:.42}
+.rung.hd .rate,.rung.hd .amt,.rung.hd .tax{color:var(--ink-3);font-weight:600;font-size:10.5px;font-family:var(--font-body)}
+
+/* ---------- Insight band: bridges calculator and references ---------- */
+.band{max-width:1360px;margin:0 auto;padding:0 22px}
+.band-in{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line)}
+.tile{background:var(--paper);padding:2px 20px}
+.tile:first-child{padding-left:0} .tile:last-child{padding-right:0}
+.tile .k{font-size:11.5px;color:var(--ink-3);display:flex;align-items:center;gap:7px}
+.tile .dot{width:7px;height:7px;border-radius:50%;background:var(--tc,var(--brand));flex:none}
+.tile .v{font-family:var(--font-mono);font-size:23px;font-weight:600;letter-spacing:-.02em;margin:3px 0 2px;color:var(--tc,var(--ink));font-variant-numeric:tabular-nums}
+.tile .d{font-size:12.2px;color:var(--ink-2);line-height:1.5;max-width:40ch}
+@media (max-width:1080px){.band-in{grid-template-columns:1fr;gap:16px;background:none}.tile{padding:0}}
+
+/* ---------- References ---------- */
+.refs{max-width:1360px;margin:0 auto;padding:0 22px 40px}
+.refs h2{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.02em;margin:28px 0 4px}
+.refs .lead{color:var(--ink-2);font-size:14px;margin:0 0 18px;max-width:76ch}
+/* Neither a grid nor CSS columns balances this set: a grid stretches every
+   card in a row to the tallest, and columns fill top to bottom in order, so
+   whichever card lands last leaves a long tail of empty space. The cards are
+   dealt into real columns instead, each one going to whichever column is
+   currently shortest, which evens the bottom edge out. The rule below is the
+   no-script fallback; the script replaces it with flex columns. */
+.ref-grid{columns:3;column-gap:16px}
+.ref-card{break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-block;width:100%;margin:0 0 16px}
+.ref-grid.balanced{display:flex;gap:16px;align-items:stretch;columns:auto}
+.ref-grid.balanced .ref-col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:16px}
+.ref-grid.balanced .ref-card{display:block;margin:0}
+/* Whatever slack is left after balancing is shared out across the cards in
+   that column rather than dumped into the last one, so the set finishes on a
+   single clean line and no card ends up looking hollow. */
+.ref-grid.balanced .ref-col>.ref-card{flex:1 1 auto}
+@media (max-width:1180px){.ref-grid{columns:2}}
+@media (max-width:760px){.ref-grid{columns:1}}
+.ref-wide{margin-top:16px}
+.ref-wide .ref-card{margin-bottom:0}
+/* This card carries far more than the others, so as a normal grid item it
+   stretched its whole row and left the cards beside it half empty. It spans
+   the full width instead and sets its list in columns, which keeps the grid
+   rows even and makes a long list far quicker to scan. */
+/* Every input, select and money field shares one height token, so rows line
+   up across a card regardless of which control sits in them. */
+.f input,.f select{height:var(--field-h);box-sizing:border-box}
+.f select{padding-top:0;padding-bottom:0}
+/* Embedded links are marked as leaving the page: a small corner-arrow after
+   the text, and every one opens in a new tab so a half-filled return is never
+   lost by navigating away. */
+.ref-card a,.disclaimer a,.blurb a{color:var(--brand);text-decoration:none;
+  border-bottom:1px solid var(--brand-line);white-space:nowrap}
+.ref-card a:hover,.disclaimer a:hover,.blurb a:hover{border-bottom-color:var(--brand);background:var(--brand-soft)}
+.ref-card a::after,.disclaimer a::after,.blurb a::after{content:"";display:inline-block;
+  width:.62em;height:.62em;margin-left:.3em;vertical-align:-.02em;background-color:currentColor;
+  -webkit-mask:var(--ext-ic) center/contain no-repeat;mask:var(--ext-ic) center/contain no-repeat;opacity:.75}
+.ref-card.wide{width:100%}
+.ref-card.wide ul.cols{columns:2;column-gap:30px}
+.ref-card.wide ul.cols li{break-inside:avoid;-webkit-column-break-inside:avoid}
+@media (min-width:1180px){.ref-card.wide ul.cols{columns:3}}
+@media (max-width:700px){.ref-card.wide ul.cols{columns:1}}
+.ref-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:17px 20px;border-top:3px solid var(--accent,var(--line-2))}
+.ref-card.a-income{--accent:var(--income)} .ref-card.a-relief{--accent:var(--relief)}
+.ref-card.a-charge{--accent:var(--charge)} .ref-card.a-brand{--accent:var(--brand)}
+.ref-card h4{font-family:var(--font-display);font-size:14px;font-weight:600;margin:0 0 10px;letter-spacing:-.01em;color:var(--accent,var(--ink));line-height:1.4}
+.ref-card ul{margin:0;padding-left:17px;font-size:13.2px;color:var(--ink-2)}
+.ref-card li{margin-bottom:6px} .ref-card li b{color:var(--ink)}
+table.ref{width:100%;border-collapse:collapse;font-size:13px;margin-top:4px}
+table.ref th,table.ref td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+table.ref th:first-child,table.ref td:first-child{text-align:left}
+table.ref th{font-size:11.5px;color:var(--ink-3);font-weight:600}
+table.ref td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+table.ref tr.hl td{color:var(--charge);font-weight:600}
+.srcs{font-size:12.5px;color:var(--ink-3);margin-top:9px;line-height:1.65}
+.disclaimer{margin-top:20px;background:var(--relief-soft);border:1px solid var(--relief-line);border-left:3px solid var(--relief);border-radius:var(--radius);padding:16px 20px;font-size:13.2px;color:var(--ink)}
+.disclaimer b{font-family:var(--font-display);color:var(--relief)}
+.disclaimer p{margin:0 0 9px} .disclaimer p:last-child{margin-bottom:0}
+
+/* ---------- Colophon ---------- */
+.colophon{max-width:1360px;margin:0 auto;padding:0 22px 56px}
+.colophon-in{border-top:1px solid var(--line);padding-top:26px;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:30px;align-items:start}
+@media (max-width:820px){.colophon-in{grid-template-columns:1fr;gap:22px}}
+.sig{font-family:var(--font-display);font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;line-height:1.3}
+.sig .amp{color:var(--brand);font-weight:400;padding:0 2px}
+.colophon .blurb{margin:0 0 11px;font-size:13.4px;color:var(--ink-2);line-height:1.65;max-width:56ch}
+.colophon .blurb:last-of-type{margin-bottom:15px}
+/* The three profiles read as a small showcase rather than a row of buttons:
+   each card carries the mark, the network and the handle, and lifts toward
+   its own brand colour on hover. One shared grid keeps them equal in width
+   and height in both languages. */
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px;margin-top:16px;max-width:560px}
+.lnk{display:flex;align-items:center;gap:10px;text-decoration:none;padding:11px 13px;
+     border-radius:var(--radius);border:1px solid var(--line-2);color:var(--ink);
+     background:var(--surface);position:relative;overflow:hidden;
+     transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease}
+.lnk::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--lnk,var(--brand));
+             transform:scaleY(0);transform-origin:50% 0;transition:transform .18s ease}
+.lnk:hover{border-color:var(--lnk,var(--brand));transform:translateY(-2px);box-shadow:0 4px 14px rgba(16,30,25,.10)}
+.lnk:hover::before{transform:scaleY(1)}
+.lnk .lnk-ic{width:30px;height:30px;flex:none;border-radius:8px;display:grid;place-items:center;
+             background:var(--surface-2);color:var(--lnk,var(--brand));transition:background .16s ease}
+.lnk:hover .lnk-ic{background:var(--lnk,var(--brand));color:#fff}
+.lnk svg{width:16px;height:16px;fill:currentColor;display:block}
+.lnk .lnk-tx{display:flex;flex-direction:column;min-width:0;line-height:1.25}
+.lnk .lnk-n{font-size:12.5px;font-weight:600}
+/* GitHub's brand black is invisible against a dark page, so on the dark
+   themes the mark switches to a near-white and the tile inverts instead. */
+/* Brand colours live in the stylesheet, not inline: an inline custom property
+   outranks any rule, so the dark-theme overrides below could never win. */
+.lnk-gh{--lnk:#24292F} .lnk-li{--lnk:#0A66C2} .lnk-fb{--lnk:#1877F2}
+[data-theme="midnight"] .lnk-gh,[data-theme="graphite"] .lnk-gh{--lnk:#E8EAED}
+[data-theme="midnight"] .lnk-li,[data-theme="graphite"] .lnk-li{--lnk:#5CADEB}
+[data-theme="midnight"] .lnk-fb,[data-theme="graphite"] .lnk-fb{--lnk:#6BA6F7}
+[data-theme="midnight"] .lnk-gh:hover .lnk-ic,[data-theme="graphite"] .lnk-gh:hover .lnk-ic{color:#0C0D10}
+.lnk .lnk-h{font-size:11.5px;color:var(--ink-3);font-family:var(--font-mono);
+            overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.privacy{background:var(--brand-soft);border:1px solid var(--brand-line);border-radius:var(--radius);padding:15px 18px}
+.privacy h5{font-family:var(--font-display);font-size:12.5px;font-weight:600;margin:0 0 10px;color:var(--brand);display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;line-height:1.4}
+.privacy h5 svg{align-self:center}
+.pv-tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;border:1px solid currentColor;border-radius:20px;padding:1px 8px;white-space:nowrap}
+.pv-sub{color:var(--ink);font-weight:600}
+.privacy h5 svg{width:14px;height:14px;fill:currentColor}
+.privacy ul{margin:0;padding:0;list-style:none;font-size:12.8px;color:var(--ink-2)}
+.privacy li{padding:4px 0 4px 19px;position:relative;line-height:1.55}
+.privacy li::before{content:'';position:absolute;left:3px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--brand)}
+.vers{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;gap:16px;flex-wrap:wrap}
+.vers b{color:var(--ink-2);font-weight:600}
+
+/* mobile running total */
+.mobile-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--sheet-head);color:var(--sheet-head-ink);padding:9px 20px;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -4px 20px rgba(0,0,0,.22)}
+@media (max-width:1080px){.mobile-bar{display:flex}}
+.mobile-bar .k{font-size:11px;opacity:.8}
+.mobile-bar .v{font-family:var(--font-mono);font-size:20px;font-weight:600}
+.mobile-bar a{color:inherit;text-decoration:none;border:1px solid currentColor;padding:7px 13px;border-radius:6px;font-size:13px;white-space:nowrap}
+
+/* ============================================================
+   MOBILE — most people will open this on a phone
+   ============================================================ */
+@media (max-width:1080px){
+  body{font-size:15px}
+  .shell{padding:16px 14px 22px;gap:18px}
+  .lede{padding:15px 16px;margin-bottom:16px}
+  .lede h2{font-size:19px}
+  .card-body{padding:6px 16px 18px}
+  .card>summary{padding:13px 16px;gap:11px}
+  .head-txt h3{font-size:14.8px}
+  .head-fig{font-size:12.8px}
+  .grid,.grid.two{grid-template-columns:1fr;gap:12px}
+  input[type=number],input[type=text],select{padding:10px 11px;font-size:16px}
+  .f .money input{padding-left:26px}
+  .check input{width:19px;height:19px}
+  .sheet-top .amt{font-size:27px}
+  .ledger{padding:6px 15px 16px}
+  .row{font-size:12.9px}
+  .row .lbl{max-width:60%}
+  .ladder{grid-template-columns:30px minmax(20px,1fr) auto auto;gap:3px 6px}
+  .rung .amt,.rung .tax{font-size:11px}
+  .band{padding:0 14px}
+  .refs{padding:0 14px 34px}
+  .refs h2{font-size:18px;margin-top:22px}
+  .ref-card{padding:15px 16px}
+  .colophon{padding:0 14px 46px}
+  .disclaimer{padding:14px 16px}
+}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl-scroll table.ref{min-width:290px}
+@media print{.tbl-scroll{overflow:visible}.tbl-scroll table.ref{min-width:0}}
+
+/* ============================================================
+   PRINT — a purpose-built report, not the screen layout squeezed
+   onto paper. Everything on screen is hidden and #printDoc is
+   generated fresh: plain block and table markup only, so nothing
+   can overlap or fragment the way flex and column layouts do.
+   ============================================================ */
+#printDoc{display:none}
+@media print{
+  @page{margin:18mm 15mm 16mm}
+  html,html[data-theme],html[data-theme="light"],html[data-theme="paper"],
+  html[data-theme="midnight"],html[data-theme="graphite"]{
+    --ink:#101E19;--ink-2:#3F5149;--ink-3:#6B7C74;
+    --brand:#0B6B4F;--brand-soft:#EAF3EE;--brand-line:#BCD8CA;
+    --income:#2A5A83;--relief:#8A6008;--charge:#93202A;--credit:#0B6B4F;
+    --line:#D5DED8;--line-2:#AFBDB6;
+  }
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body>*{display:none!important}
+  body{background:#fff;margin:0;padding:0;font-size:9.6pt;line-height:1.5;color:var(--ink)}
+  #printDoc{display:block!important}
+
+  #printDoc h1,#printDoc h2,#printDoc h3,#printDoc h4,#printDoc p{margin:0}
+  #printDoc{orphans:3;widows:3}
+  /* Reference cards may run longer than the space left on a page. Letting them
+     break, while keeping each card's heading with the text under it, avoids
+     stranding a tall card and leaving half a page blank. */
+  .pd-refs .ref-card{break-inside:auto}
+  .pd-refs .ref-card h4{break-after:avoid}
+  .pd-refs .ref-card table tr{break-inside:avoid}
+  .pd-mast{border-bottom:2.4pt solid var(--brand);padding-bottom:9px;margin-bottom:14px}
+  .pd-mast h1{font-family:var(--font-display);font-size:18pt;font-weight:800;
+              letter-spacing:-.02em;color:var(--brand);line-height:1.15}
+  .pd-mast .pd-kick{font-size:8.4pt;color:var(--ink-3);letter-spacing:.04em;margin-bottom:3px}
+  .pd-meta{width:100%;border-collapse:collapse;margin-top:9px}
+  .pd-meta td{font-size:8.6pt;padding:2px 0;vertical-align:top;color:var(--ink-2)}
+  .pd-meta td.k{width:26%;color:var(--ink-3)}
+  .pd-meta td.v{color:var(--ink);font-weight:600}
+  .pd-meta td.k2{width:21%;color:var(--ink-3);padding-left:16px}
+
+  .pd-band{border:1pt solid var(--brand-line);background:var(--brand-soft);
+           border-radius:4px;padding:11px 14px;margin-bottom:14px;break-inside:avoid}
+  .pd-band .lbl{font-size:8.6pt;color:var(--ink-2)}
+  .pd-band .amt{font-family:var(--font-mono);font-size:21pt;font-weight:600;
+                letter-spacing:-.02em;line-height:1.2;color:var(--charge);margin-top:1px}
+  .pd-band .amt.ref{color:var(--credit)}
+  .pd-band .sub{font-size:8.4pt;color:var(--ink-2);margin-top:3px}
+  .pd-kpi{width:100%;border-collapse:collapse;margin-top:9px;border-top:.6pt solid var(--brand-line)}
+  .pd-kpi td{padding:6px 8px 0;font-size:8.4pt;color:var(--ink-3);text-align:center;width:33.33%}
+  .pd-kpi td span{display:block;font-family:var(--font-mono);font-size:12pt;
+                  font-weight:600;color:var(--ink);margin-top:1px}
+
+  .pd-sec{margin-top:16px}
+  .pd-sec>h2{font-family:var(--font-display);font-size:12.5pt;font-weight:800;color:var(--brand);
+             letter-spacing:-.02em;padding-bottom:4px;border-bottom:1pt solid var(--line-2);margin-bottom:8px}
+  .pd-sec>.pd-note{font-size:8.4pt;color:var(--ink-3);margin:-4px 0 9px}
+
+  table.pd-t{width:100%;border-collapse:collapse}
+  table.pd-t tr{break-inside:avoid}
+  table.pd-t td{padding:2.6px 0;font-size:9.2pt;color:var(--ink-2);vertical-align:baseline;
+                border-bottom:.4pt dotted var(--line)}
+  table.pd-t td.pd-v{text-align:right;font-family:var(--font-mono);white-space:nowrap;
+                     padding-left:12px;font-variant-numeric:tabular-nums;width:1%}
+  tr.pd-h td{padding:12px 0 3px;font-family:var(--font-display);font-size:8.6pt;font-weight:700;
+             color:var(--ink);border-bottom:.6pt solid var(--line-2);letter-spacing:.02em;
+             break-after:avoid}
+  tr.pd-h:first-child td{padding-top:0}
+  /* Floating the tick inside the heading cell put it out of document order, so
+     it extracted and read aloud in the wrong place. It is a table cell now. */
+  tr.pd-h td.pd-tick{font-weight:400;font-family:var(--font-mono);font-size:8pt;
+                     color:var(--ink-3);text-align:right;white-space:nowrap}
+  tr.pd-sub td{font-size:8.5pt;color:var(--ink-3);padding-left:13px}
+  tr.pd-sub td.pd-v{font-size:8.5pt;color:var(--ink-3)}
+  tr.pd-tot td{font-weight:700;color:var(--ink);border-bottom:.7pt solid var(--line-2)}
+  tr.pd-grand td{font-size:11pt;font-weight:700;color:var(--ink);
+                 border-top:1.4pt solid var(--ink);border-bottom:1.4pt solid var(--ink);padding:7px 0}
+  tr.pd-grand td.pd-v{font-size:12pt}
+  tr.pd-muted td{color:var(--ink-3)}
+  tr.pd-income td.pd-v{color:var(--income)}
+  tr.pd-relief td,tr.pd-relief td.pd-v{color:var(--relief)}
+  tr.pd-credit td,tr.pd-credit td.pd-v{color:var(--credit)}
+  tr.pd-charge td.pd-v{color:var(--charge)}
+  tr.pd-pay td.pd-v{color:var(--charge)} tr.pd-ref td.pd-v{color:var(--credit)}
+
+  td.pd-lwrap{border-bottom:none;padding:6px 0 8px}
+  /* The ladder is its own table nested inside the ledger, so every cell class
+     here is distinct from the ledger's. Sharing pd-v let the ledger's 1%
+     value-column width cascade in through the descendant selector; with
+     table-layout:fixed the two numeric columns then collapsed to a few
+     points each and their contents printed on top of one another. */
+  table.pd-lad{width:100%;border-collapse:collapse;table-layout:fixed}
+  table.pd-lad td{font-size:8.6pt;padding:3px 0;border-bottom:.4pt dotted var(--line);
+                  font-family:var(--font-mono);color:var(--ink-2);vertical-align:middle}
+  table.pd-lad td.pd-lr{width:11%;font-weight:700;color:var(--ink);text-align:left}
+  table.pd-lad td.pd-lb{width:31%;padding:3px 14px 3px 0}
+  table.pd-lad td.pd-lv{width:29%;text-align:right;padding-left:10px;
+                        font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pd-bar{display:block;height:7pt;background:var(--line);border-radius:1.5pt;overflow:hidden}
+  .pd-fill{display:block;height:100%;background:var(--brand);border-radius:1.5pt}
+  tr.pd-lh td{font-family:var(--font-body);font-size:7.8pt;color:var(--ink-3);font-weight:700;
+              letter-spacing:.04em;text-transform:uppercase;
+              border-bottom:.6pt solid var(--line-2);padding-bottom:3px}
+  tr.pd-lh td.pd-lb{border-bottom:.6pt solid var(--line-2)}
+
+  /* Groups used to be unbreakable, which threw a whole group onto a fresh
+     page whenever it did not fit whole — one report ran a page carrying three
+     lines. Letting a group break while pinning its heading to the rows that
+     follow, and keeping individual rows intact, fills the page instead. */
+  /* Forcing a fresh page here left the computation's tail sitting on a
+     half-empty sheet and pushed a three-line group onto one of its own.
+     The section reads perfectly well continuing down the page, so it is
+     given room to start wherever it lands; only the reference appendix
+     still begins on a page of its own. */
+  .pd-figs{break-before:auto;margin-top:20px}
+  /* Chrome does not honour widows/orphans across table rows, so a group that
+     was allowed to break could leave a single line marooned on a page of its
+     own. Groups move as a unit instead: short, self-contained and predictable. */
+  .pd-grp{margin-bottom:12px;break-inside:avoid}
+  .pd-grp h3{font-family:var(--font-display);font-size:9.2pt;font-weight:700;color:var(--ink);
+             padding-bottom:3px;border-bottom:.7pt solid var(--line-2);margin-bottom:4px;
+             break-after:avoid}
+  .pd-grp table tr{break-inside:avoid}
+  .pd-grp table tr:nth-child(even) td{background:#F7FAF8}
+  .pd-empty{font-size:8.8pt;color:var(--ink-3);font-style:italic}
+
+  .pd-refs{break-before:page}
+  /* The references are cloned from the screen markup, which lays the cards
+     out in a multi-column grid. A grid row cannot break across pages, so on
+     paper it stranded tall cards and left half-empty pages. Flattening it to
+     blocks lets each card flow and break-inside:avoid do its job. */
+  .pd-refs .ref-grid,.pd-refs .ref-grid.balanced{display:block;columns:1;column-gap:0}
+  .pd-refs .ref-col{display:block}
+  .pd-refs .ref-card{border:.6pt solid var(--line);border-top:2pt solid var(--accent,var(--line-2));
+                     border-radius:4px;padding:9px 12px;margin-bottom:9px;
+                     background:#fff;box-shadow:none}
+  .pd-refs .ref-card h4{font-family:var(--font-display);font-size:9.2pt;margin:0 0 5px;
+                        color:var(--accent,var(--ink))}
+  .pd-refs .ref-card ul{margin:0;padding-left:13px;font-size:8.5pt;color:var(--ink-2)}
+  .pd-refs .ref-card li{margin-bottom:3px}
+  .pd-refs table.ref{width:100%;border-collapse:collapse;font-size:8.5pt;margin-top:2px}
+  .pd-refs table.ref th,.pd-refs table.ref td{padding:2.6px 4px;border-bottom:.4pt solid var(--line);
+                                              text-align:right}
+  .pd-refs table.ref th:first-child,.pd-refs table.ref td:first-child{text-align:left}
+  .pd-refs table.ref th{color:var(--ink-3);font-weight:600}
+  .pd-refs table.ref td.num{font-family:var(--font-mono)}
+  .pd-refs .srcs{font-size:8pt;color:var(--ink-3);margin-top:5px;line-height:1.55}
+  .pd-refs .disclaimer{border:.6pt solid var(--relief);border-left:2.4pt solid var(--relief);
+                       background:#FAF3E4;border-radius:4px;padding:10px 12px;font-size:8.5pt;
+                       margin-top:10px;break-inside:avoid}
+  .pd-refs .disclaimer p{margin:0 0 6px} .pd-refs .disclaimer p:last-child{margin:0}
+  .pd-refs .disclaimer b{color:var(--relief);font-family:var(--font-display)}
+
+  .pd-foot{margin-top:14px;padding-top:8px;border-top:.7pt solid var(--line-2);
+           font-size:8pt;color:var(--ink-3);line-height:1.6;break-inside:avoid}
+  .pd-foot b{color:var(--ink-2)}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div class="wordmark">
+      <div class="seal">৳</div>
+      <div>
+        <h1 data-bn="আয়কর ক্যালকুলেটর">Income Tax Calculator</h1>
+        <p id="lawline">Income Tax Act 2023 · Finance Act 2026</p>
+      </div>
+    </div>
+    <div class="mast-tools">
+      <select id="ay" class="mast" style="min-width:250px" aria-label="Assessment year"></select>
+      <div class="seg" id="langSeg" role="group" aria-label="Language / ভাষা">
+        <button type="button" class="seg-b" data-lang="en" lang="en">English</button>
+        <button type="button" class="seg-b" data-lang="bn" lang="bn">বাংলা</button>
+      </div>
+      <div class="seg seg-ico" id="themeSeg" role="group" aria-label="Theme">
+        <button type="button" class="seg-b" data-theme-val="light" data-bn-title="উজ্জ্বল" title="Light" aria-label="Light">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><g stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></g></svg></button>
+        <button type="button" class="seg-b" data-theme-val="paper" data-bn-title="হালকা" title="Paper — softer light" aria-label="Paper">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2.6h8.2L19 7.4V21a.9.9 0 0 1-.9.9H6a.9.9 0 0 1-.9-.9V3.5A.9.9 0 0 1 6 2.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.8 2.8v4.8h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.3 12.5h7.4M8.3 16h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+        <button type="button" class="seg-b" data-theme-val="midnight" data-bn-title="গাঢ় রাত" title="Midnight — full colour dark" aria-label="Midnight">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 13.4A8.7 8.7 0 1 1 10.6 3.2a6.9 6.9 0 0 0 10.2 10.2z"/><circle cx="17.4" cy="5.4" r="1.15"/><circle cx="20.6" cy="9" r=".8"/></svg></button>
+        <button type="button" class="seg-b" data-theme-val="graphite" data-bn-title="ধূসর" title="Graphite — softer dark" aria-label="Graphite">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 3a9 9 0 0 1 0 18z"/></svg></button>
+      </div>
+      <div class="seg seg-ico" id="actionSeg" role="group" aria-label="Actions">
+        <button type="button" class="seg-b" id="sampleBtn" data-bn-title="নমুনা হিসাব বসান" title="Fill with sample figures" aria-label="Fill with sample figures">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 2.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4L3.1 5.9l2.4-.9zM18 12.6l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/><path d="M14.8 4.4l4.8 4.8M16.9 2.3l1.4 1.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M13.4 5.8L4 15.2a1.3 1.3 0 0 0 0 1.8l3 3a1.3 1.3 0 0 0 1.8 0l9.4-9.4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="seg-b" id="resetBtn" data-bn-title="সব মুছে ফেলুন" title="Clear every field" aria-label="Clear every field">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 12a8.4 8.4 0 1 1 2.6 6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3.2 5.6v4.9h4.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <button class="btn accent" id="printBtn" type="button" data-bn-title="রিপোর্ট সংরক্ষণ বা প্রিন্ট" title="Save or print the report">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="btn-ic"><path d="M12 3v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.6 10.2L12 14.6l4.4-4.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.8 16.4v2.9a1.7 1.7 0 0 0 1.7 1.7h13a1.7 1.7 0 0 0 1.7-1.7v-2.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span data-bn="সংরক্ষণ">Save</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="yearbar">
+  <div class="yearbar-in">
+    <span class="yb-chip" id="ybAY">—</span>
+    <span class="yb-arrow" aria-hidden="true">←</span>
+    <span class="yb-txt"><span class="yb-lead" data-bn="আয়ের সময়কাল">income earned in</span> <b id="ybIY">—</b></span>
+    <span class="yb-note" data-bn="করবর্ষ মানে যে বছরে রিটার্ন জমা পড়ে; আয়বর্ষ মানে যে সময়ের আয় দেখাচ্ছেন">The assessment year is when you file; the income year is the period the income belongs to</span>
+  </div>
+</div>
+
+<div class="shell">
+<main>
+  <div class="lede">
+    <h2 data-bn="আয়ের খাত অনুযায়ী ধাপে ধাপে হিসাব করুন">Work through the return, head by head</h2>
+    <p data-bn="আয়বর্ষে আপনি যা যা পেয়েছেন, তা এখানে লিখুন। লেখার সঙ্গে সঙ্গেই হিসাব বদলে যাবে, আর প্রতিটি লাইনে কোন নিয়ম থেকে অঙ্কটা এল তা দেখানো থাকবে — ফলে নিজের রিটার্নের সঙ্গে মিলিয়ে নিতে পারবেন।">Enter what you received during the income year. The computation updates as you type, and every line shows the rule it comes from — so you can check the arithmetic against your own return.</p>
+  </div>
+
+  <!-- A · Profile -->
+  <details class="card" open>
+    <summary>
+      <span class="head-no t-brand" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>
+      <span class="head-txt"><h3 data-bn="করদাতার তথ্য ও শ্রেণি">Taxpayer particulars</h3></span>
+      <span class="head-fig util" id="fig-profile">—</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid two">
+        <div class="f">
+          <label for="p_category"><span data-bn="করদাতার শ্রেণি">Taxpayer category</span> <span class="hint" data-bn="এটাই করমুক্ত সীমা ঠিক করে">sets the tax-free threshold</span></label>
+          <select id="p_category">
+            <option value="general" data-bn="সাধারণ করদাতা (পুরুষ, ৬৫ বছরের নিচে)">General taxpayer (male, under 65)</option>
+            <option value="female" data-bn="মহিলা করদাতা">Woman taxpayer</option>
+            <option value="senior65" data-bn="প্রবীণ নাগরিক, বয়স ৬৫ বা তার বেশি">Senior citizen, aged 65 or above</option>
+            <option value="thirdGender" data-bn="তৃতীয় লিঙ্গের করদাতা">Third-gender taxpayer</option>
+            <option value="disabled" data-bn="প্রতিবন্ধী ব্যক্তি">Person with a disability</option>
+            <option value="freedomFighter" data-bn="গেজেটভুক্ত যুদ্ধাহত মুক্তিযোদ্ধা বা জুলাই যোদ্ধা">Gazetted war-wounded freedom fighter or July fighter</option>
+          </select>
+        </div>
+        <div class="f">
+          <label for="p_residence"><span data-bn="আপনি নিবাসী না অনিবাসী">Residential status</span></label>
+          <select id="p_residence">
+            <option value="resident" data-bn="নিবাসী (বছরের বেশির ভাগ সময় দেশে ছিলেন)">Resident</option>
+            <option value="nrb" data-bn="অনিবাসী, তবে বাংলাদেশি নাগরিক">Non-resident Bangladeshi citizen</option>
+            <option value="nrForeign" data-bn="অনিবাসী বিদেশি নাগরিক">Non-resident, not a Bangladeshi citizen</option>
+          </select>
+        </div>
+        <div class="f">
+          <label for="p_disabledKids"><span data-bn="প্রতিবন্ধী সন্তান বা নির্ভরশীল">Children or dependants with a disability</span> <span class="hint" data-bn="কতজন">count</span></label>
+          <input type="number" id="p_disabledKids" min="0" max="20" step="1" value="0" placeholder="0">
+        </div>
+        <div class="f" id="firstWrap">
+          <label for="p_first"><span data-bn="আগে কখনো রিটার্ন দিয়েছেন কি">Filing history</span></label>
+          <select id="p_first">
+            <option value="existing" data-bn="আগেও রিটার্ন দিয়েছি">Existing taxpayer</option>
+            <option value="first" data-bn="এবারই প্রথম রিটার্ন দিচ্ছি">Filing for the first time</option>
+          </select>
+        </div>
+        <div class="f" id="locWrap">
+          <label for="p_location"><span data-bn="কোথায় থাকেন">Place of residence</span> <span class="hint" data-bn="শুধু করবর্ষ ২০২৫-২৬ এর ন্যূনতম করের জন্য">AY 2025-26 minimum tax only</span></label>
+          <select id="p_location">
+            <option value="dhakaCtg" data-bn="ঢাকা উত্তর, ঢাকা দক্ষিণ বা চট্টগ্রাম সিটি কর্পোরেশন">Dhaka North, Dhaka South or Chattogram City Corporation</option>
+            <option value="otherCC" data-bn="অন্য যেকোনো সিটি কর্পোরেশন">Any other city corporation</option>
+            <option value="other" data-bn="সিটি কর্পোরেশনের বাইরে">Outside city corporation areas</option>
+          </select>
+        </div>
+        <div class="f" id="fileWindowWrap">
+          <label for="p_window"><span data-bn="কখন রিটার্ন জমা দেবেন">When you file the return</span></label>
+          <select id="p_window">
+            <option value="julSep" data-bn="১ জুলাই – ৩০ সেপ্টেম্বর (আগে দিলে ছাড় পাবেন)">1 July – 30 September (early-filing incentive)</option>
+            <option value="octDec" selected data-bn="১ অক্টোবর – ৩১ ডিসেম্বর (ছাড়ও নেই, জরিমানাও নেই)">1 October – 31 December (no incentive, no penalty)</option>
+            <option value="janMar" data-bn="১ জানুয়ারি – ৩১ মার্চ">1 January – 31 March</option>
+            <option value="aprJun" data-bn="১ এপ্রিল – ৩০ জুন">1 April – 30 June</option>
+            <option value="lateVol" data-bn="করবর্ষ পার হওয়ার পর, নিজে থেকে">After the assessment year, filed voluntarily</option>
+            <option value="lateNotice" data-bn="ধারা ২১২(১) নোটিশ পাওয়ার পর">After a notice under section 212(1)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="subhead" data-bn="নিট সম্পদ ও সম্পত্তি — সারচার্জের হিসাবের জন্য">Net wealth and assets — for surcharge</div>
+      <div class="grid">
+        <div class="f"><label for="p_netWealth"><span data-bn="সম্পদ বিবরণী অনুযায়ী নিট সম্পদ">Net wealth per statement of assets</span> <span class="hint" data-bn="মোট সম্পদ থেকে দায় বাদ দিয়ে">assets minus liabilities</span></label><div class="money"><input type="number" id="p_netWealth" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="p_cars"><span data-bn="নিজের নামে নিবন্ধিত গাড়ির সংখ্যা">Motor cars registered in your name</span></label><input type="number" id="p_cars" min="0" step="1" value="0" placeholder="0"></div>
+        <div class="f">
+          <label for="p_carCC"><span data-bn="প্রথমটির পর গাড়িগুলোর মধ্যে সর্বোচ্চ ইঞ্জিন ক্ষমতা">Highest engine capacity among cars beyond the first</span> <span class="hint" data-bn="এই হার প্রতিটি বাড়তি গাড়িতে লাগবে">this rate applies to every additional car</span></label>
+          <select id="p_carCC">
+            <option value="25000" data-bn="১,৫০০ সিসি পর্যন্ত">Up to 1,500 cc</option>
+            <option value="50000" data-bn="১,৫০১ – ২,০০০ সিসি">1,501 – 2,000 cc</option>
+            <option value="75000" data-bn="২,০০১ – ২,৫০০ সিসি">2,001 – 2,500 cc</option>
+            <option value="150000" data-bn="২,৫০১ – ৩,০০০ সিসি">2,501 – 3,000 cc</option>
+            <option value="200000" data-bn="৩,০০১ – ৩,৫০০ সিসি">3,001 – 3,500 cc</option>
+            <option value="350000" data-bn="৩,৫০০ সিসির বেশি">Above 3,500 cc</option>
+            <option value="0" data-bn="বৈদ্যুতিক গাড়ি — তফসিলে সিসি-ভিত্তিক কোনো ধাপ নেই; যাচাই করে নিন">Electric vehicle — no cc band in the schedule; verify</option>
+          </select>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="p_bigHouse"><span data-bn="আমার নামে ৮,০০০ বর্গফুটের বেশি আয়তনের বাড়ি বা ফ্ল্যাট আছে">I own house property with an aggregate area above 8,000 sq ft</span></label>
+      <div class="note relief" data-bn="একাধিক গাড়ি থাকলে, বা ৮,০০০ বর্গফুটের বেশি বাড়ি থাকলে, নিট সম্পদ ৪ কোটি টাকার কম হলেও <b>১০% সম্পদ সারচার্জ</b> দিতে হয়।">Owning more than one car, or house property above 8,000 sq ft, triggers the <b>10% wealth surcharge</b> even if net wealth is below Tk 4 crore.</div>
+    </div>
+  </details>
+
+  <!-- 1 · Employment -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-income" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="13" rx="2"/><path d="M8.5 7V5.2A1.7 1.7 0 0 1 10.2 3.5h3.6A1.7 1.7 0 0 1 15.5 5.2V7M2.5 12.5h19"/></svg></span>
+      <span class="head-txt"><h3 data-bn="চাকরি থেকে আয়">Income from employment</h3></span>
+      <span class="head-fig" id="fig-emp">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="note" id="empNote"></div>
+      <div class="subhead" data-bn="নগদ প্রাপ্তি">Cash receipts</div>
+      <div class="grid">
+        <div class="f"><label for="e_basic" data-bn="মূল বেতন">Basic salary</label><div class="money"><input type="number" id="e_basic" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_house" data-bn="বাড়ি ভাড়া ভাতা">House rent allowance</label><div class="money"><input type="number" id="e_house" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_medical" data-bn="চিকিৎসা ভাতা">Medical allowance</label><div class="money"><input type="number" id="e_medical" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_convey" data-bn="যাতায়াত ভাতা">Conveyance allowance</label><div class="money"><input type="number" id="e_convey" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_bonus" data-bn="উৎসব ও অন্যান্য বোনাস">Festival and other bonus</label><div class="money"><input type="number" id="e_bonus" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_other" data-bn="ওভারটাইম, বকেয়া, ছুটি নগদায়ন ও অন্যান্য নগদ প্রাপ্তি">Overtime, arrears, leave encashment, other cash</label><div class="money"><input type="number" id="e_other" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="subhead" data-bn="নিয়োগকর্তার চাঁদা ও তহবিলের আয়">Employer contributions and fund income</div>
+      <div class="grid">
+        <div class="f"><label for="e_rpfEmployer" data-bn="স্বীকৃত ভবিষ্য তহবিলে অফিসের দেওয়া চাঁদা">Employer's contribution to recognised provident fund</label><div class="money"><input type="number" id="e_rpfEmployer" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_rpfInterest" data-bn="ভবিষ্য তহবিলে জমা হওয়া করযোগ্য সুদ">Taxable interest credited to provident fund</label><div class="money"><input type="number" id="e_rpfInterest" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="subhead" data-bn="নগদ ব্যতীত প্রাপ্ত সুবিধা">Perquisites and benefits in kind</div>
+      <div class="grid">
+        <div class="f"><label for="e_accom"><span data-bn="বিনা ভাড়ায় বা কম ভাড়ায় বাসস্থান">Rent-free or concessional accommodation</span> <span class="hint" data-bn="বাড়িটির বার্ষিক মূল্য, বা অফিস যত ভাড়া দেয়">annual value, or the rent your employer pays</span></label><div class="money"><input type="number" id="e_accom" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="e_accomPaid" data-bn="বাদ: ওই বাসস্থানের জন্য আপনি নিজে যত ভাড়া দিয়েছেন">Less: rent you paid for that accommodation</label><div class="money"><input type="number" id="e_accomPaid" min="0" step="1" placeholder="0"></div></div>
+        <div class="f">
+          <label for="e_carCC"><span data-bn="অফিসের দেওয়া গাড়ি">Car provided by employer</span> <span class="hint" data-bn="ইঞ্জিন ক্ষমতা অনুযায়ী মাসিক মূল্য">monthly value by engine size</span></label>
+          <select id="e_carCC">
+            <option value="0" data-bn="গাড়ি দেওয়া হয়নি">No car provided</option>
+            <option value="15000" data-bn="১,৫০০ সিসি পর্যন্ত — মাসে ১৫,০০০">Up to 1,500 cc — Tk 15,000/month</option>
+            <option value="20000" data-bn="১,৫০১ – ২,০০০ সিসি — মাসে ২০,০০০">1,501 – 2,000 cc — Tk 20,000/month</option>
+            <option value="30000" data-bn="২,০০১ – ২,৫০০ সিসি — মাসে ৩০,০০০">2,001 – 2,500 cc — Tk 30,000/month</option>
+            <option value="50000" data-bn="২,৫০০ সিসির বেশি — মাসে ৫০,০০০">Above 2,500 cc — Tk 50,000/month</option>
+          </select>
+        </div>
+        <div class="f"><label for="e_carMonths" data-bn="কত মাস গাড়িটি পেয়েছেন">Months the car was available</label><input type="number" id="e_carMonths" min="0" max="12" step="1" value="12"></div>
+        <div class="f"><label for="e_perqOther" data-bn="অন্যান্য সুবিধা, বাজারমূল্যে">Other perquisites at fair market value</label><div class="money"><input type="number" id="e_perqOther" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="subhead" data-bn="উপরে অন্তর্ভুক্ত করমুক্ত অঙ্ক">Amounts included above that are exempt</div>
+      <div class="grid two">
+        <div class="f"><label for="e_exempt"><span data-bn="বাদ দেওয়ার মতো মোট করমুক্ত প্রাপ্তি">Total exempt receipts to deduct</span> <span class="hint" data-bn="নিচের নোটে তালিকা আছে">listed in the note below</span></label><div class="money"><input type="number" id="e_exempt" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="note" data-bn="সাধারণত যেগুলো করমুক্ত: অফিসের কাজে সত্যিই খরচ হওয়া যাতায়াত, ভ্রমণ ও দৈনিক ভাতা; অফিসের হয়ে খরচ করে ফেরত নেওয়া টাকা; অফিসের দেওয়া গ্রুপ বিমার প্রিমিয়াম ও তা থেকে পাওয়া সুবিধা; মস্তিষ্ক, হৃদযন্ত্র, কিডনি, চোখ, লিভার ও ক্যান্সারের অস্ত্রোপচার বা কৃত্রিম অঙ্গ সংযোজনের টাকা; সরকারি বা অনুমোদিত তহবিল থেকে ২.৫ কোটি টাকা পর্যন্ত গ্র্যাচুইটি।">Typical exempt items: conveyance, travelling and daily allowances actually spent on duty; reimbursements incurred wholly for the employer; employer-paid group insurance premiums and benefits received under a group policy; payments for brain, heart, kidney, eye, liver and cancer surgery or artificial-organ transplant; gratuity from a government or approved fund up to Tk 2.5 crore.</div>
+    </div>
+  </details>
+
+  <!-- 2 · Rent -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-teal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 20.5V9.2L12 3.5l8.5 5.7v11.3"/><path d="M9.5 20.5v-6h5v6"/><path d="M2 20.5h20"/></svg></span>
+      <span class="head-txt"><h3 data-bn="ভাড়া থেকে আয়">Income from rent</h3></span>
+      <span class="head-fig" id="fig-rent">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="note" id="rentNote"></div>
+      <div class="subhead" data-bn="মোট ভাড়া মূল্য">Gross rental value</div>
+      <div class="grid">
+        <div class="f"><label for="r_rent" data-bn="সারা বছরে পাওয়া বা পাওনা ভাড়া">Annual rent received or receivable</label><div class="money"><input type="number" id="r_rent" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_tenantCharge" data-bn="ভাড়াটিয়া নিজে যে সেবা, মেরামত বা রক্ষণাবেক্ষণ খরচ দিয়েছেন">Service, repair or maintenance charges borne by the tenant</label><div class="money"><input type="number" id="r_tenantCharge" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_vacancy"><span data-bn="খালি থাকার ছাড়">Vacancy allowance</span> <span class="hint" data-bn="বিদ্যুৎ বিল দেখাতে হবে">needs utility bills</span></label><div class="money"><input type="number" id="r_vacancy" min="0" step="1" placeholder="0"></div></div>
+        <div class="f">
+          <label for="r_use" data-bn="সম্পত্তিটি কী কাজে ভাড়া দেওয়া">Use of the property</label>
+          <select id="r_use">
+            <option value="0.25" data-bn="বসবাসের জন্য — ২৫% ধরে নেওয়া খরচ বাদ">Residential — 25% standard deduction</option>
+            <option value="0.30" data-bn="ব্যবসার জন্য — ৩০% ধরে নেওয়া খরচ বাদ">Commercial — 30% standard deduction</option>
+          </select>
+        </div>
+      </div>
+      <div class="subhead" data-bn="নির্ধারিত হারের খরচ ছাড়া অন্যান্য কর্তন">Deductions other than the standard allowance</div>
+      <div class="grid">
+        <div class="f"><label for="r_insurance" data-bn="সম্পত্তির বিমার প্রিমিয়াম">Insurance premium on the property</label><div class="money"><input type="number" id="r_insurance" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_interest"><span data-bn="গৃহঋণের সুদ বা মুনাফা">Interest or profit on housing loan</span> <span class="hint" data-bn="ভাড়া দেওয়ার আগের সময়ের সুদও ধরা যাবে">pre-letting period counts too</span></label><div class="money"><input type="number" id="r_interest" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_tax" data-bn="পৌর কর, ভূমি রাজস্ব ও বার্ষিক চার্জ">Municipal tax, land revenue, annual charges</label><div class="money"><input type="number" id="r_tax" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="subhead" data-bn="বিশেষ ভাড়া আয় — অগ্রিম ও সালামি">Special rental income — advances and premiums</div>
+      <div class="grid">
+        <div class="f"><label for="r_deposit" data-bn="সমন্বয়যোগ্য অগ্রিম বা ফেরতযোগ্য জামানতের বছর শেষের স্থিতি">Closing balance of adjustable advance or refundable deposit</label><div class="money"><input type="number" id="r_deposit" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_salami"><span data-bn="ফেরত দিতে হবে না এমন অগ্রিম">Non-adjustable advance received</span> <span class="hint" data-bn="সালামি বা প্রিমিয়াম">salami or premium</span></label><div class="money"><input type="number" id="r_salami" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_salamiYears"><span data-bn="ভাড়ার মেয়াদ, বছরে">Rental tenure in years</span> <span class="hint" data-bn="এই মেয়াদ বা ৫ বছর, যেটি কম, তত ভাগে ভাগ হবে">spread over this or 5 years, whichever is lower</span></label><input type="number" id="r_salamiYears" min="1" max="99" step="1" value="5"></div>
+      </div>
+      <div class="note relief" data-bn="সমন্বয়যোগ্য অগ্রিম ও ফেরতযোগ্য জামানতের বছর শেষে জমা থাকা টাকার ১০% প্রতি বছর বিশেষ ভাড়া আয় হিসেবে যোগ হয়। ছয় বছরের মধ্যে ফেরত না দিলে জামানতটি অন্যান্য উৎসের আয় হয়ে যায়।">10% of the year-end balance of adjustable advances and refundable deposits is added as special rental income each year. A refundable deposit not returned within six years becomes income from other sources.</div>
+    </div>
+  </details>
+
+  <!-- 3 · Agriculture -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-olive" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 4c0 8.5-4.7 12.5-9.5 12.5A5.5 5.5 0 0 1 5 11C5 6.5 10.5 4 20 4z"/><path d="M4 20.5c1.5-4 4-7 8-9"/></svg></span>
+      <span class="head-txt"><h3 data-bn="কৃষি থেকে আয়">Agricultural income</h3></span>
+      <span class="head-fig" id="fig-agri">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid">
+        <div class="f"><label for="a_gross" data-bn="কৃষি থেকে মোট প্রাপ্তি">Gross agricultural receipts</label><div class="money"><input type="number" id="a_gross" min="0" step="1" placeholder="0"></div></div>
+        <div class="f">
+          <label for="a_basis" data-bn="উৎপাদন খরচ কীভাবে ধরবেন">Cost of production</label>
+          <select id="a_basis">
+            <option value="deemed" data-bn="হিসাবের খাতা নেই — ধরে নেওয়া ৫০% খরচ">No books kept — deemed cost of 50%</option>
+            <option value="actual" data-bn="হিসাবের খাতা আছে — প্রকৃত খরচ লিখব">Books kept — enter actual expenses</option>
+          </select>
+        </div>
+        <div class="f"><label for="a_cost" data-bn="প্রকৃত উৎপাদন খরচ">Actual cost of production</label><div class="money"><input type="number" id="a_cost" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <label class="check"><input type="checkbox" id="a_exempt"><span data-bn="জমি চাষ আমার পেশা, আর জমি চাষ ও সর্বোচ্চ ২০,০০০ টাকা সুদ বা মুনাফা ছাড়া আমার অন্য কোনো আয়ের উৎস নেই — ২,০০,০০০ টাকার ছাড় নেব">Cultivation of land is my profession and I have no other source of income except cultivation and interest or profit of up to Tk 20,000 — claim the Tk 2,00,000 non-assessable allowance</span></label>
+      <div class="note relief" id="agriEligibilityNote"></div>
+      <div class="note" data-bn="চা ও রাবারের আয় অনুমোদিত খরচ বাদ দেওয়ার পর ৪০% ব্যবসা ও ৬০% কৃষি হিসেবে ভাগ হয়। এখানে শুধু কৃষির অংশটুকু লিখুন।">Tea and rubber receipts are split 40% business : 60% agriculture after computing income with admissible expenses. Enter only the agricultural share here.</div>
+    </div>
+  </details>
+
+  <!-- 4 · Business -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-amber" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="4.5" y="12" width="4" height="8.5" rx="1"/><rect x="10" y="7.5" width="4" height="13" rx="1"/><rect x="15.5" y="3.5" width="4" height="17" rx="1"/></svg></span>
+      <span class="head-txt"><h3 data-bn="ব্যবসা বা পেশা থেকে আয়">Income from business or profession</h3></span>
+      <span class="head-fig" id="fig-biz">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid">
+        <div class="f"><label for="b_profit"><span data-bn="অনুমোদিত খরচ বাদ দেওয়ার পর নিট মুনাফা">Net profit after admissible expenses</span> <span class="hint" data-bn="লোকসান হলে মাইনাস দিন">may be negative</span></label><div class="money"><input type="number" id="b_profit" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="b_turnover"><span data-bn="মোট বিক্রি বা টার্নওভার">Gross receipts or turnover</span> <span class="hint" data-bn="টার্নওভার ন্যূনতম করের হিসাবের জন্য">for turnover minimum tax</span></label><div class="money"><input type="number" id="b_turnover" min="0" step="1" placeholder="0"></div></div>
+        <div class="f">
+          <label for="b_turnoverType"><span data-bn="টার্নওভারের শ্রেণি">Turnover category</span> <span class="hint" data-bn="প্রযোজ্য হার ঠিক করে">sets the applicable rate</span></label>
+          <select id="b_turnoverType">
+            <option value="general" data-bn="সাধারণ ব্যক্তি ব্যবসা বা পেশা">General individual business or profession</option>
+            <option value="tobacco" data-bn="তামাকজাত পণ্য উৎপাদন">Manufacture of tobacco products</option>
+            <option value="beverage" data-bn="কার্বনেটেড বা মিষ্টি পানীয় উৎপাদন">Manufacture of carbonated or sweetened beverages</option>
+            <option value="mobile" data-bn="মোবাইল ফোন অপারেটর">Mobile phone operator</option>
+            <option value="nttn" data-bn="এনটিটিএন অপারেটর">Nationwide telecommunication transmission network operator</option>
+            <option value="newManufacturing" data-post2026="1" data-bn="যোগ্য নতুন উৎপাদনকারী — প্রথম ৩ আয়বর্ষ">Eligible new manufacturer — first 3 income years</option>
+            <option value="excluded" data-post2026="1" data-bn="ধারা ১৬৩-এ স্পষ্টভাবে বাদ দেওয়া প্রাপ্তি">Receipts expressly excluded by section 163</option>
+          </select>
+        </div>
+      </div>
+      <div class="note relief" id="bizNote"></div>
+    </div>
+  </details>
+
+  <!-- 5 · Capital gains -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-clay" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.5 16.5L9 11l4 4 7.5-7.5"/><path d="M15.5 7.5h5v5"/></svg></span>
+      <span class="head-txt"><h3 data-bn="মূলধনী মুনাফা">Capital gains</h3></span>
+      <span class="head-fig" id="fig-cg">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="subhead" data-bn="আপনার স্তরভিত্তিক হারে কর বসবে">Taxed at your slab rates</div>
+      <div class="grid">
+        <div class="f"><label for="c_short"><span data-bn="পাঁচ বছর বা তার কম সময় ধরে রাখা সম্পদের মুনাফা">Gain on assets held five years or less</span> <span class="hint" data-bn="শেয়ার-সিকিউরিটিজ ছাড়া">other than securities</span></label><div class="money"><input type="number" id="c_short" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="subhead" data-bn="নির্দিষ্ট হারে কর বসবে">Taxed at fixed rates</div>
+      <div class="grid">
+        <div class="f"><label for="c_long"><span data-bn="পাঁচ বছরের বেশি সময় ধরে রাখা সম্পদের মুনাফা">Gain on assets held more than five years</span> <span class="hint" data-bn="১৫%">15%</span></label><div class="money"><input type="number" id="c_long" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="c_s125"><span data-bn="দলিল রেজিস্ট্রেশনের সময় ধারা ১২৫ অনুযায়ী কেটে রাখা কর">Tax deducted at registration under section 125</span> <span class="hint" data-bn="স্বয়ংক্রিয়ভাবে কর-ক্রেডিটে যোগ হবে; অন্য ঘরে আবার লিখবেন না">automatically credited; do not repeat under tax paid</span></label><div class="money"><input type="number" id="c_s125" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="c_listed"><span data-bn="তালিকাভুক্ত শেয়ার ও মিউচুয়াল ফান্ড ইউনিটের মুনাফা">Gain on listed shares and mutual fund units</span> <span class="hint" data-bn="প্রথম ৫০ লাখ টাকা করমুক্ত">first Tk 50 lakh exempt</span></label><div class="money"><input type="number" id="c_listed" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="c_sponsor"><span data-bn="উদ্যোক্তা, পরিচালক বা প্লেসমেন্ট শেয়ারের মুনাফা">Gain on sponsor, director or placement shares</span> <span class="hint" data-bn="১০%">10%</span></label><div class="money"><input type="number" id="c_sponsor" min="0" step="1" placeholder="0"></div></div>
+        <div class="f" id="goldWrap"><label for="c_gold"><span data-bn="সোনা, রুপা, রত্ন, গয়না বা ক্লাব সদস্যপদের মুনাফা">Gain on gold, silver, gems, jewellery, club membership</span> <span class="hint" data-bn="৫%, যদি আপনি এসবের ব্যবসায়ী না হন">5%, if you are not a trader in these</span></label><div class="money"><input type="number" id="c_gold" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="c_dev"><span data-bn="ডেভেলপারের কাছ থেকে পাওয়া সুবিধা, জমির খরচ বাদে">Developer benefit on land, net of land cost</span> <span class="hint" data-bn="১৫%">15%</span></label><div class="money"><input type="number" id="c_dev" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="note" id="cgNote"></div>
+    </div>
+  </details>
+
+  <!-- 6 · Financial assets -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-plum" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 4l9 5.5"/><path d="M5 9.5v9M19 9.5v9M9.5 9.5v9M14.5 9.5v9"/><path d="M2.5 18.5h19"/></svg></span>
+      <span class="head-txt"><h3 data-bn="আর্থিক সম্পদ থেকে আয়">Income from financial assets</h3></span>
+      <span class="head-fig" id="fig-fin">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid">
+        <div class="f"><label for="fa_bank"><span data-bn="ব্যাংকে জমা টাকার সুদ বা মুনাফা">Interest or profit on bank deposits</span> <span class="hint" data-bn="কর কাটার আগের পুরো অঙ্ক">gross, before TDS</span></label><div class="money"><input type="number" id="fa_bank" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="fa_sanchay"><span data-bn="সঞ্চয়পত্রের মুনাফা">Profit on savings certificates</span> <span class="hint" data-bn="কর কাটার আগের পুরো অঙ্ক">gross</span></label><div class="money"><input type="number" id="fa_sanchay" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="fa_securities" data-bn="সিকিউরিটিজ, বন্ড ও সুকুকের সুদ">Interest on securities, bonds and sukuk</label><div class="money"><input type="number" id="fa_securities" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="fa_dividend"><span data-bn="বাংলাদেশি কোম্পানি ও ফান্ড থেকে পাওয়া লভ্যাংশ">Dividend from Bangladeshi companies and funds</span> <span class="hint" data-bn="কর কাটার আগের অঙ্ক">gross</span></label><div class="money"><input type="number" id="fa_dividend" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="note" id="finNote"></div>
+    </div>
+  </details>
+
+  <!-- 7 · Other sources -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-charge" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.7"/><path d="M12 7.6v.1M12 11v5.4"/></svg></span>
+      <span class="head-txt"><h3 data-bn="অন্যান্য উৎস থেকে আয়">Income from other sources</h3></span>
+      <span class="head-fig" id="fig-oth">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid">
+        <div class="f"><label for="o_royalty" data-bn="রয়্যালটি, লাইসেন্স ফি ও কারিগরি জ্ঞানের ফি">Royalty, licence fee, technical know-how fee</label><div class="money"><input type="number" id="o_royalty" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="o_gift" data-bn="পাওয়া করযোগ্য উপহার ও দান">Taxable gifts, donations and presentations received</label><div class="money"><input type="number" id="o_gift" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="o_foreign"><span data-bn="করযোগ্য বিদেশি আয়">Taxable foreign income</span> <span class="hint" data-bn="ব্যাংকিং চ্যানেলে আনা হয়নি এমন">not remitted through banking channel</span></label><div class="money"><input type="number" id="o_foreign" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="o_other" data-bn="আর যেকোনো করযোগ্য আয়">Any other taxable income</label><div class="money"><input type="number" id="o_other" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="o_lottery"><span data-bn="লটারি, তাস, শব্দ বা অনলাইন গেমে জেতা টাকা">Winnings from lottery, card, word or online games</span> <span class="hint" data-bn="২৫%, কোনো খরচ বাদ যাবে না">25%, no deduction</span></label><div class="money"><input type="number" id="o_lottery" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <label class="check"><input type="checkbox" id="o_nonRecurring"><span data-bn="মোট আয়ের মধ্যে এমন এককালীন প্রাপ্তি আছে যা চলতি অর্থবছরে আবার পাওয়ার সম্ভাবনা নেই — অগ্রিম করের ব্যতিক্রমের জন্য">Total income includes a one-time receipt not expected to recur in the current financial year — for the advance-tax exception</span></label>
+      <div class="note" data-bn="স্বামী বা স্ত্রী, বাবা-মা কিংবা সন্তানের কাছ থেকে পাওয়া উপহার করমুক্ত, যদি দুজনের রিটার্নেই সেটা দেখানো থাকে। ব্যাংকিং চ্যানেলে দেশে আনা বিদেশি আয় বাংলাদেশি নাগরিকদের জন্য করমুক্ত।">Gifts from a spouse, parent or child are exempt if shown in both returns. Foreign income brought into Bangladesh through the banking channel is exempt for Bangladeshi citizens.</div>
+    </div>
+  </details>
+
+  <!-- 8 · Investments -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-credit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 8.5h13v12h-13z"/><path d="M3.5 4.5h17v4h-17zM12 4.5v16"/><path d="M12 4.5S10.8 1.8 8.7 2.6C6.9 3.3 7.3 4.5 12 4.5zM12 4.5s1.2-2.7 3.3-1.9c1.8.7 1.4 1.9-3.3 1.9z"/></svg></span>
+      <span class="head-txt"><h3 data-bn="কর রেয়াতের জন্য বিনিয়োগ ও দান">Investments and donations for the rebate</h3></span>
+      <span class="head-fig give" id="fig-inv">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="note give" id="rebateNote"></div>
+      <div class="grid">
+        <div class="f"><label for="i_lifePrem" data-bn="জীবন বিমার প্রিমিয়াম">Life insurance premium paid</label><div class="money"><input type="number" id="i_lifePrem" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_policyValue"><span data-bn="ওই পলিসির বিমা অঙ্ক">Sum assured of that policy</span> <span class="hint" data-bn="এর ১০% পর্যন্ত প্রিমিয়াম ধরা হবে">premium counts up to 10% of this</span></label><div class="money"><input type="number" id="i_policyValue" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_rpfSelf" data-bn="স্বীকৃত ভবিষ্য তহবিলে আপনার নিজের চাঁদা">Your own contribution to recognised provident fund</label><div class="money"><input type="number" id="i_rpfSelf" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_rpfEmp"><span data-bn="ওই তহবিলে অফিসের দেওয়া চাঁদা">Employer's contribution to that fund</span> <span class="hint" data-bn="এটাও গোনা হয়">also counts</span></label><div class="money"><input type="number" id="i_rpfEmp" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_gpf" data-bn="সাধারণ ভবিষ্য তহবিল বা অনুমোদিত অবসর তহবিল">General provident fund or approved superannuation fund</label><div class="money"><input type="number" id="i_gpf" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_dps"><span data-bn="ডিপিএস বা মাসিক সঞ্চয় স্কিম">Deposit pension scheme</span> <span class="hint" data-bn="সর্বোচ্চ ১,২০,০০০">capped at Tk 1,20,000</span></label><div class="money"><input type="number" id="i_dps" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_gsec"><span data-bn="সঞ্চয়পত্র ও সরকারি সিকিউরিটিজ">Savings certificates and government securities</span> <span class="hint" data-bn="সর্বোচ্চ ৫,০০,০০০">capped at Tk 5,00,000</span></label><div class="money"><input type="number" id="i_gsec" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_shares"><span data-bn="তালিকাভুক্ত শেয়ার, ডিবেঞ্চার, মিউচুয়াল ফান্ড, ইউনিট ও সুকুক">Listed shares, debentures, mutual funds, units and sukuk</span> <span class="hint" data-bn="সর্বোচ্চ ৭৫,০০,০০০">capped at Tk 75,00,000</span></label><div class="money"><input type="number" id="i_shares" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_zakat" data-bn="যাকাত তহবিল ও অনুমোদিত দাতব্য প্রতিষ্ঠানে দান">Zakat fund and approved charitable donations</label><div class="money"><input type="number" id="i_zakat" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="i_other" data-bn="অন্যান্য অনুমোদিত বিনিয়োগ">Other approved investments</label><div class="money"><input type="number" id="i_other" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="note relief" data-bn="রেয়াত নেওয়া ডিপিএস বা সরকারি সিকিউরিটিজ নির্দিষ্ট সময়ের আগে ভাঙিয়ে ফেললে আগে পাওয়া রেয়াত ওই বছরে বাড়তি কর হিসেবে ফেরত দিতে হয়। জীবন বিমার ১০% সীমা প্রতিটি পলিসিতে আলাদাভাবে প্রয়োগ করুন; একাধিক পলিসি থাকলে যোগ করার আগে প্রতিটির যোগ্য প্রিমিয়াম বের করুন। ধারা ৭৮ কেবল দেরিতে রিটার্ন দেওয়ার কারণে নিজে থেকে পুরো রেয়াত বাতিল করে না; জমাদানের সময়ের সমন্বয় আলাদাভাবে হিসাব হয়।">Encashing a rebated deposit pension scheme or government security before its holding period claws the earlier rebate back as additional tax in the year of encashment. Apply the 10% life-policy limit separately to each policy; with multiple policies, total only the eligible premium from each. Section 78 does not by itself cancel the entire rebate merely because the return is late; filing-date adjustments are computed separately.</div>
+    </div>
+  </details>
+
+  <!-- 9 · Tax paid -->
+  <details class="card">
+    <summary>
+      <span class="head-no t-relief" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.5 2.8h13v18.4l-2.2-1.6-2.2 1.6-2.1-1.6-2.2 1.6-2.1-1.6-2.2 1.6z"/><path d="M9 8h6M9 12h6"/></svg></span>
+      <span class="head-txt"><h3 data-bn="উৎসে কর্তিত ও পূর্বে পরিশোধিত কর">Tax already deducted, collected or paid</h3></span>
+      <span class="head-fig paid" id="fig-paid">৳0</span><span class="chev"></span>
+    </summary>
+    <div class="card-body">
+      <div class="grid">
+        <div class="f"><label for="t_salary" data-bn="বেতন থেকে কাটা">Deducted from salary</label><div class="money"><input type="number" id="t_salary" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_bank" data-bn="ব্যাংকের সুদ থেকে কাটা">Deducted from bank interest</label><div class="money"><input type="number" id="t_bank" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_sanchay" data-bn="সঞ্চয়পত্র থেকে কাটা">Deducted from savings certificates</label><div class="money"><input type="number" id="t_sanchay" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_dividend" data-bn="লভ্যাংশ থেকে কাটা">Deducted from dividend</label><div class="money"><input type="number" id="t_dividend" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_rent" data-bn="বাড়ি বা গুদাম ভাড়া থেকে কাটা">Deducted from house or warehouse rent</label><div class="money"><input type="number" id="t_rent" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_car" data-bn="নিজের গাড়ির জন্য ধারা ১৫৩ অনুযায়ী অগ্রিম কর">Advance tax on your motor car under section 153</label><div class="money"><input type="number" id="t_car" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_advance" data-bn="ত্রৈমাসিক কিস্তিতে দেওয়া অগ্রিম কর">Advance tax paid in quarterly instalments</label><div class="money"><input type="number" id="t_advance" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="t_other" data-bn="আর যেকোনো কাটা বা জমা দেওয়া কর">Any other deduction, collection or payment</label><div class="money"><input type="number" id="t_other" min="0" step="1" placeholder="0"></div></div>
+      </div>
+      <div class="note" id="paidNote"></div>
+    </div>
+  </details>
+</main>
+
+<aside>
+  <div class="sheet">
+    <div class="sheet-top">
+      <div class="kicker"><span id="sheetKicker">Balance payable with return</span><span class="tag pay" id="sheetTag">Payable</span></div>
+      <div class="amt" id="sheetAmt">৳0</div>
+      <div class="sub" id="sheetSub">—</div>
+    </div>
+    <div class="stat-strip">
+      <div><div class="k" title="Total income plus income taxed under final settlement" data-bn="সব উৎসের আয়">Income, all sources</div><div class="v i" id="statIncome">৳0</div></div>
+      <div><div class="k" data-bn="কার্যকর হার">Effective rate</div><div class="v" id="statEff">0%</div></div>
+      <div><div class="k" data-bn="মাসিক গড়">Per month</div><div class="v c" id="statMonth">৳0</div></div>
+    </div>
+    <div class="ledger" id="ledger" role="region" aria-live="polite" aria-atomic="false"></div>
+  </div>
+</aside>
+</div>
+
+<!-- Insight band: turns the old dead space into something useful -->
+<section class="band">
+  <div class="band-in">
+    <div class="tile" style="--tc:var(--s25)">
+      <div class="k"><span class="dot"></span><span data-bn="আপনার প্রান্তিক করহার">Your marginal rate</span></div>
+      <div class="v" id="tileMarginal">0%</div>
+      <div class="d" id="tileMarginalD">—</div>
+    </div>
+    <div class="tile" style="--tc:var(--brand)">
+      <div class="k"><span class="dot"></span><span data-bn="সর্বোচ্চ রেয়াত পেতে আরও বিনিয়োগ">To reach the full rebate</span></div>
+      <div class="v" id="tileGap">৳0</div>
+      <div class="d" id="tileGapD">—</div>
+    </div>
+    <div class="tile" style="--tc:var(--income)">
+      <div class="k"><span class="dot"></span><span data-bn="প্রতি ১০০ টাকা আয়ের মধ্যে">Of every Tk 100 you earn</span></div>
+      <div class="v" id="tileKeep">৳100</div>
+      <div class="d" id="tileKeepD">—</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REFERENCES ================= -->
+<section class="refs">
+  <h2 data-bn="হার, নিয়ম ও সূত্র">Rates, rules and references</h2>
+  <p class="lead" data-bn="ক্যালকুলেটর যেসব অঙ্ক ব্যবহার করে তার সবই এখানে দেওয়া আছে, যাতে রিটার্ন জমা দেওয়ার আগে আইনের সঙ্গে মিলিয়ে নিতে পারেন। বাংলাদেশে আয়বর্ষ চলে ১ জুলাই থেকে ৩০ জুন পর্যন্ত; তার পরের বছরটাই করবর্ষ, যখন রিটার্ন জমা পড়ে ও কর নির্ধারণ হয়।">Every figure the calculator uses is listed here so you can check it against the law before you file. Bangladesh's income year runs 1 July to 30 June; the assessment year that follows it is the year the return is filed and assessed.</p>
+
+  <div class="ref-grid">
+    <div class="ref-card a-income">
+      <h4 data-bn="বর্তমান স্তরভিত্তিক হার — করবর্ষ ২০২৬-২৭ ও ২০২৭-২৮">Slab rates in force — assessment years 2026-27 and 2027-28</h4>
+      <div class="tbl-scroll"><table class="ref">
+        <thead><tr><th data-bn="মোট আয়ের যতটুকু অংশ">Slice of total income</th><th data-bn="হার">Rate</th></tr></thead>
+        <tbody>
+          <tr><td data-bn="প্রথম ৪,০০,০০০ টাকা">First Tk 4,00,000</td><td class="num" data-bn="শূন্য">Nil</td></tr>
+          <tr><td data-bn="পরের ৩,০০,০০০">Next Tk 3,00,000</td><td class="num" data-bn="১০%">10%</td></tr>
+          <tr><td data-bn="পরের ৪,০০,০০০">Next Tk 4,00,000</td><td class="num" data-bn="১৫%">15%</td></tr>
+          <tr><td data-bn="পরের ৫,০০,০০০">Next Tk 5,00,000</td><td class="num" data-bn="২০%">20%</td></tr>
+          <tr><td data-bn="পরের ২০,০০,০০০">Next Tk 20,00,000</td><td class="num" data-bn="২৫%">25%</td></tr>
+          <tr><td data-bn="বাকি যা থাকে">On the balance</td><td class="num" data-bn="৩০%">30%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="srcs" data-bn="৫% এর প্রথম স্তরটি তুলে দেওয়া হয়েছে। করবর্ষ ২০২৮-২৯ থেকে মোট আয় ৩ কোটি টাকা ছাড়ালে অতিরিক্ত অংশে ৩৫% স্তর যোগ হবে; তাই ২০২৮-২৯ ও ২০২৯-৩০-এ ৩০% স্তর চলে ২,৬৩,৫০,০০০ টাকা পর্যন্ত, আর ২০৩০-৩১-এ ২,৬৩,০০,০০০ টাকা পর্যন্ত। অনিবাসী বিদেশি নাগরিকরা কোনো করমুক্ত সীমা ছাড়াই সমান ৩০% হারে কর দেন। স্বাভাবিক ব্যক্তির লভ্যাংশে আলাদাভাবে ১৫% চূড়ান্ত কর বসে, তা এই স্তরের সিঁড়ি দিয়ে যায় না।">The 5% entry slab was abolished. A 35% band arrives from AY 2028-29 on total income above Tk 3 crore; accordingly, the 30% band is Tk 2,63,50,000 in AY 2028-29 and 2029-30 and Tk 2,63,00,000 in AY 2030-31. Non-residents who are not Bangladeshi citizens pay a flat 30% with no threshold. Dividend income of a natural person is charged separately at a final 15% and does not pass through this ladder.</p>
+    </div>
+
+    <div class="ref-card a-income">
+      <h4 data-bn="পাঁচ বছরের রোডম্যাপে করমুক্ত সীমা">Tax-free thresholds across the five-year card</h4>
+      <div class="tbl-scroll"><table class="ref">
+        <thead><tr><th data-bn="করদাতা">Taxpayer</th><th data-bn="২৬-২৭<br>২৭-২৮">26-27<br>27-28</th><th data-bn="২৮-২৯<br>২৯-৩০">28-29<br>29-30</th><th data-bn="৩০-৩১">30-31</th></tr></thead>
+        <tbody>
+          <tr><td data-bn="সাধারণ">General</td><td class="num" data-bn="৪,০০,০০০">4,00,000</td><td class="num" data-bn="৪,৫০,০০০">4,50,000</td><td class="num" data-bn="৫,০০,০০০">5,00,000</td></tr>
+          <tr><td data-bn="মহিলা ও ৬৫+ পুরুষ">Women; men 65+</td><td class="num" data-bn="৪,৫০,০০০">4,50,000</td><td class="num" data-bn="৫,০০,০০০">5,00,000</td><td class="num" data-bn="৫,৫০,০০০">5,50,000</td></tr>
+          <tr><td data-bn="তৃতীয় লিঙ্গ ও প্রতিবন্ধী">Third gender; disability</td><td class="num" data-bn="৫,২৫,০০০">5,25,000</td><td class="num" data-bn="৫,৭৫,০০০">5,75,000</td><td class="num" data-bn="৬,২৫,০০০">6,25,000</td></tr>
+          <tr><td data-bn="মুক্তিযোদ্ধা ও জুলাই যোদ্ধা">Freedom / July fighters</td><td class="num" data-bn="৫,৫০,০০০">5,50,000</td><td class="num" data-bn="৬,০০,০০০">6,00,000</td><td class="num" data-bn="৬,৫০,০০০">6,50,000</td></tr>
+          <tr><td data-bn="প্রতিবন্ধী সন্তান প্রতি">Per child with a disability</td><td class="num" colspan="3" data-bn="জনপ্রতি আরও ৫০,০০০, বাবা বা মা যেকোনো একজন নিতে পারবেন">+ 50,000 each, claimable by one parent</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+
+    <div class="ref-card a-brand">
+      <h4 data-bn="বিনিয়োগে কর রেয়াত — ধারা ৭৮">Investment rebate — section 78</h4>
+      <ul>
+        <li data-bn="রেয়াত হবে তিনটির মধ্যে <b>সবচেয়ে কমটি</b>: মোট আয়ের ৩%, যোগ্য বিনিয়োগের ১০%, অথবা ৭,৫০,০০০ টাকা।">The rebate is the <b>lowest</b> of 3% of total income, 10% of eligible investment, and Tk 7,50,000.</li>
+        <li data-bn="প্রতিটি খাতের নিজস্ব সীমা: ডিপিএস ১,২০,০০০; সঞ্চয়পত্র ও সরকারি সিকিউরিটিজ ৫,০০,০০০; জীবন বিমার প্রিমিয়াম বিমা অঙ্কের ১০% পর্যন্ত; তালিকাভুক্ত শেয়ার ও মিউচুয়াল ফান্ড সেই পর্যন্ত, যেখানে ১০% রেয়াত ৭.৫ লাখ টাকার সর্বোচ্চ সীমায় পৌঁছায়।">Item ceilings: deposit pension scheme Tk 1,20,000; savings certificates and government securities Tk 5,00,000; life insurance premium up to 10% of the sum assured; listed securities and mutual funds up to the level where the 10% rebate meets its Tk 7.5 lakh ceiling.</li>
+        <li data-bn="করমুক্ত আয়, কম হারে করযোগ্য আয়, ফার্ম বা সমিতির মুনাফার ভাগ এবং চূড়ান্ত করের আয় ৩%-এর হিসাব থেকে বাদ যায়।">Exempt income, reduced-rate income, share of profit from a firm or association, and income under final tax are left out of the 3% base.</li>
+        <li data-bn="ধারা ৭৮ নিজে শুধু দেরিতে জমার কারণে রেয়াত বাতিল করে না; দেরিতে জমার বাড়তি কর আলাদাভাবে হিসাব হয়, আর নির্দিষ্ট অব্যাহতি হারানোর নিয়ম প্রযোজ্য হতে পারে।">Section 78 does not itself cancel the rebate solely because filing is late; filing-date additional tax is computed separately, and specified exemptions may still be denied under the late-return rules.</li>
+      </ul>
+    </div>
+
+    <div class="ref-card a-charge">
+      <h4 data-bn="পরিশোধযোগ্য করের উপর সম্পদ সারচার্জ">Wealth surcharge on the tax payable</h4>
+      <div class="tbl-scroll"><table class="ref">
+        <thead><tr><th data-bn="নিট সম্পদ">Net wealth</th><th data-bn="হার">Rate</th></tr></thead>
+        <tbody>
+          <tr><td data-bn="৪ কোটি টাকা পর্যন্ত">Up to Tk 4 crore</td><td class="num" data-bn="শূন্য">Nil</td></tr>
+          <tr><td data-bn="৪ কোটি থেকে ১০ কোটি; বা একাধিক গাড়ি; বা ৮,০০০ বর্গফুটের বেশি বাড়ি">Above Tk 4 crore to Tk 10 crore; or more than one car; or house property above 8,000 sq ft</td><td class="num" data-bn="১০%">10%</td></tr>
+          <tr><td data-bn="১০ কোটি থেকে ২০ কোটি">Above Tk 10 crore to Tk 20 crore</td><td class="num" data-bn="২০%">20%</td></tr>
+          <tr><td data-bn="২০ কোটি থেকে ৫০ কোটি">Above Tk 20 crore to Tk 50 crore</td><td class="num" data-bn="৩০%">30%</td></tr>
+          <tr class="hl"><td data-bn="৫০ কোটি টাকার বেশি">Above Tk 50 crore</td><td class="num" data-bn="৩৫%">35%</td></tr>
+          <tr><td data-bn="তামাকজাত পণ্য (সিগারেট, বিড়ি, জর্দা, গুল) উৎপাদনকারীর আয়">Income from manufacturing tobacco products</td><td class="num" data-bn="২.৫%">2.5%</td></tr>
+          <tr><td data-bn="প্রতিবন্ধী ব্যক্তির জন্য আইনে নির্ধারিত প্রবেশগম্যতা না রাখা শিক্ষাপ্রতিষ্ঠান">Educational institutions without required disability access</td><td class="num" data-bn="২.৫%">2.5%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="srcs" data-bn="সারচার্জ বসে সাধারণ করের উপর; চূড়ান্ত নিষ্পত্তির কর এই ভিত্তির বাইরে থাকে। করবর্ষ ২০২৬-২৭ থেকে ন্যূনতম করও এর মধ্যে ধরা হয় না। প্রথম গাড়ির পর প্রতিটি গাড়িতে ২৫,০০০ থেকে ৩,৫০,০০০ টাকা পরিবেশ সারচার্জ লাগে; বাড়তি গাড়িগুলোর মধ্যে সর্বোচ্চ ইঞ্জিন-ক্ষমতার হারটি প্রতিটি বাড়তি গাড়ির জন্য ব্যবহৃত হয়। এটি নিবন্ধন বা ফিটনেস নবায়নের সময় দিতে হয় এবং ফেরত বা সমন্বয়যোগ্য নয়, তাই এখানে স্মারক হিসেবে দেখানো হয়েছে।">The surcharge is charged on regular tax; final-settlement taxes stay outside the base. From AY 2026-27 minimum tax is also excluded. Environmental surcharge of Tk 25,000 to Tk 3,50,000 applies to each car beyond the first, using the highest engine-capacity band among those additional cars for every such car. It is paid at registration or fitness renewal and is neither refundable nor adjustable, so it is shown as a memorandum only.</p>
+    </div>
+
+    <div class="ref-card a-relief">
+      <h4 data-bn="ব্যক্তি করদাতার রিটার্ন জমার ক্যালেন্ডার">Filing calendar for individuals</h4>
+      <div class="tbl-scroll"><table class="ref">
+        <thead><tr><th data-bn="কখন জমা দিচ্ছেন">When you file</th><th data-bn="করের উপর প্রভাব">Effect on tax</th></tr></thead>
+        <tbody>
+          <tr><td data-bn="১ জুলাই – ৩০ সেপ্টেম্বর">1 Jul – 30 Sep</td><td class="num" data-bn="−৫%, সর্বোচ্চ ২৫,০০০">−5%, capped at 25,000</td></tr>
+          <tr><td data-bn="১ অক্টোবর – ৩১ ডিসেম্বর">1 Oct – 31 Dec</td><td class="num" data-bn="কিছু নয়">Nil</td></tr>
+          <tr><td data-bn="১ জানুয়ারি – ৩১ মার্চ">1 Jan – 31 Mar</td><td class="num" data-bn="+২% বা ৩,০০০">+2% or 3,000</td></tr>
+          <tr><td data-bn="১ এপ্রিল – ৩০ জুন (সাধারণ করদাতা)">1 Apr – 30 Jun (existing filer)</td><td class="num" data-bn="+৫% বা ৫,০০০">+5% or 5,000</td></tr>
+          <tr><td data-bn="আরও পরে, নিজে থেকে">Later, voluntarily</td><td class="num" data-bn="+১০% বা ৫,০০০">+10% or 5,000</td></tr>
+          <tr><td data-bn="ধারা ২১২(১) নোটিশের পর">After a s.212(1) notice</td><td class="num" data-bn="+১৫% বা ১০,০০০">+15% or 10,000</td></tr>
+        </tbody>
+      </table></div>
+      <p class="srcs" data-bn="দুটো অঙ্ক দেওয়া থাকলে যেটা বেশি সেটাই লাগে। যে স্বাভাবিক ব্যক্তি আগে কখনো রিটার্ন দেননি, তিনি প্রথম রিটার্ন ৩০ জুনের মধ্যে দিলে উপরের সাধারণ প্রণোদনা বা অতিরিক্ত করের সারণি প্রযোজ্য হয় না। করবর্ষ শেষ হওয়ার পর স্বেচ্ছায় বা নোটিশের পরে দিলে সংশ্লিষ্ট বিলম্বের অতিরিক্ত কর প্রযোজ্য। ব্যক্তি করদাতারা সর্বজনীন স্ব-নির্ধারণী পদ্ধতি ব্যবহার করেন; তবে পেশাদার প্রস্তুতি বা সত্যায়নের ধারা ৭৩ কেবল আইনে নির্দিষ্ট শ্রেণির করদাতার জন্য।">Where two figures are shown, the higher applies. A natural person who has never filed before may submit the first return by 30 June without the ordinary incentive/additional-tax table above. The late-voluntary or post-notice addition applies after the assessment year. Individuals use universal self-assessment; professional preparation or certification under section 73 applies only to specified taxpayers.</p>
+    </div>
+
+    <div class="ref-card a-income">
+      <h4 data-bn="প্রতিটি খাত যেভাবে হিসাব হয়">How each head is computed</h4>
+      <ul>
+        <li data-bn="<b>চাকরি</b> — সব মিলিয়ে মোট আয় ধরা হয়, তারপর এক-তৃতীয়াংশ বা ৫,০০,০০০ টাকা, যেটা কম, সেটা বাদ যায়। গাড়ির মূল্য ইঞ্জিন অনুযায়ী মাসে ১৫,০০০ থেকে ৫০,০০০; বাসস্থান বার্ষিক মূল্যে বা অফিস যত ভাড়া দেয় তাতে।"><b>Employment</b> — everything in gross, then the lower of one-third or Tk 5,00,000 comes out. Cars are valued at Tk 15,000 to Tk 50,000 a month by engine size; accommodation at annual value or the rent the employer bears.</li>
+        <li data-bn="<b>ভাড়া</b> — বসবাসের জন্য ২৫% আর ব্যবসার জন্য ৩০% ধরে নেওয়া খরচ, তার সঙ্গে বিমা, ঋণের সুদ ও পৌর কর বাদ যায়; এরপর বিশেষ ভাড়া আয় যোগ হয়ে পুরো ভাড়া খাতের ফল অন্য সাধারণ আয়ের সঙ্গে সমন্বিত হয়।"><b>Rent</b> — standard deduction of 25% for residential and 30% for commercial use, plus insurance, loan interest and municipal charges; special rental income is then added before the whole rent-head result is set off against other ordinary income.</li>
+        <li data-bn="<b>কৃষি</b> — হিসাবের খাতা না থাকলে মোট প্রাপ্তির অর্ধেক উৎপাদন খরচ ধরা হয়। পেশাদার কৃষকের আর কোনো আয় না থাকলে ২,০০,০০০ টাকা করমুক্ত।"><b>Agriculture</b> — half of gross receipts is the deemed cost of production where no books are kept. Tk 2,00,000 is non-assessable for a professional farmer with no other income.</li>
+        <li data-bn="<b>মূলধনী মুনাফা</b> — পাঁচ বছরের মধ্যে হলে স্তরভিত্তিক হার; পাঁচ বছরের পর ১৫% বা দলিল রেজিস্ট্রেশনে ধারা ১২৫ অনুযায়ী কাটা কর, যেটি বেশি। ওই কর্তন ধারা ১৬৩ অনুযায়ী ন্যূনতম কর, তাই চার্জের বিপরীতে সমন্বয় হয় কিন্তু ফেরত হয় না।"><b>Capital gains</b> — slab rates within five years; after five years, the higher of 15% and the section 125 tax collected at deed registration. That collection is minimum tax under section 163, so it is set against the charge but is not refundable.</li>
+        <li data-bn="<b>অন্যান্য উৎস</b> — লটারি ও গেমে জেতা টাকার পুরোটার উপর ২৫%, কোনো খরচ বাদ যায় না।"><b>Other sources</b> — lottery and game winnings at 25% on the gross receipt, with nothing deductible.</li>
+      </ul>
+    </div>
+
+    <div class="ref-card">
+      <h4 data-bn="আইনের উৎস ও যেখানে যাচাই করবেন">The law behind this, and where to check it</h4>
+      <ul>
+        <li data-bn="<b><a href=&quot;http://bdlaws.minlaw.gov.bd/act-1429.html&quot;>আয়কর আইন ২০২৩</a></b> (২০২৩ সনের ১২ নং আইন) — মূল আইন, যা আয়কর অধ্যাদেশ ১৯৮৪ বাতিল করেছে"><b><a href="http://bdlaws.minlaw.gov.bd/act-1429.html">Income Tax Act 2023</a></b> (Act No. XII of 2023) — the governing statute, which repealed the Income-tax Ordinance 1984.</li>
+        <li data-bn="<b><a href=&quot;https://nbr.gov.bd/uploads/acts/Finance_Act_2026.pdf&quot;>অর্থ আইন ২০২৬</a></b> (২০২৬ সনের ৯৬ নং আইন) — ৩০ জুন ২০২৬ তারিখে বাংলাদেশ গেজেটে প্রকাশিত, কার্যকর ১ জুলাই ২০২৬ থেকে। এটিই করবর্ষ ২০২৬-২৭ থেকে ২০৩০-৩১ পর্যন্ত হারগুলো ঠিক করে দিয়েছে।"><b><a href="https://nbr.gov.bd/uploads/acts/Finance_Act_2026.pdf">Finance Act 2026</a></b> (Act No. 96 of 2026) — published in the Bangladesh Gazette on 30 June 2026 and effective 1 July 2026. It fixes the rate cards for AY 2026-27 through AY 2030-31.</li>
+        <li data-bn="<b><a href=&quot;https://nbr.gov.bd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>জাতীয় রাজস্ব বোর্ড</a></b> — এখানে আইন, অর্থ আইন, বার্ষিক পরিপত্র ও রিটার্ন ফরম পাওয়া যায়।"><b><a href="https://nbr.gov.bd" target="_blank" rel="noopener">National Board of Revenue</a></b> — publishes the Act, the Finance Act, the annual Paripatra and the return forms.</li>
+        <li data-bn="<b><a href=&quot;http://bdlaws.minlaw.gov.bd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>bdlaws.minlaw.gov.bd</a></b> — আইনের সর্বশেষ সমন্বিত পাঠ"><b><a href="http://bdlaws.minlaw.gov.bd" target="_blank" rel="noopener">bdlaws.minlaw.gov.bd</a></b> — the consolidated, up-to-date text of the Act.</li>
+        <li data-bn="<b><a href=&quot;https://etaxnbr.gov.bd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>etaxnbr.gov.bd</a></b> — অনলাইনে রিটার্ন জমা ও কর পরিশোধের পোর্টাল"><b><a href="https://etaxnbr.gov.bd" target="_blank" rel="noopener">etaxnbr.gov.bd</a></b> — the e-return portal for online filing and payment.</li>
+        <li data-bn="হার শুধু আইনে নয়, এসআরও ও সাধারণ আদেশেও ঠিক হয় — আর সেগুলো আইনের চেয়ে অনেক ঘন ঘন বদলায়।">Rates are also fixed by SROs and general orders, which change far more often than the Act itself.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ref-wide">
+    <div class="ref-card a-charge wide">
+      <h4 data-bn="অর্থ আইন ২০২৬ যা যা বদলে দিল">What the Finance Act 2026 changed</h4>
+      <ul class="cols">
+        <li data-bn="<b>করমুক্ত সীমা ৪,০০,০০০ টাকা</b> — করবর্ষ ২০২৬-২৭ ও ২০২৭-২৮-এ।"><b>Threshold Tk 4,00,000</b> for AY 2026-27 and 2027-28.</li>
+        <li data-bn="<b>বিনিয়োগ রেয়াত ১৫% থেকে কমে ১০%</b>, সর্বোচ্চ সীমা ১০ লাখ থেকে ৭.৫ লাখ টাকা।"><b>Investment rebate cut to 10%</b> from 15%, ceiling down to Tk 7.5 lakh from Tk 10 lakh.</li>
+        <li data-bn="<b>ন্যূনতম কর সবার জন্য ৫,০০০ টাকা</b> — প্রথমবার রিটার্ন দিলে ১,০০০। সিটি কর্পোরেশনভেদে আর কোনো পার্থক্য নেই।"><b>Minimum tax a flat Tk 5,000</b> — Tk 1,000 for first-time filers, with no city-corporation split.</li>
+        <li data-bn="<b>লভ্যাংশে ১৫% চূড়ান্ত কর</b> — নিবাসী ব্যক্তির উৎসে কর্তনও ১৫%-এ এক করা হয়েছে। ফেরত হয় না।"><b>Dividend final at 15%</b>, with resident withholding unified at 15%. No refund arises.</li>
+        <li data-bn="<b>চারটি বিষয় চূড়ান্ত করের তালিকা ছেড়েছে</b> — সঞ্চয়পত্রের মুনাফা, অধিগ্রহণের ক্ষতিপূরণ, রপ্তানির নগদ সহায়তা ও সম্পত্তি হস্তান্তরের মূলধনী মুনাফা।"><b>Four items left the final-tax net</b>: savings-certificate profit, acquisition compensation, export cash subsidy and gains on property transfer.</li>
+        <li data-bn="<b>উৎসে কর্তন আর ন্যূনতম কর নয়</b> — ধারা ৮৯–১৫১-এর বাড়তি কর্তন এখন ফেরত বা সমন্বয় করা যায়। ধারা ১৩৮, ১৩৯ ও ১৬৬(২) চূড়ান্তই থাকে।"><b>Withholding is no longer minimum tax</b> — excess under ss.89-151 is now refundable or adjustable. Sections 138, 139 and 166(2) stay final.</li>
+        <li data-bn="<b>উদ্বৃত্ত টার্নওভার কর জের টানা যায়</b> পরের আয়বর্ষের নিয়মিত করের সঙ্গে।"><b>Excess turnover tax carries forward</b> against the next year's regular tax.</li>
+        <li data-bn="<b>ফেরত স্বয়ংক্রিয়</b> — আয় কেবল বেতন, আর্থিক সম্পদ ও কৃষি হলে ১২০ দিনে নিষ্পন্ন, আবেদনের ৬০ দিনে ফেরত।"><b>Refunds are automated</b> where income is only salary, financial assets and agriculture: settled in 120 days, paid within 60 days of application.</li>
+        <li data-bn="<b>ভাড়ার খাত নতুন করে সাজানো</b> — গুদাম ভাড়া যোগ, সালামি এই খাতে, আর অগ্রিম থেকে বিশেষ ভাড়া আয়।"><b>Rental income rebuilt</b>: warehouse rent added, salami moved in, and advances now yield special rental income.</li>
+        <li data-bn="<b>সোনা, গয়না, রত্ন ও ক্লাব সদস্যপদ মূলধনী সম্পদ</b> — ব্যবসায়ী না হলে মুনাফায় ৫%।"><b>Gold, jewellery, gems and club memberships are capital assets</b>, taxed at 5% for non-traders.</li>
+        <li data-bn="<b>সারা বছরই রিটার্ন দেওয়া যায়</b> — আগে দিলে ছাড়, দেরিতে দিলে বাড়তি কর।"><b>Filing runs year-round</b>, with a rebate for filing early and additional tax for filing late.</li>
+        <li data-bn="<b>টার্নওভার ন্যূনতম কর শ্রেণিভেদে ০–৩%</b> — সাধারণভাবে ১%, তামাকে ৩%, মিষ্টি পানীয়ে ২.৫%, মোবাইল ও এনটিটিএন-এ ১.৫%, নতুন উৎপাদনকারীর প্রথম তিন বছরে ০.২%।"><b>Turnover minimum tax runs 0–3% by class</b>: 1% generally, 3% tobacco, 2.5% sweetened drinks, 1.5% mobile and NTTN, 0.2% for a new manufacturer's first three years.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <p data-bn="<b>কোনো অঙ্কের উপর ভরসা করার আগে এটুকু পড়ুন।</b> এটি শুধু হিসাব মেলানোর একটি সহায়ক — আইনি, কর, আর্থিক, বিনিয়োগ বা হিসাবরক্ষণ বিষয়ক পরামর্শ নয়, আর পরামর্শ হিসেবে ব্যবহারও করা যাবে না। এখানকার কিছুই সঞ্চয়পত্র, ডিপিএস, শেয়ার, মিউচুয়াল ফান্ড, জীবন বিমা বা অন্য কোনো পণ্য কেনার সুপারিশ নয়; কর রেয়াত পাওয়া যায় বলেই কোনো বিনিয়োগ আপনার জন্য ঠিক — এমনটা ভাবার কারণ নেই।"><b>Read this before you rely on a number.</b> This is a computation aid. It is not legal, tax, financial, investment or accounting advice, and must not be relied on as such. Nothing here is a recommendation to buy or hold any savings certificate, DPS, share, mutual fund, insurance policy or other product; the fact that an investment attracts a rebate does not make it suitable for you.</p>
+    <p data-bn="যেসব তথ্যের উপর কঠিন সিদ্ধান্তগুলো নির্ভর করে, সেগুলো এই পাতা দেখতে পায় না — আপনি নিবাসী কি না, কোনো প্রাপ্তি আসলে কোন ধরনের আয়, কোনো খরচ বাদ দেওয়া যাবে কি না, বা কোনো নির্দিষ্ট এসআরও আপনার বেলায় কীভাবে খাটবে। কয়েকটি বিষয় ইচ্ছে করেই সরল রাখা হয়েছে: অংশীদারি ফার্মের মুনাফার ভাগ, বিদেশে দেওয়া করের ক্রেডিট, বছরের পর বছর লোকসান সমন্বয় ও জের টানা, কম হারে করযোগ্য আয়ের সঙ্গে রেয়াতের সম্পর্ক, তামাকজাত পণ্য উৎপাদনকারী ব্যক্তির ৪৫% হার ও ২.৫% সারচার্জ, এবং করমুক্ত বা কম-হারের প্রাপ্তিতে টার্নওভার করের আনুপাতিক সমন্বয় এখানে ধরা হয়নি।">It cannot see the facts that decide hard cases — residential status, what kind of income a receipt really is, whether an expense is admissible, or how a particular SRO applies to you. Several provisions are simplified: partnership share of profit, foreign tax credit, set-off and carry-forward of losses across years, the interaction of reduced-rate income with the rebate, the 45% rate and 2.5% surcharge on an individual manufacturing tobacco products, and the proportional scaling of turnover tax where receipts are exempt or taxed at a reduced rate are not modelled.</p>
+    <p data-bn="৬ আগস্ট ২০২৬ পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে সর্বশেষ এনবিআর উপকরণের সঙ্গে মিলিয়ে নিন এবং প্রয়োজনে যোগ্য পরামর্শ নিন।">Checked to 6 August 2026 against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — verify against current NBR material, and take qualified advice, before you file.</p>
+  </div>
+
+</section>
+
+<!-- ================= COLOPHON =================
+     EDIT HERE: name, blurb and the two profile links.
+============================================================ -->
+<section class="colophon">
+  <div class="colophon-in">
+    <div>
+      <p class="sig" data-bn="সজীবের একটি প্রকল্প, <span class=&quot;amp&quot;>ক্লড</span> দিয়ে তৈরি">A project by Sajeeb, built with <span class="amp">Claude</span></p>
+      <p class="blurb" data-bn="আয়করের নিয়মগুলো ছড়িয়ে থাকে অনেক জায়গায় — আইন, তফসিল, এসআরও, পরিপত্র, আর প্রতি বছরের অর্থ আইন। ফলে নিজের করটা ঠিক কীভাবে হিসাব হলো, সেটা বুঝে ওঠা সবসময় সহজ হয় না। এই পাতাটা সেই ধাপগুলো এক জায়গায় সাজিয়ে দেখানোর একটা চেষ্টা।">Working out your own tax means pulling together the Act, its schedules, a stack of SROs, the year's Paripatra and the latest Finance Act — and it isn't always obvious how the figure on your return was arrived at. This page is an attempt to lay those steps out in one place, in the order they actually happen.</p>
+      <p class="blurb" data-bn="নিয়ম বদলালে পাতাটি ঠিক করে নেওয়ার ইচ্ছা আছে। কোথাও ভুল চোখে পড়লে, কিংবা কোনো নিয়ম বাদ পড়েছে মনে হলে, অনুগ্রহ করে জানাবেন — সংশোধনের চেষ্টা করব। এ ছাড়া যেকোনো প্রয়োজনে নির্দ্বিধায় যোগাযোগ করতে পারেন।">I intend to keep this current as the rules change. If you spot an error, or a rule that should be here and isn't, please do let me know and I'll try to put it right. Otherwise, you're always welcome to connect.</p>
+      <div class="links">
+        <a class="lnk lnk-gh" href="https://github.com/bajeess" target="_blank" rel="noopener me">
+          <span class="lnk-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg></span>
+          <span class="lnk-tx"><span class="lnk-n" data-bn="গিটহাব">GitHub</span><span class="lnk-h">@bajeess</span></span>
+        </a>
+        <a class="lnk lnk-li" href="https://www.linkedin.com/in/bajeess/" target="_blank" rel="noopener me">
+          <span class="lnk-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></span>
+          <span class="lnk-tx"><span class="lnk-n" data-bn="লিংকডইন">LinkedIn</span><span class="lnk-h">in/bajeess</span></span>
+        </a>
+        <a class="lnk lnk-fb" href="https://www.facebook.com/bajeess/" target="_blank" rel="noopener me">
+          <span class="lnk-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></span>
+          <span class="lnk-tx"><span class="lnk-n" data-bn="ফেসবুক">Facebook</span><span class="lnk-h">@bajeess</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <h5>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+        <span class="pv-tag" data-bn="গোপনীয়তা নোটিশ">Privacy notice</span>
+        <span class="pv-sub" data-bn="আপনার তথ্য কোথাও যাচ্ছে না">Your figures stay with you</span>
+      </h5>
+      <ul>
+        <li data-bn="কর-সংক্রান্ত অঙ্কগুলো আপনার ব্রাউজারেই হিসাব হয় এবং ক্যালকুলেটর কোনো অঙ্ক পাঠায় না। অনলাইনে থাকলে ফন্ট আনার জন্য ব্রাউজার Google Fonts-এর সঙ্গে যোগাযোগ করতে পারে।">Tax figures are calculated in your browser and the calculator does not transmit them. When online, your browser may contact Google Fonts to fetch font files.</li>
+        <li data-bn="কিছুই সংরক্ষণ করা হয় না — কুকি নেই, লোকাল স্টোরেজ নেই, অ্যানালিটিক্স নেই।">Nothing is stored — no cookies, no local storage, no analytics.</li>
+        <li data-bn="পাতাটি রিফ্রেশ করলেই সব লেখা মুছে যায়।">Refreshing the page clears everything you typed.</li>
+      </ul>
+      <div class="vers">
+        <span><b data-bn="প্রকাশ">Created</b> <span data-bn="জুলাই ২০২৬">July 2026</span></span>
+        <span><b data-bn="সর্বশেষ পরিবর্তন">Last updated</b> <span data-bn="৬ আগস্ট ২০২৬">6 August 2026</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="mobile-bar">
+  <div><div class="k" id="mKicker">Balance payable</div><div class="v" id="mAmt">৳0</div></div>
+  <a href="#ledger" data-bn="হিসাব দেখুন">See working</a>
+</div>
+
+<div id="printDoc" aria-hidden="true"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   1. Rate configuration by assessment year
+   ============================================================ */
+const CFG = {
+  "2025-26": {
+    label:"Assessment year 2025-26 · income year 2024-25", labelBn:"করবর্ষ ২০২৫-২৬ · আয়বর্ষ ২০২৪-২৫",
+    short:"Assessment year 2025-26", shortBn:"করবর্ষ ২০২৫-২৬",
+    incomeYear:"1 July 2024 – 30 June 2025", incomeYearBn:"১ জুলাই ২০২৪ – ৩০ জুন ২০২৫",
+    law:"Income Tax Act 2023 · Finance Ordinance 2025", lawBn:"আয়কর আইন ২০২৩ · অর্থ অধ্যাদেশ ২০২৫",
+    thresholds:{general:350000,female:400000,senior65:400000,thirdGender:475000,disabled:475000,freedomFighter:500000},
+    childExtra:50000,
+    slabs:[{size:100000,rate:0.05},{size:400000,rate:0.10},{size:500000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:Infinity,rate:0.30}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.15,cap:1000000},
+    minTax:{mode:"location",dhakaCtg:5000,otherCC:4000,other:3000},
+    surchargeIncludesMinTax:true, advanceTaxThreshold:600000,
+    s125IsMinimumTax:true, turnoverCarryForward:false,
+    turnoverMinThreshold:30000000,
+    turnoverRates:{general:0.0025,tobacco:0.03,beverage:0.03,mobile:0.02,nttn:0.0025,newManufacturing:0.0025,excluded:0.0025},
+    nonRefundableCredits:["t_car","t_sanchay","t_dividend"],
+    dividendFinalRate:null, sanchayFinal:true, goldCG:false, filingCalendar:false,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  },
+  "2026-27": {
+    label:"Assessment year 2026-27 · income year 2025-26", labelBn:"করবর্ষ ২০২৬-২৭ · আয়বর্ষ ২০২৫-২৬",
+    short:"Assessment year 2026-27", shortBn:"করবর্ষ ২০২৬-২৭",
+    incomeYear:"1 July 2025 – 30 June 2026", incomeYearBn:"১ জুলাই ২০২৫ – ৩০ জুন ২০২৬",
+    law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
+    thresholds:{general:400000,female:450000,senior65:450000,thirdGender:525000,disabled:525000,freedomFighter:550000},
+    childExtra:50000,
+    slabs:[{size:300000,rate:0.10},{size:400000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:Infinity,rate:0.30}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.10,cap:750000},
+    minTax:{mode:"flat",standard:5000,firstTime:1000},
+    dividendFinalRate:0.15, sanchayFinal:false, goldCG:true, goldCGRate:0.05, filingCalendar:true,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  },
+  "2027-28": {
+    label:"Assessment year 2027-28 · income year 2026-27", labelBn:"করবর্ষ ২০২৭-২৮ · আয়বর্ষ ২০২৬-২৭",
+    short:"Assessment year 2027-28", shortBn:"করবর্ষ ২০২৭-২৮",
+    incomeYear:"1 July 2026 – 30 June 2027", incomeYearBn:"১ জুলাই ২০২৬ – ৩০ জুন ২০২৭",
+    law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
+    thresholds:{general:400000,female:450000,senior65:450000,thirdGender:525000,disabled:525000,freedomFighter:550000},
+    childExtra:50000,
+    slabs:[{size:300000,rate:0.10},{size:400000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:Infinity,rate:0.30}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.10,cap:750000},
+    minTax:{mode:"flat",standard:5000,firstTime:1000},
+    dividendFinalRate:0.15, sanchayFinal:false, goldCG:true, goldCGRate:0.05, filingCalendar:true,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  },
+  "2028-29": {
+    label:"Assessment year 2028-29 · income year 2027-28", labelBn:"করবর্ষ ২০২৮-২৯ · আয়বর্ষ ২০২৭-২৮",
+    short:"Assessment year 2028-29", shortBn:"করবর্ষ ২০২৮-২৯",
+    incomeYear:"1 July 2027 – 30 June 2028", incomeYearBn:"১ জুলাই ২০২৭ – ৩০ জুন ২০২৮",
+    law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
+    thresholds:{general:450000,female:500000,senior65:500000,thirdGender:575000,disabled:575000,freedomFighter:600000},
+    childExtra:50000,
+    slabs:[{size:300000,rate:0.10},{size:400000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:26350000,rate:0.30},{size:Infinity,rate:0.35}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.10,cap:750000},
+    minTax:{mode:"flat",standard:5000,firstTime:1000},
+    dividendFinalRate:0.15, sanchayFinal:false, goldCG:true, goldCGRate:0.05, filingCalendar:true,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  },
+  "2029-30": {
+    label:"Assessment year 2029-30 · income year 2028-29", labelBn:"করবর্ষ ২০২৯-৩০ · আয়বর্ষ ২০২৮-২৯",
+    short:"Assessment year 2029-30", shortBn:"করবর্ষ ২০২৯-৩০",
+    incomeYear:"1 July 2028 – 30 June 2029", incomeYearBn:"১ জুলাই ২০২৮ – ৩০ জুন ২০২৯",
+    law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
+    thresholds:{general:450000,female:500000,senior65:500000,thirdGender:575000,disabled:575000,freedomFighter:600000},
+    childExtra:50000,
+    slabs:[{size:300000,rate:0.10},{size:400000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:26350000,rate:0.30},{size:Infinity,rate:0.35}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.10,cap:750000},
+    minTax:{mode:"flat",standard:5000,firstTime:1000},
+    dividendFinalRate:0.15, sanchayFinal:false, goldCG:true, goldCGRate:0.05, filingCalendar:true,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  },
+  "2030-31": {
+    label:"Assessment year 2030-31 · income year 2029-30", labelBn:"করবর্ষ ২০৩০-৩১ · আয়বর্ষ ২০২৯-৩০",
+    short:"Assessment year 2030-31", shortBn:"করবর্ষ ২০৩০-৩১",
+    incomeYear:"1 July 2029 – 30 June 2030", incomeYearBn:"১ জুলাই ২০২৯ – ৩০ জুন ২০৩০",
+    law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
+    thresholds:{general:500000,female:550000,senior65:550000,thirdGender:625000,disabled:625000,freedomFighter:650000},
+    childExtra:50000,
+    slabs:[{size:300000,rate:0.10},{size:400000,rate:0.15},{size:500000,rate:0.20},{size:2000000,rate:0.25},{size:26300000,rate:0.30},{size:Infinity,rate:0.35}],
+    salaryCap:500000,
+    rebate:{incomePct:0.03,investPct:0.10,cap:750000},
+    minTax:{mode:"flat",standard:5000,firstTime:1000},
+    dividendFinalRate:0.15, sanchayFinal:false, goldCG:true, goldCGRate:0.05, filingCalendar:true,
+    listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
+  }
+};
+
+/* Rules that are the same in every year on the card live here and are merged
+   into each CFG entry, so that a year which departs from them only has to
+   state the difference. Nothing rate-bearing is left outside CFG. */
+const RULE_DEFAULTS = {
+  /* Sixth Schedule Part 1, paragraph 20: available only where cultivation of
+     land is the taxpayer's occupation and there is no other source except
+     interest or profit not exceeding Tk 20,000. Eligibility is tested below. */
+  agriExempt: 200000,
+  /* Seventh Schedule / s.135 and the separate developer-benefit line. */
+  sponsorCGRate: 0.10,
+  devCGRate: 0.15,
+  /* Finance Act 2026, section 163: no former natural-person threshold.
+     The user selects the statutory category because the rate is fact-sensitive. */
+  turnoverMinThreshold: 0,
+  turnoverRates: {general:0.01,tobacco:0.03,beverage:0.025,mobile:0.015,nttn:0.015,newManufacturing:0.002,excluded:0},
+  /* Finance Act 2026 raised the continuing-taxpayer advance-tax trigger to Tk 10 lakh.
+     Capital gains and cultivation-only income up to Tk 8 lakh disapply the Part. */
+  /* s.154 sets the advance-tax trigger for a continuing taxpayer at a last
+     assessed total income above Tk 10 lakh. A person assessable for the first
+     time is instead brought in where the current year's income is likely to
+     exceed Tk 6 lakh, so the two tests need separate thresholds. */
+  advanceTaxThreshold: 1000000,
+  advanceFirstTimeThreshold: 600000,
+  advanceCultivationCap: 800000,
+  caps: {dps:120000, gsec:500000, shares:7500000, lifePolicyPct:0.10},
+  surchargeIncludesMinTax: false,
+  /* Finance Act 2026 withdrew the rule treating tax deducted under ss.89-151
+     as non-refundable minimum tax. Only ss.138 and 139 collections, and
+     withholding from persons exempt from filing under s.166(2), stay final.
+     Advance tax on a private car under s.153 is therefore now adjustable and
+     refundable. Dividend is the one item still settled finally, at 15%. */
+  nonRefundableCredits: ["t_dividend"],
+  /* Tax collected at deed registration under s.125 remains minimum tax on the
+     transfer after the Finance Act 2026: a gain on an asset held more than five
+     years is charged at the higher of 15% and the s.125 collection, and that
+     collection is set against the charge but cannot be refunded. */
+  s125IsMinimumTax: true,
+  /* Turnover tax paid in excess of regular tax carries forward. */
+  turnoverCarryForward: true
+};
+Object.keys(CFG).forEach(function(k){
+  const c = CFG[k];
+  Object.keys(RULE_DEFAULTS).forEach(function(f){ if (!(f in c)) c[f] = RULE_DEFAULTS[f]; });
+});
+
+const RATE_COLOUR = {0:"--s0", 5:"--s5", 10:"--s10", 15:"--s15", 20:"--s20", 25:"--s25", 30:"--s30", 35:"--s35"};
+
+/* ============================================================
+   2. Language
+   ============================================================ */
+let LANG = "en";
+const BN_D = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"];
+const bnDigits = s => String(s).replace(/[0-9]/g, d => BN_D[+d]);
+
+const T = {
+  headsOfIncome:["Heads of income","আয়ের খাতসমূহ"],
+  empGross:["1 · Employment, gross","১ · চাকরি, মোট"],
+  empExcl:["Less exclusion — lower of ⅓ or {0}","বাদ অব্যাহতি — এক-তৃতীয়াংশ বা {0}, যেটি কম"],
+  empNet:["Income from employment","চাকরি থেকে আয়"],
+  rentGRV:["2 · Gross rental value","২ · মোট ভাড়া মূল্য"],
+  rentStd:["Less standard deduction at {0}%","বাদ নির্ধারিত হারে খরচ {0}%"],
+  rentOther:["Less insurance, interest, municipal tax","বাদ বিমা, সুদ ও পৌর কর"],
+  rentSpecial:["Add special rental income","যোগ বিশেষ ভাড়া আয়"],
+  rentOrdinary:["Rent-head result before set-off","সমন্বয়ের আগে ভাড়া খাতের ফল"],
+  rentLossSetoff:["Rental loss set off against other ordinary heads","অন্যান্য সাধারণ আয়ের সঙ্গে ভাড়া লোকসান সমন্বয়"],
+  rentLossCarry:["Unabsorbed rental loss — carry-forward not computed","অসমন্বিত ভাড়া লোকসান — পরবর্তী বছরের হিসাব এখানে নেই"],
+  rentNet:["Net contribution from rent","ভাড়া খাতের নিট অবদান"],
+  agGross:["3 · Agricultural receipts","৩ · কৃষি থেকে প্রাপ্তি"],
+  agCost:["Less cost of production","বাদ উৎপাদন খরচ"],
+  agExempt:["Less non-assessable allowance","বাদ করমুক্ত ছাড়"],
+  agNet:["Agricultural income","কৃষি থেকে আয়"],
+  biz:["4 · Business or profession","৪ · ব্যবসা বা পেশা"],
+  bizLoss:["Business loss — not set off against other heads here","ব্যবসার লোকসান — এখানে অন্য খাতের সঙ্গে সমন্বয় হয়নি"],
+  cgSlab:["5 · Capital gains at slab rates","৫ · স্তরভিত্তিক হারে মূলধনী মুনাফা"],
+  fin:["6 · Financial assets at regular rates","৬ · সাধারণ হারে আর্থিক সম্পদ"],
+  oth:["7 · Other sources","৭ · অন্যান্য উৎস"],
+  totalIncome:["Total income","মোট আয়"],
+  incomeAll:["Income, all sources","সব উৎসের আয়"],
+  ladderHead:["How the slabs fill","কোন স্তরে কত আয় পড়ল"],
+  threshold:["threshold {0}","করমুক্ত সীমা {0}"],
+  cRate:["Rate","হার"], cIncome:["Income","আয়"], cTax:["Tax","কর"],
+  slabTax:["Tax on total income","মোট আয়ের উপর কর"],
+  fixedHead:["Tax at fixed rates","নির্দিষ্ট হারে কর"],
+  cgLong:["Gain held over 5 years — higher of 15% or s.125 tax","৫ বছরের বেশি সময় ধরে রাখা সম্পদের মুনাফা — ১৫% বা ধারা ১২৫-এর কর, যেটি বেশি"],
+  cgListed:["Listed securities above {0} at 15%","{0}-এর বেশি তালিকাভুক্ত শেয়ার, ১৫%"],
+  cgSponsor:["Sponsor, director or placement shares at 10%","উদ্যোক্তা, পরিচালক বা প্লেসমেন্ট শেয়ার, ১০%"],
+  cgDev:["Developer benefit at 15%","ডেভেলপারের কাছ থেকে পাওয়া সুবিধা, ১৫%"],
+  cgGold:["Gold and precious metals at 5% — final","সোনা ও মূল্যবান ধাতু, ৫% — চূড়ান্ত"],
+  divTax:["Dividend at 15% — final","লভ্যাংশ, ১৫% — চূড়ান্ত"],
+  sanchayTax:["Savings-certificate tax already deducted — final","সঞ্চয়পত্রে ইতিমধ্যে কাটা কর — চূড়ান্ত"],
+  lotTax:["Lottery and game winnings at 25% — final","লটারি ও গেম থেকে প্রাপ্তি, ২৫% — চূড়ান্ত"],
+  grossTax:["Gross tax before rebate","রেয়াতের আগে মোট কর"],
+  rebHead:["Investment rebate","বিনিয়োগে কর রেয়াত"],
+  rebSec:["section 78","ধারা ৭৮"],
+  rebEligible:["Eligible investment after item ceilings","সীমা বাদ দেওয়ার পর যোগ্য বিনিয়োগ"],
+  rebByIncome:["{0}% of total income","মোট আয়ের {0}%"],
+  rebByInv:["{0}% of eligible investment","যোগ্য বিনিয়োগের {0}%"],
+  rebCap:["Statutory ceiling","আইনে নির্ধারিত সর্বোচ্চ সীমা"],
+  rebAllowed:["Rebate allowed — the lowest of the three","প্রাপ্য রেয়াত — তিনটির মধ্যে সর্বনিম্ন"],
+  afterRebate:["Tax after rebate","রেয়াতের পর কর"],
+  minHead:["Minimum tax and surcharge","ন্যূনতম কর ও সারচার্জ"],
+  minTax:["Minimum tax","ন্যূনতম কর"],
+  na:["not applicable","প্রযোজ্য নয়"],
+  turnMin:["Turnover minimum tax at {0} of gross receipts","মোট প্রাপ্তির {0} হারে টার্নওভার ন্যূনতম কর"],
+  topUp:["Top-up to reach the minimum","ন্যূনতম পূরণে অতিরিক্ত"],
+  afterMin:["Tax after the minimum-tax test","ন্যূনতম কর যাচাইয়ের পর কর"],
+  addFinal:["Add taxes under final settlement","যোগ চূড়ান্ত নিষ্পত্তির কর"],
+  surchargeAt:["Surcharge at {0}% — {1}","সারচার্জ {0}% — {1}"],
+  surchargeNone:["Wealth surcharge","সম্পদ সারচার্জ"],
+  totalTax:["Total tax liability","মোট কর দায়"],
+  filingHead:["Filing date","রিটার্ন জমার সময়"],
+  payableYear:["Tax payable for the year","বছরের পরিশোধযোগ্য কর"],
+  creditHead:["Set against tax paid","পূর্বে পরিশোধিত করের সমন্বয়"],
+  creditLine:["Tax deducted or collected, including section 125, and advance tax","উৎসে কাটা বা সংগৃহীত কর—ধারা ১২৫-সহ—ও অগ্রিম কর"],
+  creditBlocked:["Add back deductions that are minimum tax — not refundable","যোগ ন্যূনতম কর হিসেবে গণ্য কর্তন — ফেরতযোগ্য নয়"],
+  balPay:["Balance payable with the return","রিটার্নের সঙ্গে পরিশোধযোগ্য"],
+  balRef:["Refundable or carried forward","ফেরতযোগ্য বা পরবর্তী বছরে সমন্বয়যোগ্য"],
+  memoHead:["Memoranda","অতিরিক্ত তথ্য"],
+  memoNote:["not part of the return","রিটার্নের অংশ নয়"],
+  envSur:["Environmental surcharge on additional cars","অতিরিক্ত গাড়ির পরিবেশ সারচার্জ"],
+  turnCarry:["Excess turnover tax available to carry forward to next year","পরের বছরে জের টানার মতো উদ্বৃত্ত টার্নওভার কর"],
+  autoRefund:["Refund qualifies for the automated route — salary, financial assets and agriculture only","ফেরতটি স্বয়ংক্রিয় পদ্ধতিতে পড়ছে — শুধু বেতন, আর্থিক সম্পদ ও কৃষি আয় থাকলে"],
+  manualRefund:["Refund requires assessment — another income head is present","ফেরতের জন্য কর নির্ধারণ লাগবে — অন্য খাতের আয় আছে"],
+  s125NoGain:["Section 125 tax entered without a matching gain held over five years — check the entry","পাঁচ বছরের বেশি রাখা সম্পদের মুনাফা ছাড়াই ধারা ১২৫-এর কর লেখা হয়েছে — ঘরটি মিলিয়ে দেখুন"],
+  finalOnly:["Tax shown arises only from final-settlement income; the minimum tax test looks at total income","দেখানো কর কেবল চূড়ান্ত নিষ্পত্তির আয় থেকে; ন্যূনতম কর যাচাই হয় মোট আয়ের উপর"],
+  advApplies:["Quarterly advance tax applies this year","এ বছর ত্রৈমাসিক অগ্রিম কর প্রযোজ্য"],
+  agriRejected:["Agricultural allowance not applied — the stated source conditions are not met","কৃষি ছাড় প্রয়োগ হয়নি — ঘোষিত আয়ের উৎসের শর্ত পূরণ হয়নি"],
+  lifeMissing:["Life-insurance premium excluded — enter the sum assured and apply the cap per policy","জীবন বিমার প্রিমিয়াম বাদ গেছে — বিমা অঙ্ক লিখুন এবং প্রতিটি পলিসিতে আলাদা সীমা প্রয়োগ করুন"],
+  yes:["yes","হ্যাঁ"],
+  perMonth:["Average tax per month","মাসিক গড় কর"],
+  effRate:["Effective rate on all income","সব আয়ের উপর কার্যকর হার"],
+  kickPay:["Balance payable with return","রিটার্নের সঙ্গে পরিশোধযোগ্য"],
+  kickRef:["Refundable or carried forward","ফেরতযোগ্য বা পরবর্তী বছরে সমন্বয়যোগ্য"],
+  kickPayShort:["Balance payable","পরিশোধযোগ্য"],
+  kickRefShort:["Refundable","ফেরতযোগ্য"],
+  tagPay:["Payable","পরিশোধযোগ্য"], tagRef:["Refund","ফেরত"],
+  thresholdChip:["Threshold {0}","করমুক্ত সীমা {0}"],
+  scW50:["net wealth above Tk 50 crore","নিট সম্পদ ৫০ কোটি টাকার বেশি"],
+  scW20:["net wealth above Tk 20 crore","নিট সম্পদ ২০ কোটি টাকার বেশি"],
+  scW10:["net wealth above Tk 10 crore","নিট সম্পদ ১০ কোটি টাকার বেশি"],
+  scW4:["net wealth above Tk 4 crore","নিট সম্পদ ৪ কোটি টাকার বেশি"],
+  scCars:["more than one motor car","একাধিক গাড়ি"],
+  scHouse:["house property above 8,000 sq ft","৮,০০০ বর্গফুটের বেশি বাড়ি"],
+  mtFlat:["flat, all locations","সব এলাকায় অভিন্ন"],
+  mtFirst:["first-time taxpayer","প্রথমবারের করদাতা"],
+  mtDhaka:["Dhaka or Chattogram City Corporation","ঢাকা বা চট্টগ্রাম সিটি কর্পোরেশন"],
+  mtOtherCC:["other city corporation","অন্য সিটি কর্পোরেশন"],
+  mtOther:["outside city corporations","সিটি কর্পোরেশনের বাইরে"],
+  fwJulSep:["Early-filing incentive, 1 Jul – 30 Sep","আগাম জমার প্রণোদনা, ১ জুলাই – ৩০ সেপ্টেম্বর"],
+  fwJanMar:["Additional tax, filed 1 Jan – 31 Mar","অতিরিক্ত কর, ১ জানুয়ারি – ৩১ মার্চে জমা"],
+  fwAprJun:["Additional tax, filed 1 Apr – 30 Jun","অতিরিক্ত কর, ১ এপ্রিল – ৩০ জুনে জমা"],
+  fwLateVol:["Additional tax, late voluntary return","অতিরিক্ত কর, স্বেচ্ছায় বিলম্বে জমা"],
+  fwLateNotice:["Additional tax, return filed after notice","অতিরিক্ত কর, নোটিশের পর জমা"],
+  nrFlat:["Flat rate for non-resident foreign nationals","অনিবাসী বিদেশি নাগরিকের ক্ষেত্রে অভিন্ন হার"],
+  /* insight band */
+  tmZero:["You are below the tax-free threshold, so the next taka you earn is untaxed.","আপনার আয় করমুক্ত সীমার নিচে, তাই পরবর্তী আয়ের উপর কোনো কর বসবে না"],
+  tmSome:["The next taka you earn is taxed at this rate. Income already earned stays in its own lower band.","পরবর্তী আয়ের উপর এই হারে কর বসবে; আগের আয় নিজ নিজ কম হারের স্তরেই থাকে"],
+  tmFloor:["Your tax is currently held at the minimum-tax floor, so the next taka you earn adds nothing until slab tax overtakes the floor. Your slab rate is {0}.","আপনার কর এখন ন্যূনতম করের সমান, তাই স্তরভিত্তিক কর ওই সীমা ছাড়ানো পর্যন্ত বাড়তি আয়ে কর বাড়বে না। আপনার স্তরভিত্তিক হার {0}।"],
+  tgDone:["You have invested enough to take the full rebate available on this income.","এই আয়ে সর্বোচ্চ যত রেয়াত পাওয়া সম্ভব, সে অনুযায়ী বিনিয়োগ ইতিমধ্যেই করা হয়েছে"],
+  tgMore:["Invest this much more in approved instruments and your rebate rises by {0}.","অনুমোদিত খাতে আরও এই পরিমাণ বিনিয়োগ করলে রেয়াত {0} বাড়বে"],
+  tgNone:["Enter an income first — the rebate is capped at {0}% of total income.","প্রথমে আয় লিখুন — রেয়াত মোট আয়ের {0}%-এর বেশি হয় না"],
+  tkKeep:["You keep {0} after income tax. This is an average across all your income, not your top rate.","আয়কর পরিশোধের পর হাতে থাকে {0}; এটি সব আয়ের গড়, সর্বোচ্চ হার নয়"],
+  pdTitle:["Income Tax Computation","আয়কর গণনা"],
+  pdKick:["Individual taxpayer · Bangladesh","ব্যক্তি করদাতা · বাংলাদেশ"],
+  pdAssessYear:["Assessment year","করবর্ষ"],
+  pdResidence:["Residential status","আবাসিক অবস্থা"],
+  pdPrepared:["Prepared on","প্রস্তুতের তারিখ"],
+  pdCurrency:["Currency","মুদ্রা"],
+  pdBDT:["Bangladeshi Taka (৳)","বাংলাদেশি টাকা (৳)"],
+  pdComputation:["Computation","বিস্তারিত গণনা"],
+  pdCompNote:["Each line shows the rule it follows. Sub-lines are components of the total above them.","প্রতিটি লাইনে কোন নিয়ম অনুসরণ করা হয়েছে তা দেখানো আছে; ছোট লাইনগুলো উপরের মোট অঙ্কের উপাদান"],
+  pdFigures:["Figures entered","প্রদত্ত তথ্য"],
+  pdFigNote:["Only the fields that were filled in appear here. Anything left blank was treated as nil.","যে ঘরগুলোতে তথ্য দেওয়া হয়েছে কেবল সেগুলোই এখানে আছে; খালি ঘরগুলো শূন্য ধরা হয়েছে"],
+  pdRefs:["Rates, rules and references","হার, নিয়ম ও সূত্র"],
+  pdEmpty:["No figures were entered.","কোনো তথ্য দেওয়া হয়নি"],
+  pdYes:["yes","হ্যাঁ"],
+  pdEffRate:["Effective rate","কার্যকর হার"],
+  pdPerMonth:["Per month","মাসিক গড়"],
+  pTaxpayer:["Taxpayer","করদাতা"],
+  pIncomeYear:["Income year","আয়বর্ষ"],
+  pLaw:["Governing law","প্রযোজ্য আইন"],
+  printFoot:["Computation aid only — not legal, tax, financial or investment advice. Verify against the current NBR Paripatra and take professional advice before filing. A project by Sajeeb, built with Claude.","শুধু হিসাব করার সহায়ক — আইনি, কর, আর্থিক বা বিনিয়োগ পরামর্শ নয়। জমা দেওয়ার আগে সর্বশেষ এনবিআর পরিপত্রের সঙ্গে মিলিয়ে নিন ও পেশাদার পরামর্শ নিন। সজীবের একটি প্রকল্প, ক্লড দিয়ে তৈরি।"]
+};
+function t(key){
+  let s = T[key][LANG === "bn" ? 1 : 0];
+  for (let i = 1; i < arguments.length; i++) s = s.replace("{" + (i-1) + "}", arguments[i]);
+  return s;
+}
+
+/* ============================================================
+   3. Helpers
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const num = id => { const v = parseFloat(($(id)||{}).value); return isFinite(v) ? v : 0; };
+/* Money fields are whole taka. parseFloat would otherwise let a pasted or
+   spinner-produced fraction propagate into every subtotal, so round on read. */
+const nn = id => Math.max(0, Math.round(num(id)));
+const whole = (id, lo, hi) => {
+  const n = Math.trunc(nn(id));
+  return Math.min(hi === undefined ? n : hi, Math.max(lo === undefined ? 0 : lo, n));
+};
+const val = id => ($(id)||{}).value;
+const checked = id => !!(($(id)||{}).checked);
+
+function group(n){
+  const neg = n < 0;
+  let s = Math.round(Math.abs(n)).toString();
+  if (s.length > 3){
+    const last3 = s.slice(-3);
+    let rest = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+    s = rest + "," + last3;
+  }
+  if (LANG === "bn") s = bnDigits(s);
+  return (neg ? "−" : "") + s;
+}
+const tk = n => "৳" + group(n);
+const pc = n => (LANG === "bn" ? bnDigits(n) : n) + "%";
+const n2 = n => LANG === "bn" ? bnDigits(n) : String(n);
+
+/* ============================================================
+   4. Computation
+   ============================================================ */
+function compute(){
+  const cfg = CFG[val("ay")];
+  const out = {cfg: cfg};
+  const category = val("p_category");
+  const isForeignNR = val("p_residence") === "nrForeign";
+
+  const carMonths = whole("e_carMonths", 0, 12);
+  const carPerq = (parseFloat(val("e_carCC")) || 0) * carMonths;
+  const accomNet = Math.max(0, nn("e_accom") - nn("e_accomPaid"));
+  const empGross = Math.max(0, nn("e_basic") + nn("e_house") + nn("e_medical") + nn("e_convey") +
+    nn("e_bonus") + nn("e_other") + nn("e_rpfEmployer") + nn("e_rpfInterest") +
+    accomNet + carPerq + nn("e_perqOther") - nn("e_exempt"));
+  const empExclusion = Math.round(Math.min(empGross / 3, cfg.salaryCap));
+  const employment = Math.max(0, empGross - empExclusion);
+  out.emp = {gross: empGross, exclusion: empExclusion};
+
+  const grv = Math.max(0, nn("r_rent") + nn("r_tenantCharge") - nn("r_vacancy"));
+  const repairRate = parseFloat(val("r_use")) || 0.25;
+  const stdDeduction = Math.round(grv * repairRate);
+  const otherRentDed = nn("r_insurance") + nn("r_interest") + nn("r_tax");
+  const salamiYears = whole("r_salamiYears", 1, 5) || 5;
+  const specialRent = Math.round(nn("r_deposit") * 0.10 +
+    (nn("r_salami") > 0 ? nn("r_salami") / salamiYears : 0));
+  const rentOrdinary = grv - stdDeduction - otherRentDed;
+
+  const agGross = nn("a_gross");
+  const agCost = val("a_basis") === "deemed" ? Math.round(agGross * 0.5) : nn("a_cost");
+  const agNet = Math.max(0, agGross - agCost);
+
+  const businessRaw = Math.round(num("b_profit"));
+  const business = Math.max(0, businessRaw);
+  const businessLoss = Math.max(0, -businessRaw);
+  const turnover = nn("b_turnover");
+  const turnoverType = val("b_turnoverType") || "general";
+  const turnoverRate = Object.prototype.hasOwnProperty.call(cfg.turnoverRates, turnoverType)
+    ? cfg.turnoverRates[turnoverType] : cfg.turnoverRates.general;
+
+  const cgSlab = nn("c_short");
+  const cgLong = nn("c_long"), s125 = nn("c_s125");
+  /* Until AY 2025-26 the s.125 collection was minimum tax on the transfer, so
+     the charge was the higher of 15% and that collection. The Finance Act 2026
+     took capital gains on transfer of property out of the final-tax net, so the
+     gain is simply charged at 15% and the s.125 tax becomes an ordinary
+     adjustable credit. */
+  const cgLongTax = cgLong > 0
+    ? (cfg.s125IsMinimumTax ? Math.round(Math.max(cgLong * cfg.ltcgRate, s125))
+                            : Math.round(cgLong * cfg.ltcgRate))
+    : 0;
+  const listedGain = nn("c_listed");
+  const listedTax = Math.round(Math.max(0, listedGain - cfg.listedCGExempt) * cfg.listedCGRate);
+  const sponsorGain = nn("c_sponsor"), developerGain = nn("c_dev");
+  const sponsorTax = Math.round(sponsorGain * cfg.sponsorCGRate);
+  const devTax = Math.round(developerGain * cfg.devCGRate);
+  const goldGain = cfg.goldCG ? nn("c_gold") : 0;
+  const goldTax = cfg.goldCG ? Math.round(goldGain * cfg.goldCGRate) : 0;
+  out.cg = {slab: cgSlab, long: cgLong, longTax: cgLongTax, listed: listedGain, listedTax: listedTax,
+            sponsor: sponsorGain, sponsorTax: sponsorTax, dev: developerGain, devTax: devTax,
+            gold: goldGain, goldTax: goldTax};
+
+  const dividend = nn("fa_dividend"), sanchay = nn("fa_sanchay");
+  const bankInterest = nn("fa_bank"), securityInterest = nn("fa_securities");
+  const financialRegular = bankInterest + securityInterest +
+    (cfg.sanchayFinal ? 0 : sanchay) + (cfg.dividendFinalRate === null ? dividend : 0);
+  const dividendTax = cfg.dividendFinalRate === null ? 0 : Math.round(dividend * cfg.dividendFinalRate);
+  const sanchayTax = cfg.sanchayFinal ? nn("t_sanchay") : 0;
+  out.fin = {dividend: dividend, dividendTax: dividendTax, sanchay: sanchay,
+             sanchayTax: sanchayTax, interestProfit: bankInterest + securityInterest + sanchay};
+
+  const otherRegular = nn("o_royalty") + nn("o_gift") + nn("o_foreign") + nn("o_other");
+  const lottery = nn("o_lottery");
+  const lotteryTax = Math.round(lottery * cfg.lotteryRate);
+  out.oth = {lottery: lottery, lotteryTax: lotteryTax};
+
+  /* Sixth Schedule paragraph 20 is source-sensitive, not a free checkbox. */
+  const otherSourcePresent = empGross > 0 || grv > 0 || specialRent > 0 || businessRaw !== 0 || turnover > 0 ||
+    cgSlab > 0 || cgLong > 0 || listedGain > 0 || sponsorGain > 0 || developerGain > 0 || goldGain > 0 ||
+    dividend > 0 || otherRegular > 0 || lottery > 0;
+  const agriClaimed = checked("a_exempt");
+  const agriEligible = agriClaimed && agNet > 0 && !otherSourcePresent && out.fin.interestProfit <= 20000;
+  const agExempt = agriEligible ? Math.min(agNet, cfg.agriExempt) : 0;
+  const agriculture = agNet - agExempt;
+  out.agri = {gross: agGross, cost: agCost, exempt: agExempt, claimed: agriClaimed, eligible: agriEligible};
+
+  /* Deductions are computed from ordinary gross rental value. Special rental
+     income is then added to form the rent-head result, and any resulting rent
+     loss may be set off against other ordinary heads under section 70. */
+  const ordinaryBeforeRent = employment + agriculture + business + cgSlab + financialRegular + otherRegular;
+  const rentHeadRaw = rentOrdinary + specialRent;
+  const totalIncome = Math.max(0, ordinaryBeforeRent + rentHeadRaw);
+  const rentLossUsed = rentHeadRaw < 0 ? Math.min(-rentHeadRaw, ordinaryBeforeRent) : 0;
+  const rentLossCarry = rentHeadRaw < 0 ? Math.max(0, -rentHeadRaw - rentLossUsed) : 0;
+  const rentContribution = totalIncome - ordinaryBeforeRent;
+  out.rent = {grv: grv, std: stdDeduction, stdRate: repairRate, other: otherRentDed,
+              ordinary: rentOrdinary, special: specialRent, raw: rentHeadRaw, lossUsed: rentLossUsed,
+              lossCarry: rentLossCarry, contribution: rentContribution};
+  out.business = {raw: businessRaw, income: business, loss: businessLoss, turnover: turnover,
+                  turnoverType: turnoverType, turnoverRate: turnoverRate};
+  out.heads = {employment, rent: rentContribution, agriculture, business, cgSlab,
+               financial: financialRegular, other: otherRegular};
+  out.totalIncome = totalIncome;
+
+  const threshold = isForeignNR ? 0
+    : (cfg.thresholds[category] + whole("p_disabledKids", 0, 20) * cfg.childExtra);
+  out.threshold = threshold;
+
+  const ladder = [];
+  let slabTax = 0, marginal = 0;
+  if (isForeignNR){
+    slabTax = Math.round(totalIncome * 0.30); marginal = 30;
+    ladder.push({rate:0.30, width:Math.max(totalIncome,1), amount: totalIncome, tax: slabTax});
+    out.nrFlat = true;
+  } else {
+    let remaining = totalIncome;
+    const inThreshold = Math.min(remaining, threshold);
+    ladder.push({rate:0, width:threshold, amount:inThreshold, tax:0});
+    remaining -= inThreshold;
+    for (const band of cfg.slabs){
+      const amt = Math.min(remaining, band.size);
+      const bandTax = Math.round(amt * band.rate);
+      ladder.push({rate:band.rate, width:band.size, amount:amt, tax:bandTax});
+      slabTax += bandTax;
+      remaining -= amt;
+    }
+    let headroom = totalIncome - threshold;
+    if (headroom < 0) marginal = 0;
+    else {
+      for (const band of cfg.slabs){
+        marginal = Math.round(band.rate * 100);
+        if (headroom < band.size) break;
+        headroom -= band.size;
+      }
+    }
+  }
+  out.ladder = ladder;
+  out.slabTax = slabTax;
+  out.slabMarginal = marginal;
+  out.marginal = marginal;
+
+  const adjustableSpecial = cgLongTax + listedTax + sponsorTax + devTax;
+  const finalTaxes = dividendTax + sanchayTax + goldTax + lotteryTax;
+  const grossRegularTax = slabTax + adjustableSpecial;
+  out.adjustableSpecial = adjustableSpecial;
+  out.finalTaxes = finalTaxes;
+  out.grossRegularTax = grossRegularTax;
+
+  let floorMin = 0, floorKey = "";
+  if (totalIncome > threshold && totalIncome > 0){
+    if (cfg.minTax.mode === "flat"){
+      const first = val("p_first") === "first";
+      floorMin = first ? cfg.minTax.firstTime : cfg.minTax.standard;
+      floorKey = first ? "mtFirst" : "mtFlat";
+    } else {
+      const loc = val("p_location");
+      floorMin = cfg.minTax[loc];
+      floorKey = loc === "dhakaCtg" ? "mtDhaka" : loc === "otherCC" ? "mtOtherCC" : "mtOther";
+    }
+  }
+  const turnoverMin = turnover > 0 && turnover >= cfg.turnoverMinThreshold
+    ? Math.round(turnover * turnoverRate) : 0;
+  const floor = Math.max(floorMin, turnoverMin);
+
+  const policyValue = nn("i_policyValue"), lifePrem = nn("i_lifePrem");
+  const lifeMissing = lifePrem > 0 && policyValue <= 0;
+  const lifeAllowed = policyValue > 0 ? Math.min(lifePrem, policyValue * cfg.caps.lifePolicyPct) : 0;
+  const eligibleInvestment = lifeAllowed + nn("i_rpfSelf") + nn("i_rpfEmp") + nn("i_gpf") +
+    Math.min(nn("i_dps"), cfg.caps.dps) + Math.min(nn("i_gsec"), cfg.caps.gsec) +
+    Math.min(nn("i_shares"), cfg.caps.shares) + nn("i_zakat") + nn("i_other");
+  const cands = {
+    byIncome: Math.round(totalIncome * cfg.rebate.incomePct),
+    byInvestment: Math.round(eligibleInvestment * cfg.rebate.investPct),
+    byCap: cfg.rebate.cap
+  };
+  let rebate = isForeignNR ? 0 : Math.min(cands.byIncome, cands.byInvestment, cands.byCap);
+  rebate = Math.min(rebate, grossRegularTax);
+  out.investment = {eligible: eligibleInvestment, candidates: cands, rebate: rebate,
+                    lifeAllowed: lifeAllowed, lifeMissing: lifeMissing};
+  const afterRebate = Math.max(0, grossRegularTax - rebate);
+  out.afterRebate = afterRebate;
+
+  const usableCeiling = Math.max(0, grossRegularTax - floor);
+  const maxRebate = isForeignNR ? 0 : Math.min(cands.byIncome, cands.byCap, usableCeiling);
+  const optimalInvestment = cfg.rebate.investPct > 0 ? maxRebate / cfg.rebate.investPct : 0;
+  out.headroom = {investMore: Math.max(0, optimalInvestment - eligibleInvestment),
+                  extraRebate: Math.max(0, maxRebate - rebate)};
+
+  const netRegular = Math.max(afterRebate, floor);
+  out.minTax = {floor: floorMin, key: floorKey, turnoverMin: turnoverMin,
+                topUp: netRegular - afterRebate, net: netRegular};
+
+  /* On the minimum-tax plateau the slab rate is not the rate that actually
+     applies to the next taka earned — total tax does not move at all until
+     slab tax overtakes the floor. */
+  out.onFloor = floor > 0 && netRegular === floor && floor > afterRebate;
+  if (out.onFloor) out.marginal = 0;
+
+  /* Excess turnover tax over regular tax may be carried to the next year. */
+  out.turnoverCarry = (cfg.turnoverCarryForward && turnoverMin > 0)
+    ? Math.max(0, Math.min(netRegular, turnoverMin) - afterRebate) : 0;
+
+  const netWealth = nn("p_netWealth");
+  const cars = whole("p_cars", 0);
+  let scRate = 0, scKey = "";
+  if (netWealth > 500000000){ scRate = 0.35; scKey = "scW50"; }
+  else if (netWealth > 200000000){ scRate = 0.30; scKey = "scW20"; }
+  else if (netWealth > 100000000){ scRate = 0.20; scKey = "scW10"; }
+  else if (netWealth > 40000000){ scRate = 0.10; scKey = "scW4"; }
+  else if (cars > 1){ scRate = 0.10; scKey = "scCars"; }
+  else if (checked("p_bigHouse")){ scRate = 0.10; scKey = "scHouse"; }
+  const surchargeBase = cfg.surchargeIncludesMinTax ? netRegular : afterRebate;
+  out.surcharge = {rate: scRate, key: scKey, base: surchargeBase,
+                   amount: Math.round(surchargeBase * scRate)};
+  out.envSurcharge = cars > 1 ? (cars - 1) * (parseFloat(val("p_carCC")) || 0) : 0;
+
+  const totalTax = netRegular + finalTaxes + out.surcharge.amount;
+  out.totalTax = totalTax;
+
+  const creditIds = ["t_salary","t_bank","t_sanchay","t_dividend","t_rent","t_car","t_advance","t_other"];
+  const automaticCredits = s125;
+  const credits = creditIds.reduce(function(a, id){ return a + nn(id); }, automaticCredits);
+  let nonRefundable = cfg.nonRefundableCredits.reduce(function(a, id){ return a + nn(id); }, 0);
+  /* Where s.125 still operates as minimum tax on the transfer it cannot create
+     a refund either, but only up to the charge it settles. */
+  if (cfg.s125IsMinimumTax) nonRefundable += Math.min(s125, cgLongTax);
+  out.credits = credits;
+  out.automaticCredits = automaticCredits;
+
+  /* The incentive and the additional tax are percentages of the tax liability
+     for the year, not of the residue left after withholding. Basing them on the
+     residue made the early-filing incentive shrink to nothing for a fully
+     withheld salaried taxpayer, and — worse — let the statutory floors of
+     Tk 3,000 / 5,000 / 10,000 disappear entirely whenever deductions already
+     covered the tax. Those floors bite whenever any tax is payable. */
+  let filingAdj = 0, filingKey = "";
+  if (cfg.filingCalendar){
+    const w = val("p_window");
+    const dueTax = Math.max(0, totalTax);
+    const firstTimer = cfg.minTax.mode === "flat" && val("p_first") === "first";
+    if (dueTax > 0){
+      if (!firstTimer && w === "julSep"){
+        filingAdj = -Math.round(Math.min(dueTax * 0.05, 25000)); filingKey = "fwJulSep";
+      } else if (!firstTimer && w === "janMar"){
+        filingAdj = Math.round(Math.max(dueTax * 0.02, 3000)); filingKey = "fwJanMar";
+      } else if (!firstTimer && w === "aprJun"){
+        filingAdj = Math.round(Math.max(dueTax * 0.05, 5000)); filingKey = "fwAprJun";
+      } else if (w === "lateVol"){
+        filingAdj = Math.round(Math.max(dueTax * 0.10, 5000)); filingKey = "fwLateVol";
+      } else if (w === "lateNotice"){
+        filingAdj = Math.round(Math.max(dueTax * 0.15, 10000)); filingKey = "fwLateNotice";
+      }
+    }
+  }
+  out.filing = {amount: filingAdj, key: filingKey};
+
+  out.grandTotal = Math.max(0, totalTax + filingAdj);
+  const nrUsed = Math.min(nonRefundable, out.grandTotal);
+  out.creditsBlocked = nonRefundable - nrUsed;
+  out.balance = out.grandTotal - nrUsed - (credits - nonRefundable);
+
+  const specialIncomeTotal = cgLong + listedGain + sponsorGain + developerGain + goldGain + lottery +
+    (cfg.dividendFinalRate === null ? 0 : dividend) + (cfg.sanchayFinal ? sanchay : 0);
+  out.incomeBase = totalIncome + specialIncomeTotal;
+  out.effectiveRate = out.incomeBase > 0 ? (out.grandTotal / out.incomeBase) * 100 : 0;
+
+  /* Automated refunds reach only returns whose income is employment, financial
+     assets and/or agriculture; anything else routes into assessment. */
+  const autoRefundHeads = rentContribution === 0 && business === 0 && businessRaw === 0 &&
+    cgSlab === 0 && otherRegular === 0 && lottery === 0 && cgLong === 0 && listedGain === 0 &&
+    sponsorGain === 0 && developerGain === 0 && goldGain === 0;
+  out.refundRoute = out.balance < 0 ? (autoRefundHeads ? "auto" : "manual") : "";
+  out.s125NoGain = s125 > 0 && cgLong <= 0;
+  out.finalOnly = totalIncome <= threshold && finalTaxes > 0;
+
+  const hasCapitalGain = cgSlab + cgLong + listedGain + sponsorGain + developerGain + goldGain > 0;
+  const nonCultivationHeads = employment + rentContribution + business + cgSlab + financialRegular + otherRegular + lottery;
+  const cultivationOnly = agriculture > 0 && nonCultivationHeads <= 0 && agriculture <= cfg.advanceCultivationCap;
+  out.advanceBase = totalIncome;
+  const hasOneTimeReceipt = checked("o_nonRecurring");
+  /* A continuing taxpayer is measured against the last assessed income and the
+     Tk 10 lakh trigger; someone assessable for the first time has no assessed
+     year to look back on and is brought in on the lower Tk 6 lakh estimate of
+     the current year instead. */
+  const firstAssessment = cfg.minTax.mode === "flat" && val("p_first") === "first";
+  out.advanceThreshold = firstAssessment && cfg.advanceFirstTimeThreshold
+    ? cfg.advanceFirstTimeThreshold : cfg.advanceTaxThreshold;
+  out.advanceFirstTime = firstAssessment;
+  out.needsAdvanceTax = !hasCapitalGain && !hasOneTimeReceipt && !cultivationOnly &&
+                        totalIncome > out.advanceThreshold;
+  out.advanceException = hasCapitalGain ? "capital" : hasOneTimeReceipt ? "nonRecurring" : cultivationOnly ? "cultivation" : "";
+  return out;
+}
+
+/* ============================================================
+   5. Render
+   ============================================================ */
+function row(label, value, cls){
+  return '<div class="row ' + (cls||"") + '"><span class="lbl">' + label +
+         '</span><span class="dots"></span><span class="val">' + value + '</span></div>';
+}
+
+function render(){
+  const r = compute(), cfg = r.cfg;
+
+  $("fig-emp").textContent  = tk(r.heads.employment);
+  $("fig-rent").textContent = tk(r.heads.rent);
+  $("fig-agri").textContent = tk(r.heads.agriculture);
+  $("fig-biz").textContent  = tk(r.business.raw);
+  $("fig-cg").textContent   = tk(r.cg.slab + r.cg.long + r.cg.listed + r.cg.sponsor + r.cg.dev + r.cg.gold);
+  $("fig-fin").textContent  = tk(r.heads.financial + (cfg.dividendFinalRate !== null ? r.fin.dividend : 0) + (cfg.sanchayFinal ? r.fin.sanchay : 0));
+  $("fig-oth").textContent  = tk(r.heads.other + r.oth.lottery);
+  $("fig-inv").textContent  = tk(r.investment.eligible);
+  $("fig-paid").textContent = tk(r.credits);
+  $("fig-profile").textContent = t("thresholdChip", tk(r.threshold));
+
+  const payable = r.balance >= 0;
+  $("sheetKicker").textContent = payable ? t("kickPay") : t("kickRef");
+  $("sheetTag").textContent = payable ? t("tagPay") : t("tagRef");
+  $("sheetTag").className = "tag " + (payable ? "pay" : "ref");
+  $("mKicker").textContent = payable ? t("kickPayShort") : t("kickRefShort");
+  $("sheetAmt").textContent = tk(Math.abs(r.balance));
+  $("mAmt").textContent = tk(Math.abs(r.balance));
+  $("sheetSub").textContent = LANG === "bn" ? cfg.labelBn : cfg.label;
+  $("statIncome").textContent = tk(r.incomeBase);
+  $("statEff").textContent = pc(r.effectiveRate.toFixed(1));
+  $("statMonth").textContent = tk(r.grandTotal / 12);
+  $("lawline").textContent = (LANG === "bn" ? "বাংলাদেশি ব্যক্তি করদাতা · " : "Bangladeshi individuals · ") +
+                             (LANG === "bn" ? cfg.lawBn : cfg.law);
+
+  /* year bar */
+  $("ybAY").textContent = LANG === "bn" ? cfg.shortBn : cfg.short;
+  $("ybIY").textContent = LANG === "bn" ? cfg.incomeYearBn : cfg.incomeYear;
+
+  /* browser tab title follows the selected year */
+  document.title = LANG === "bn"
+    ? "আয়কর ক্যালকুলেটর — বাংলাদেশি ব্যক্তি করদাতা, " + cfg.shortBn
+    : "Income Tax Calculator — Bangladeshi individuals, " + cfg.short;
+
+
+
+  /* insight band */
+  $("tileMarginal").textContent = pc(r.marginal);
+  $("tileMarginalD").textContent = r.onFloor ? t("tmFloor", pc(r.slabMarginal))
+    : (r.marginal === 0 ? t("tmZero") : t("tmSome"));
+  if (r.headroom.investMore <= 0 || r.headroom.extraRebate <= 0){
+    $("tileGap").textContent = r.totalIncome > 0 ? tk(0) : "—";
+    $("tileGapD").textContent = r.totalIncome > 0 ? t("tgDone")
+      : t("tgNone", n2(Math.round(cfg.rebate.incomePct * 100)));
+  } else {
+    $("tileGap").textContent = tk(r.headroom.investMore);
+    $("tileGapD").textContent = t("tgMore", tk(r.headroom.extraRebate));
+  }
+  const keep = r.incomeBase > 0 ? Math.max(0, 100 - r.effectiveRate) : 100;
+  $("tileKeep").textContent = tk(keep.toFixed(0));
+  $("tileKeepD").textContent = t("tkKeep", tk(keep.toFixed(0)));
+
+  let h = "";
+  h += '<div class="lg-h"><span>' + t("headsOfIncome") + '</span><span class="tick">' +
+       (LANG === "bn" ? cfg.incomeYearBn : cfg.incomeYear) + '</span></div>';
+
+  if (r.emp.gross > 0){
+    h += row(t("empGross"), tk(r.emp.gross), "income");
+    h += row(t("empExcl", tk(cfg.salaryCap)), "−" + group(r.emp.exclusion), "sub relief");
+    h += row(t("empNet"), tk(r.heads.employment), "tot");
+  } else h += row(n2(1) + " · " + t("empNet"), tk(0), "muted");
+
+  if (r.rent.grv > 0 || r.rent.other > 0 || r.rent.special > 0){
+    h += row(t("rentGRV"), tk(r.rent.grv), "income");
+    if (r.rent.std > 0) h += row(t("rentStd", n2(Math.round(r.rent.stdRate*100))), "−" + group(r.rent.std), "sub relief");
+    if (r.rent.other > 0) h += row(t("rentOther"), "−" + group(r.rent.other), "sub relief");
+    h += row(t("rentOrdinary"), tk(r.rent.ordinary), "sub");
+    if (r.rent.lossUsed > 0) h += row(t("rentLossSetoff"), "−" + group(r.rent.lossUsed), "sub relief");
+    if (r.rent.special > 0) h += row(t("rentSpecial"), "+" + group(r.rent.special), "sub");
+    h += row(t("rentNet"), tk(r.heads.rent), "tot");
+  } else h += row(n2(2) + " · " + t("rentNet"), tk(0), "muted");
+
+  if (r.agri.gross > 0){
+    h += row(t("agGross"), tk(r.agri.gross), "income");
+    h += row(t("agCost"), "−" + group(r.agri.cost), "sub relief");
+    if (r.agri.exempt > 0) h += row(t("agExempt"), "−" + group(r.agri.exempt), "sub relief");
+    h += row(t("agNet"), tk(r.heads.agriculture), "tot");
+  } else h += row(n2(3) + " · " + t("agNet"), tk(0), "muted");
+
+  h += row(t("biz"), tk(r.heads.business), r.heads.business ? "income" : "muted");
+  h += row(t("cgSlab"), tk(r.heads.cgSlab), r.heads.cgSlab ? "income" : "muted");
+  h += row(t("fin"), tk(r.heads.financial), r.heads.financial ? "income" : "muted");
+  h += row(t("oth"), tk(r.heads.other), r.heads.other ? "income" : "muted");
+  h += row(t("totalIncome"), tk(r.totalIncome), "tot");
+
+  h += '<div class="lg-h"><span>' + t("ladderHead") + '</span><span class="tick">' +
+       t("threshold", tk(r.threshold)) + '</span></div>';
+  h += '<div class="ladder">';
+  h += '<div class="rung hd"><span class="rate">' + t("cRate") + '</span><span></span>' +
+       '<span class="amt">' + t("cIncome") + '</span><span class="tax">' + t("cTax") + '</span></div>';
+  r.ladder.forEach(function(b){
+    const width = isFinite(b.width) ? b.width : Math.max(b.amount, 1);
+    const pctFill = width > 0 ? Math.min(100, (b.amount / width) * 100) : 0;
+    const rate = Math.round(b.rate * 100);
+    h += '<div class="rung' + (b.amount <= 0 ? ' empty' : '') + '" style="--rc:var(' + (RATE_COLOUR[rate]||"--s30") + ')">' +
+           '<span class="rate">' + pc(rate) + '</span>' +
+           '<span class="bar"><span class="fill" style="width:' + pctFill.toFixed(1) + '%"></span></span>' +
+           '<span class="amt">' + (b.amount > 0 ? group(b.amount) : "—") + '</span>' +
+           '<span class="tax">' + (b.tax > 0 ? group(b.tax) : "—") + '</span></div>';
+  });
+  h += '</div>';
+  h += row(r.nrFlat ? t("nrFlat") : t("slabTax"), tk(r.slabTax), "tot charge");
+
+  /* Only the adjustable special rates belong above the rebate line: they are
+     part of the regular tax the rebate is set against. Taxes under final
+     settlement sit outside that base and are added back after the minimum-tax
+     test, so they are listed there instead. Keeping the two apart is what
+     makes every subtotal in this ledger follow from the line above it. */
+  if (r.adjustableSpecial > 0){
+    h += '<div class="lg-h"><span>' + t("fixedHead") + '</span></div>';
+    if (r.cg.longTax > 0) h += row(t("cgLong"), tk(r.cg.longTax), "charge");
+    if (r.cg.listedTax > 0) h += row(t("cgListed", tk(cfg.listedCGExempt)), tk(r.cg.listedTax), "charge");
+    if (r.cg.sponsorTax > 0) h += row(t("cgSponsor"), tk(r.cg.sponsorTax), "charge");
+    if (r.cg.devTax > 0) h += row(t("cgDev"), tk(r.cg.devTax), "charge");
+    h += row(t("grossTax"), tk(r.grossRegularTax), "tot");
+  }
+
+  h += '<div class="lg-h"><span>' + t("rebHead") + '</span><span class="tick">' + t("rebSec") + '</span></div>';
+  h += row(t("rebEligible"), tk(r.investment.eligible));
+  h += row(t("rebByIncome", n2(Math.round(cfg.rebate.incomePct*100))), group(r.investment.candidates.byIncome), "sub");
+  h += row(t("rebByInv", n2(Math.round(cfg.rebate.investPct*100))), group(r.investment.candidates.byInvestment), "sub");
+  h += row(t("rebCap"), group(r.investment.candidates.byCap), "sub");
+  h += row(t("rebAllowed"), "−" + group(r.investment.rebate), "tot credit");
+  h += row(t("afterRebate"), tk(r.afterRebate), "tot");
+
+  h += '<div class="lg-h"><span>' + t("minHead") + '</span></div>';
+  if (r.minTax.floor > 0) h += row(t("minTax") + " — " + t(r.minTax.key), tk(r.minTax.floor));
+  else h += row(t("minTax"), t("na"), "muted");
+  if (r.minTax.turnoverMin > 0)
+    h += row(t("turnMin", pc(+(r.business.turnoverRate * 100).toFixed(2))), tk(r.minTax.turnoverMin), "charge");
+  if (r.minTax.topUp > 0) h += row(t("topUp"), "+" + group(r.minTax.topUp), "sub charge");
+  h += row(t("afterMin"), tk(r.minTax.net), "tot");
+  if (r.finalTaxes > 0){
+    if (r.cg.goldTax > 0) h += row(t("cgGold"), tk(r.cg.goldTax), "sub charge");
+    if (r.fin.dividendTax > 0) h += row(t("divTax"), tk(r.fin.dividendTax), "sub charge");
+    if (r.fin.sanchayTax > 0) h += row(t("sanchayTax"), tk(r.fin.sanchayTax), "sub charge");
+    if (r.oth.lotteryTax > 0) h += row(t("lotTax"), tk(r.oth.lotteryTax), "sub charge");
+    h += row(t("addFinal"), "+" + group(r.finalTaxes), "sub");
+  }
+  if (r.surcharge.rate > 0)
+    h += row(t("surchargeAt", n2(Math.round(r.surcharge.rate*100)), t(r.surcharge.key)), tk(r.surcharge.amount), "charge");
+  else h += row(t("surchargeNone"), t("na"), "muted");
+  h += row(t("totalTax"), tk(r.totalTax), "tot charge");
+
+  if (cfg.filingCalendar && r.filing.amount !== 0){
+    h += '<div class="lg-h"><span>' + t("filingHead") + '</span></div>';
+    h += row(t(r.filing.key), (r.filing.amount < 0 ? "−" : "+") + group(Math.abs(r.filing.amount)),
+             r.filing.amount < 0 ? "credit" : "charge");
+    h += row(t("payableYear"), tk(r.grandTotal), "tot");
+  }
+
+  h += '<div class="lg-h"><span>' + t("creditHead") + '</span></div>';
+  h += row(t("creditLine"), "−" + group(r.credits), "credit");
+  if (r.creditsBlocked > 0) h += row(t("creditBlocked"), "+" + group(r.creditsBlocked), "sub charge");
+  h += row(payable ? t("balPay") : t("balRef"), tk(Math.abs(r.balance)), "grand " + (payable ? "pay" : "ref"));
+
+  h += '<div class="lg-h"><span>' + t("memoHead") + '</span><span class="tick">' + t("memoNote") + '</span></div>';
+  if (r.envSurcharge > 0) h += row(t("envSur"), tk(r.envSurcharge), "relief");
+  if (r.turnoverCarry > 0) h += row(t("turnCarry"), tk(r.turnoverCarry), "muted");
+  if (r.s125NoGain) h += row(t("s125NoGain"), t("yes"), "muted");
+  if (r.finalOnly) h += row(t("finalOnly"), t("yes"), "muted");
+  if (r.refundRoute === "auto") h += row(t("autoRefund"), t("yes"), "muted");
+  if (r.refundRoute === "manual") h += row(t("manualRefund"), t("yes"), "muted");
+  if (r.business.loss > 0) h += row(t("bizLoss"), tk(r.business.loss), "muted");
+  if (r.rent.lossCarry > 0) h += row(t("rentLossCarry"), tk(r.rent.lossCarry), "muted");
+  if (r.agri.claimed && !r.agri.eligible) h += row(t("agriRejected"), t("yes"), "muted");
+  if (r.investment.lifeMissing) h += row(t("lifeMissing"), t("yes"), "muted");
+  if (r.needsAdvanceTax) h += row(t("advApplies"), t("yes"), "muted");
+  h += row(t("perMonth"), tk(r.grandTotal / 12), "muted");
+  h += row(t("effRate"), pc(r.effectiveRate.toFixed(2)), "muted");
+
+  $("ledger").innerHTML = h;
+}
+
+/* ============================================================
+   Report builder — assembles #printDoc from the live computation.
+   The on-screen ledger is the single source of truth: its rows are
+   transcribed into plain table markup so pagination behaves.
+   ============================================================ */
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function pdLedger(){
+  const led = $("ledger");
+  let out = '<table class="pd-t">';
+  Array.prototype.forEach.call(led.children, function(node){
+    if (node.classList.contains("lg-h")){
+      const sp = node.querySelectorAll("span");
+      const tick = sp[1] ? '<td class="pd-v pd-tick">' + esc(sp[1].textContent) + '</td>'
+                         : '<td class="pd-v pd-tick"></td>';
+      out += '<tr class="pd-h"><td>' + esc(sp[0].textContent) + '</td>' + tick + '</tr>';
+    } else if (node.classList.contains("row")){
+      const lbl = node.querySelector(".lbl"), v = node.querySelector(".val");
+      if (!lbl || !v) return;
+      let c = "";
+      ["sub","tot","grand","muted","income","relief","credit","charge","pay","ref"]
+        .forEach(function(k){ if (node.classList.contains(k)) c += " pd-" + k; });
+      out += '<tr class="' + c.trim() + '"><td>' + esc(lbl.textContent) +
+             '</td><td class="pd-v">' + esc(v.textContent) + '</td></tr>';
+    } else if (node.classList.contains("ladder")){
+      let lad = '<table class="pd-lad">';
+      Array.prototype.forEach.call(node.children, function(r){
+        const rate = r.querySelector(".rate"), amt = r.querySelector(".amt"), tax = r.querySelector(".tax");
+        if (!rate || !amt || !tax) return;
+        const head = r.classList.contains("hd");
+        /* The bar carries the shape of the ladder at a glance, so it comes to
+           paper too: the fill width and band colour are read straight off the
+           rendered row. The numeric cells get their own class — reusing pd-v
+           made them inherit the ledger's 1% value-column width through the
+           descendant selector, which is what collapsed them into each other. */
+        const fill = r.querySelector(".fill");
+        const w = head || !fill ? "" : (fill.style.width || "0%");
+        const col = head ? "" : (r.style.getPropertyValue("--rc") || "");
+        const bar = head ? "" :
+          '<span class="pd-bar"><span class="pd-fill" style="width:' + esc(w) +
+          (col ? ';background:' + esc(col) : '') + '"></span></span>';
+        lad += '<tr' + (head ? ' class="pd-lh"' : '') + '><td class="pd-lr">' +
+               esc(rate.textContent) + '</td><td class="pd-lb">' + bar + '</td><td class="pd-lv">' +
+               esc(amt.textContent) + '</td><td class="pd-lv">' + esc(tax.textContent) + '</td></tr>';
+      });
+      lad += '</table>';
+      out += '<tr><td colspan="2" class="pd-lwrap">' + lad + '</td></tr>';
+    }
+  });
+  return out + '</table>';
+}
+
+function pdFigures(){
+  let out = "";
+  document.querySelectorAll("details.card").forEach(function(card, idx){
+    const head = card.querySelector(".head-txt h3");
+    if (!head) return;
+    const isProfile = idx === 0;
+    let rows = "";
+    card.querySelectorAll(".f").forEach(function(f){
+      if (f.style.display === "none") return;
+      const el = f.querySelector("input, select");
+      if (!el) return;
+      const lab = f.querySelector("label");
+      let name = el.id;
+      if (lab){
+        const c = lab.cloneNode(true);
+        const hint = c.querySelector(".hint");
+        if (hint) hint.remove();
+        name = c.textContent.replace(/\s+/g, " ").trim();
+      }
+      const alwaysShow = ["r_use","a_basis","b_turnoverType"].indexOf(el.id) >= 0;
+      if (el.tagName === "SELECT"){
+        if (!isProfile && !alwaysShow && el.selectedIndex === 0) return;
+        rows += '<tr><td>' + esc(name) + '</td><td class="pd-v">' +
+                esc(el.options[el.selectedIndex].textContent) + '</td></tr>';
+      } else {
+        const v = parseFloat(el.value);
+        if (!isFinite(v) || v === 0) return;
+        const plain = ["p_disabledKids","p_cars","e_carMonths","r_salamiYears"].indexOf(el.id) >= 0;
+        rows += '<tr><td>' + esc(name) + '</td><td class="pd-v">' +
+                (plain ? group(v) : tk(v)) + '</td></tr>';
+      }
+    });
+    card.querySelectorAll(".check").forEach(function(c){
+      const cb = c.querySelector("input"), sp = c.querySelector("span");
+      if (cb && cb.checked && sp)
+        rows += '<tr><td>' + esc(sp.textContent) + '</td><td class="pd-v">' + t("pdYes") + '</td></tr>';
+    });
+    if (rows)
+      out += '<div class="pd-grp"><h3>' + esc(head.textContent) +
+             '</h3><table class="pd-t">' + rows + '</table></div>';
+  });
+  return out || '<p class="pd-empty">' + t("pdEmpty") + '</p>';
+}
+
+function pdReferences(){
+  const src = document.querySelector(".refs");
+  const clone = src.cloneNode(true);
+  clone.querySelectorAll("[data-bn]").forEach(function(el){
+    el.removeAttribute("data-bn"); delete el.dataset.en;
+  });
+  const h2 = clone.querySelector("h2"); if (h2) h2.remove();
+  const lead = clone.querySelector(".lead"); if (lead) lead.remove();
+  clone.querySelectorAll(".tbl-scroll").forEach(function(w){
+    const tb = w.querySelector("table");
+    if (tb) w.parentNode.replaceChild(tb, w);
+  });
+  return clone.innerHTML;
+}
+
+function buildPrintDoc(){
+  const r = compute(), cfg = r.cfg, bn = LANG === "bn";
+  const catSel = $("p_category"), resSel = $("p_residence");
+  const d = new Date();
+  const stamp = bn ? bnDigits(d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear())
+                   : d.toLocaleDateString("en-GB", {day:"numeric", month:"long", year:"numeric"});
+  const payable = r.balance >= 0;
+
+  let html = '';
+  html += '<div class="pd-mast">' +
+            '<p class="pd-kick">' + t("pdKick") + '</p>' +
+            '<h1>' + t("pdTitle") + '</h1>' +
+            '<table class="pd-meta">' +
+              '<tr><td class="k">' + t("pdAssessYear") + '</td><td class="v">' +
+                (bn ? cfg.shortBn : cfg.short) + '</td>' +
+                  '<td class="k2">' + t("pdPrepared") + '</td><td class="v">' + stamp + '</td></tr>' +
+              '<tr><td class="k">' + t("pIncomeYear") + '</td><td class="v">' +
+                (bn ? cfg.incomeYearBn : cfg.incomeYear) + '</td>' +
+                  '<td class="k2">' + t("pdCurrency") + '</td><td class="v">' + t("pdBDT") + '</td></tr>' +
+              '<tr><td class="k">' + t("pTaxpayer") + '</td><td class="v">' +
+                esc(catSel.options[catSel.selectedIndex].textContent) + '</td>' +
+                  '<td class="k2">' + t("pdResidence") + '</td><td class="v">' +
+                esc(resSel.options[resSel.selectedIndex].textContent) + '</td></tr>' +
+              '<tr><td class="k">' + t("pLaw") + '</td><td class="v" colspan="3">' +
+                (bn ? cfg.lawBn : cfg.law) + '</td></tr>' +
+            '</table>' +
+          '</div>';
+
+  html += '<div class="pd-band">' +
+            '<p class="lbl">' + (payable ? t("kickPay") : t("kickRef")) + '</p>' +
+            '<p class="amt' + (payable ? '' : ' ref') + '">' + tk(Math.abs(r.balance)) + '</p>' +
+            '<p class="sub">' + (bn ? cfg.labelBn : cfg.label) + '</p>' +
+            '<table class="pd-kpi"><tr>' +
+              '<td>' + t("incomeAll") + '<span>' + tk(r.incomeBase) + '</span></td>' +
+              '<td>' + t("pdEffRate") + '<span>' + pc(r.effectiveRate.toFixed(1)) + '</span></td>' +
+              '<td>' + t("pdPerMonth") + '<span>' + tk(r.grandTotal / 12) + '</span></td>' +
+            '</tr></table>' +
+          '</div>';
+
+  html += '<div class="pd-sec"><h2>' + t("pdComputation") + '</h2>' +
+          '<p class="pd-note">' + t("pdCompNote") + '</p>' + pdLedger() + '</div>';
+
+  html += '<div class="pd-sec pd-figs"><h2>' + t("pdFigures") + '</h2>' +
+          '<p class="pd-note">' + t("pdFigNote") + '</p>' + pdFigures() + '</div>';
+
+  html += '<div class="pd-sec pd-refs"><h2>' + t("pdRefs") + '</h2>' + pdReferences() + '</div>';
+
+  html += '<p class="pd-foot">' + t("printFoot") + '</p>';
+
+  $("printDoc").innerHTML = html;
+}
+
+/* ============================================================
+   6. Year-dependent copy
+   ============================================================ */
+function syncYearUI(){
+  const cfg = CFG[val("ay")];
+  const bn = LANG === "bn";
+  const cap = tk(cfg.salaryCap);
+  const ip = n2(Math.round(cfg.rebate.incomePct*100));
+  const vp = n2(Math.round(cfg.rebate.investPct*100));
+
+  /* The first-time-taxpayer concession only exists where the minimum tax is a
+     flat figure; in the location-based years the field would sit there looking
+     as though it did something, so it comes out of the form entirely. */
+  $("locWrap").style.display = cfg.minTax.mode === "location" ? "" : "none";
+  $("firstWrap").style.display = cfg.minTax.mode === "flat" ? "" : "none";
+  $("fileWindowWrap").style.display = cfg.filingCalendar ? "" : "none";
+  $("goldWrap").style.display = cfg.goldCG ? "" : "none";
+
+  const turnoverSelect = $("b_turnoverType");
+  Array.prototype.forEach.call(turnoverSelect.options, function(o){
+    if (o.dataset.post2026 === "1") o.hidden = cfg.turnoverMinThreshold > 0;
+  });
+  if (cfg.turnoverMinThreshold > 0 && turnoverSelect.selectedOptions[0] &&
+      turnoverSelect.selectedOptions[0].dataset.post2026 === "1") turnoverSelect.value = "general";
+  const selectedTurnoverType = turnoverSelect.value || "general";
+  const selectedTurnoverRate = Object.prototype.hasOwnProperty.call(cfg.turnoverRates, selectedTurnoverType)
+    ? cfg.turnoverRates[selectedTurnoverType] : cfg.turnoverRates.general;
+  const tmRate = pc(+(selectedTurnoverRate * 100).toFixed(2));
+  const tobaccoWarn = selectedTurnoverType === "tobacco"
+    ? (bn ? " <b>সতর্কতা:</b> কোম্পানি নয় এমন করদাতা তামাকজাত পণ্য উৎপাদন করলে তাঁর ওই আয়ে স্তরভিত্তিক হার নয়, <b>৪৫%</b> হারে কর বসে এবং তার সঙ্গে <b>২.৫% সারচার্জ</b> যুক্ত হয়। এই ক্যালকুলেটর সেটি হিসাব করে না — নিচের অঙ্কগুলো ওই ক্ষেত্রে কম দেখাবে।"
+          : " <b>Warning:</b> a taxpayer who is not a company but manufactures tobacco products is charged at <b>45%</b> on that income rather than at slab rates, plus a <b>2.5% surcharge</b>. This calculator does not model that, so the figures below will understate the liability.")
+    : "";
+  if (cfg.turnoverMinThreshold > 0){
+    const tmCrore = n2(cfg.turnoverMinThreshold / 10000000);
+    $("bizNote").innerHTML = bn
+      ? "এই করবর্ষে ব্যক্তি করদাতার মোট প্রাপ্তি <b>" + tmCrore + " কোটি টাকা বা বেশি</b> হলে নির্বাচিত শ্রেণির হার <b>" + tmRate + "</b> প্রযোজ্য। করমুক্ত বা কম-হারের প্রাপ্তি থাকলে আনুপাতিক সমন্বয় আলাদাভাবে যাচাই করুন।" + tobaccoWarn
+      : "For this year, an individual's gross receipts of <b>Tk " + tmCrore + " crore or more</b> attract the selected category rate of <b>" + tmRate + "</b>. Receipts enjoying an exemption or reduced rate require a separate proportional adjustment." + tobaccoWarn;
+  } else {
+    $("bizNote").innerHTML = bn
+      ? "অর্থ আইন ২০২৬ অনুযায়ী পুরোনো ৩ কোটি টাকার সীমা নেই। নির্বাচিত শ্রেণির টার্নওভার ন্যূনতম কর <b>" + tmRate + "</b>। মোট প্রাপ্তি মানে মূসক ও সম্পূরক শুল্ক বাদে পণ্য বা সেবা বিক্রির প্রাপ্তি, কিংবা অর্জিত কমিশন, ছাড়, ফি ও চার্জ। ধারা ১৬৩ অনুযায়ী কমিশন, ডিও ও মানি এক্সচেঞ্জ ব্যবসা, সোনা-রুপা-গয়না-রত্ন-প্লাটিনামের ব্যবসা এবং সরকারি বা রাষ্ট্রায়ত্ত সংস্থার সার, বীজ ও নিত্যপণ্য বিক্রি বাদ। নিয়মিত হারের করের বেশি দেওয়া টার্নওভার কর পরের আয়বর্ষে জের টানা যায়।" + tobaccoWarn
+      : "Under the Finance Act 2026 the former Tk 3 crore threshold is gone. The selected turnover-minimum rate is <b>" + tmRate + "</b>. Gross receipts mean sales of goods or services net of VAT and supplementary duty, or the commissions, discounts, fees and charges earned. Section 163 excludes commission, delivery-order and money-exchange businesses, trading in gold, silver, jewellery, gems and platinum, and government or state-owned sale of fertiliser, seed and daily essentials. Turnover tax paid above the regular-rate liability carries forward to the next income year." + tobaccoWarn;
+  }
+
+  $("empNote").innerHTML = bn
+    ? "আয়কর আইন ২০২৩ আসার পর বাড়ি ভাড়া, চিকিৎসা ও যাতায়াত ভাতা <b>আলাদা করে আর করমুক্ত নয়</b>। সব মিলিয়ে মোট আয় ধরা হয়, তারপর একটাই ছাড় — <b>চাকরির আয়ের এক-তৃতীয়াংশ বা " + cap + ", যেটা কম</b> — বাদ যায়।"
+    : "Since the Income Tax Act 2023, house rent, medical and conveyance allowances are <b>no longer exempt separately</b>. Everything goes in gross, and a single exclusion of <b>one-third of employment income or " + cap + ", whichever is lower</b> is then taken out.";
+
+  $("rebateNote").innerHTML = bn
+    ? "রেয়াত হবে তিনটির মধ্যে <b>সবচেয়ে কমটি</b>: মোট আয়ের " + ip + "%, যোগ্য বিনিয়োগের " + vp + "%, অথবা " + tk(cfg.rebate.cap) + "। নিচের প্রতিটি খাতের নিজস্ব সীমা আগে বসে, তারপর যোগফল নেওয়া হয়।"
+    : "The rebate is the <b>lowest</b> of " + ip + "% of total income, " + vp + "% of eligible investment, and " + tk(cfg.rebate.cap) + ". Each item below is capped in its own right before the total is taken.";
+
+  $("finNote").innerHTML = cfg.sanchayFinal
+    ? (bn ? "লভ্যাংশ সাধারণ স্তরভিত্তিক আয়ে ঢোকে; উৎসে কাটা কর ন্যূনতম কর হিসেবে ফেরতযোগ্য নয়। এই পুরোনো করবর্ষে সঞ্চয়পত্রের মুনাফা <b>চূড়ান্ত কর</b> — তাই মোট আয়ের বাইরে রাখা হয়েছে এবং কাটা করই চূড়ান্ত দায় হিসেবে দেখানো হয়।"
+          : "Dividend enters ordinary slab income; the tax deducted is minimum tax and is not refundable in this earlier year. Savings-certificate profit is <b>final tax</b> in this year, so it stays outside total income and the tax already deducted is shown as the final liability.")
+    : (bn ? "অর্থ আইন ২০২৬ সঞ্চয়পত্রের মুনাফাকে চূড়ান্ত করের তালিকা থেকে বাদ দিয়েছে — তাই তা <b>সাধারণ স্তরভিত্তিক আয়ে</b> ঢোকে এবং কাটা কর সমন্বয়যোগ্য ও ফেরতযোগ্য। লভ্যাংশ উল্টো পথে গেছে: সপ্তম তফসিল অনুযায়ী স্বাভাবিক ব্যক্তির লভ্যাংশে <b>১৫% চূড়ান্ত কর</b>, উৎসেও কাটা হয় ১৫%। তাই লভ্যাংশ মোট আয়ের বাইরে থাকে, রেয়াতের ভিত্তিতেও ধরা হয় না, আর ১৫%-এর বেশি কাটা থাকলেও ফেরত হয় না। যাঁর প্রান্তিক হার ১৫%-এর বেশি তাঁর লাভ, কম হলে বাড়তি বোঝা।"
+          : "The Finance Act 2026 took savings-certificate profit out of the final-tax net, so it enters <b>ordinary slab income</b> and the tax deducted is adjustable and refundable. Dividend moved the other way: under the Seventh Schedule a natural person pays <b>15% as a final rate</b>, matching the 15% withheld at source. Dividend therefore stays outside total income, outside the rebate base, and generates no refund. This helps anyone whose marginal slab is above 15% and costs anyone below it.");
+
+  $("agriEligibilityNote").innerHTML = bn
+    ? "২ লাখ টাকার কৃষি ছাড় কেবল তখনই লাগবে যখন জমি চাষ পেশা, অন্য কোনো আয়ের উৎস নেই, এবং সুদ বা মুনাফা ২০,০০০ টাকার বেশি নয়। অন্য ঘরে আয় দিলে টিক চিহ্ন থাকলেও ক্যালকুলেটর ছাড়টি বন্ধ রাখবে।"
+    : "The Tk 2 lakh agricultural allowance applies only where cultivation of land is the occupation, there is no other source, and interest or profit does not exceed Tk 20,000. If another income source is entered, the calculator suppresses the allowance even when the box remains checked.";
+
+  $("cgNote").innerHTML = cfg.s125IsMinimumTax
+    ? (bn ? "পাঁচ বছরের বেশি রাখা সম্পদের ক্ষেত্রে এই করবর্ষে কর হবে মুনাফার <b>১৫%, নাকি দলিল রেজিস্ট্রেশনে আগেই কেটে রাখা কর — যেটি বেশি</b>; ওই কর্তনটি ন্যূনতম কর, তাই বাড়তি অংশ ফেরত পাওয়া যায় না। তালিকাভুক্ত শেয়ারের ৫০ লাখ টাকার ছাড় উদ্যোক্তা, পরিচালক বা প্লেসমেন্ট শেয়ারে খাটবে না।"
+          : "For assets held over five years the tax in this year is <b>15% of the gain, or the tax already deducted at deed registration, whichever is higher</b> — that deduction is minimum tax, so any excess is not refundable. The Tk 50 lakh exemption on listed securities does not cover sponsor, director or placement shares.")
+    : (bn ? "অর্থ আইন ২০২৬ সম্পত্তি হস্তান্তরের মূলধনী মুনাফাকে চূড়ান্ত করের তালিকা থেকে বাদ দিয়েছে। তাই পাঁচ বছরের বেশি রাখা সম্পদের মুনাফায় <b>১৫%</b> কর বসে এবং দলিল রেজিস্ট্রেশনে ধারা ১২৫ অনুযায়ী কাটা কর এখন <b>সমন্বয়যোগ্য ও ফেরতযোগ্য</b> — আর ‘যেটি বেশি’ নিয়মটি নেই। তালিকাভুক্ত শেয়ারের ৫০ লাখ টাকার ছাড় উদ্যোক্তা, পরিচালক বা প্লেসমেন্ট শেয়ারে খাটবে না।"
+          : "The Finance Act 2026 took capital gains on the transfer of property out of the final-tax net. Gains on assets held over five years are charged at <b>15%</b>, and the tax collected at deed registration under section 125 is now an <b>adjustable and refundable</b> credit — the old \u2018whichever is higher\u2019 floor is gone. The Tk 50 lakh exemption on listed securities does not cover sponsor, director or placement shares.");
+
+  $("paidNote").innerHTML = cfg.filingCalendar
+    ? (bn ? "ত্রৈমাসিক অগ্রিম করের আয়সীমা এই করবর্ষে <b>১০ লাখ টাকা</b>। মোট আয়ে মূলধনী মুনাফা বা চলতি অর্থবছরে পুনরাবৃত্তির সম্ভাবনা নেই এমন এককালীন প্রাপ্তি থাকলে, অথবা শুধু জমি চাষের আয় ৮ লাখ টাকার মধ্যে হলে, এটি প্রযোজ্য নয়; অগ্রিম করের ঘাটতিতে ৫০% অতিরিক্ত সুদ কেবল তখনই বসে যখন করবর্ষ পার হওয়ার পর রিটার্ন জমা পড়ে। অর্থ আইন ২০২৬ ধারা ৮৯–১৫১-এর কর্তনকে ন্যূনতম কর গণ্য করার নিয়ম তুলে দিয়েছে, তাই <b>ব্যক্তিগত গাড়ির ধারা ১৫৩ অগ্রিম করসহ</b> অতিরিক্ত কর্তন এখন সমন্বয় বা ফেরত পাওয়া যায়। ধারা ১৩৮ ও ১৩৯-এর কর এবং লভ্যাংশের ১৫% কর চূড়ান্তই থাকে।"
+          : "The quarterly advance-tax threshold is <b>Tk 10 lakh</b> in this year. It is disapplied where total income includes capital gains or a one-time receipt not expected to recur, or where cultivation is the only income and stays within Tk 8 lakh; the 50% additional interest on an advance-tax shortfall now bites only if the return is filed after the assessment year ends. The Finance Act 2026 withdrew the rule treating deductions under sections 89-151 as minimum tax, so excess deductions — <b>including the section 153 advance tax on a private car</b> — are now adjustable and refundable. Collections under sections 138 and 139, and the 15% on dividend, remain final.")
+    : (bn ? "এই করবর্ষে ত্রৈমাসিক অগ্রিম করের আয়সীমা <b>৬ লাখ টাকা</b>। মোট আয়ে মূলধনী মুনাফা বা এককালীন প্রাপ্তি থাকলে, অথবা শুধু জমি চাষের আয় ৮ লাখ টাকার মধ্যে হলে প্রযোজ্য নয়। এই পুরোনো করবর্ষে ব্যক্তিগত গাড়ির অগ্রিম কর, সঞ্চয়পত্র ও লভ্যাংশের কর্তন ন্যূনতম কর — সমন্বয় হয়, কিন্তু অতিরিক্ত অংশ ফেরতযোগ্য নয়।"
+          : "The quarterly advance-tax threshold is <b>Tk 6 lakh</b> in this year. It is disapplied where total income includes capital gains or a one-time receipt, or where cultivation is the only income and stays within Tk 8 lakh. In this earlier year the advance tax on a private car, and the deductions on savings certificates and dividend, are minimum tax — adjustable, but any excess is not refundable.");
+
+  $("rentNote").innerHTML = cfg.filingCalendar
+    ? (bn ? "অর্থ আইন ২০২৬ এই খাতটা নতুন করে সাজিয়েছে। মোট ভাড়া মূল্য = <b>ভাড়া + ভাড়াটিয়ার দেওয়া সেবা বা মেরামত খরচ − খালি থাকার ছাড়</b>। সাধারণ কর্তনের পরে বিশেষ ভাড়া আয় যোগ হয়, তারপর পুরো ভাড়া খাতের লাভ বা লোকসান অন্যান্য সাধারণ খাতের সঙ্গে মিলিয়ে নেওয়া হয়।"
+          : "The Finance Act 2026 rebuilt this head. Gross rental value is <b>rent + service or repair charges the tenant pays − vacancy allowance</b>. Special rental income is added after the ordinary deductions, and the resulting rent-head profit or loss is then combined with other ordinary heads.")
+    : (bn ? "মোট ভাড়া মূল্য মানে সারা বছরের ভাড়া। ধরে নেওয়া খরচের মধ্যেই ভাড়া আদায়, বিদ্যুৎ-পানি, সেবা চার্জ ও মেরামত ধরা আছে।"
+          : "Gross rental value is the annual rent. The standard deduction covers rent collection, utilities, service charges and repairs.");
+}
+
+/* ============================================================
+   7. Language switch — stable layout, no jump
+   ============================================================ */
+function applyLang(instant){
+  const bn = LANG === "bn";
+  const y = window.scrollY;
+  const swap = function(){
+    document.documentElement.setAttribute("data-lang", LANG);
+    document.documentElement.setAttribute("lang", bn ? "bn" : "en");
+    document.querySelectorAll("[data-bn-title]").forEach(function(el){
+      if (el.dataset.enTitle === undefined) el.dataset.enTitle = el.getAttribute("title") || "";
+      const tx = bn ? el.dataset.bnTitle : el.dataset.enTitle;
+      el.setAttribute("title", tx); el.setAttribute("aria-label", tx);
+    });
+    document.querySelectorAll("[data-bn]").forEach(function(el){
+      if (el.dataset.en === undefined) el.dataset.en = el.innerHTML;
+      el.innerHTML = bn ? el.dataset.bn : el.dataset.en;
+    });
+    const sel = $("ay"), keep = sel.value;
+    Array.prototype.forEach.call(sel.options, function(o){
+      o.textContent = bn ? CFG[o.value].shortBn : CFG[o.value].short;
+    });
+    sel.value = keep;
+    if (window.__markExternalLinks) window.__markExternalLinks();
+    if (window.__layoutRefs) window.__layoutRefs();
+    syncYearUI(); render();
+    window.scrollTo(0, y);
+  };
+  if (instant){ swap(); return; }
+  document.body.classList.add("swapping");
+  setTimeout(function(){
+    swap();
+    requestAnimationFrame(function(){ document.body.classList.remove("swapping"); });
+  }, 150);
+}
+
+/* ============================================================
+   8. Sample data — randomised but internally consistent
+   ============================================================ */
+function fillSample(){
+  const rnd = (lo, hi, step) => { step = step || 1000;
+    return Math.round((lo + Math.random() * (hi - lo)) / step) * step; };
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  document.querySelectorAll("input").forEach(function(i){
+    if (i.type === "checkbox") i.checked = false; else i.value = "";
+  });
+
+  /* A salaried professional: basic drives every other component. */
+  const basic = rnd(40000, 145000);
+  const annualBasic = Math.round(basic * 12 / 1000) * 1000;
+  const house = Math.round(annualBasic * 0.5 / 1000) * 1000;
+  const medical = Math.round(annualBasic * 0.10 / 1000) * 1000;
+  const convey = pick([30000, 36000, 48000]);
+  const bonus = Math.round(annualBasic / 12 * pick([1, 2, 2]) / 1000) * 1000;
+  const gross = annualBasic + house + medical + convey + bonus;
+
+  $("e_basic").value = annualBasic;
+  $("e_house").value = house;
+  $("e_medical").value = medical;
+  $("e_convey").value = convey;
+  $("e_bonus").value = bonus;
+  $("e_rpfEmployer").value = Math.round(annualBasic * 0.10 / 1000) * 1000;
+  $("i_rpfSelf").value = Math.round(annualBasic * 0.10 / 1000) * 1000;
+  $("i_rpfEmp").value = Math.round(annualBasic * 0.10 / 1000) * 1000;
+  /* No separate allowance exemption: since the Act 2023 house rent, medical
+     and conveyance all go in gross and are relieved only by the one-third
+     exclusion, which the computation applies for itself. */
+
+  /* Savings scaled to income, kept inside the statutory item ceilings. */
+  $("i_dps").value = pick([60000, 96000, 120000]);
+  $("i_gsec").value = pick([0, 100000, 200000, 300000]);
+  $("i_shares").value = Math.round(gross * pick([0, 0.04, 0.08]) / 1000) * 1000;
+  if (Math.random() < 0.5){
+    $("i_lifePrem").value = rnd(20000, 60000, 5000);
+    $("i_policyValue").value = Number($("i_lifePrem").value) * 20;
+  }
+
+  /* A little income outside salary. */
+  const bank = rnd(8000, 60000, 1000);
+  $("fa_bank").value = bank;
+  $("t_bank").value = Math.round(bank * 0.10 / 100) * 100;
+  if (Math.random() < 0.45){
+    const rent = rnd(180000, 480000, 6000);
+    $("r_rent").value = rent;
+    $("r_deposit").value = Math.round(rent / 12 * 3 / 1000) * 1000;
+    $("t_rent").value = Math.round(rent * 0.05 / 100) * 100;
+  }
+  if (Math.random() < 0.3) $("fa_dividend").value = rnd(10000, 90000, 1000);
+
+  /* Withholding on salary, roughly what a payroll office would deduct. */
+  $("p_netWealth").value = Math.round(gross * rnd(3, 9, 1) / 100000) * 100000;
+  $("p_cars").value = 0;
+
+  document.querySelectorAll("select").forEach(function(s){
+    if (s.id !== "ay")
+      s.selectedIndex = (s.id === "p_window") ? 1 : 0;
+  });
+  $("p_category").value = pick(["general", "general", "female"]);
+  $("e_carMonths").value = 12;
+  $("r_salamiYears").value = 5;
+
+  /* Deduct most of the eventual liability at source, as payroll would. */
+  const liability = compute().totalTax;
+  $("t_salary").value = Math.round(liability * (0.6 + Math.random() * 0.35) / 1000) * 1000;
+
+  if (window.__openAll) window.__openAll();
+  syncYearUI(); render();
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+/* ============================================================
+   9. Wiring
+   ============================================================ */
+(function init(){
+  const sel = $("ay");
+  Object.keys(CFG).forEach(function(k){
+    const o = document.createElement("option");
+    o.value = k; o.textContent = CFG[k].short;
+    sel.appendChild(o);
+  });
+  sel.value = "2026-27";
+
+  /* Theme and language are segmented buttons rather than dropdowns: one tap
+     instead of two, and the current choice is visible without opening
+     anything. aria-pressed carries the state for assistive technology and
+     drives the active styling, so the two can never disagree. */
+  const themeBtns = Array.prototype.slice.call(document.querySelectorAll("#themeSeg .seg-b"));
+  function setTheme(v){
+    document.documentElement.setAttribute("data-theme", v);
+    themeBtns.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.themeVal === v)); });
+    if (window.__syncMastOffset) window.__syncMastOffset();
+  }
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(prefersDark ? "midnight" : "light");
+  themeBtns.forEach(function(b){ b.addEventListener("click", function(){ setTheme(b.dataset.themeVal); }); });
+
+  const langBtns = Array.prototype.slice.call(document.querySelectorAll("#langSeg .seg-b"));
+  function setLang(v){
+    LANG = v;
+    langBtns.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.lang === v)); });
+    applyLang();
+    if (window.__syncMastOffset) window.__syncMastOffset();
+  }
+  setLang("en");
+  langBtns.forEach(function(b){ b.addEventListener("click", function(){ setLang(b.dataset.lang); }); });
+
+  $("sampleBtn").addEventListener("click", fillSample);
+  /* One action: the browser's own print dialogue, where "Save as PDF" is the
+     default destination on every desktop platform and "Print" reaches a
+     printer. Labelling it Save with a download mark matches what almost
+     everyone actually does with it. */
+  $("printBtn").addEventListener("click", function(){ buildPrintDoc(); window.print(); });
+  window.addEventListener("beforeprint", buildPrintDoc);
+  $("resetBtn").addEventListener("click", function(){
+    document.querySelectorAll("input").forEach(function(i){
+      if (i.type === "checkbox") i.checked = false;
+      else if (i.id === "e_carMonths") i.value = 12;
+      else if (i.id === "r_salamiYears") i.value = 5;
+      else if (i.id === "p_disabledKids" || i.id === "p_cars") i.value = 0;
+      else i.value = "";
+    });
+    document.querySelectorAll("select").forEach(function(s){
+      if (s.id !== "ay") s.selectedIndex = (s.id === "p_window") ? 1 : 0;
+    });
+    syncYearUI(); render();
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  /* Accordion with a height transition. <details> cannot animate on its
+     own, so the summary click is intercepted and the body is tweened;
+     the element is only closed once the transition has finished. */
+  const cards = Array.prototype.slice.call(document.querySelectorAll("details.card"));
+  const reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function slide(card, open, instant){
+    const body = card.querySelector(".card-body");
+    if (!body) { card.open = open; return; }
+    if (card.__anim){ card.__anim(); card.__anim = null; }
+    if (instant || reduceMotion){
+      card.open = open;
+      body.style.cssText = "";
+      return;
+    }
+    if (open){
+      card.open = true;
+      const target = body.scrollHeight;
+      body.style.height = "0px"; body.style.opacity = "0";
+      requestAnimationFrame(function(){
+        body.style.transition = "height .26s cubic-bezier(.4,0,.2,1), opacity .2s ease .04s";
+        body.style.height = target + "px"; body.style.opacity = "1";
+      });
+      const done = function(){ body.style.cssText = ""; card.__anim = null; };
+      card.__anim = done;
+      body.addEventListener("transitionend", function te(e){
+        if (e.propertyName !== "height") return;
+        body.removeEventListener("transitionend", te);
+        if (card.__anim === done) done();
+      });
+    } else {
+      body.style.height = body.scrollHeight + "px"; body.style.opacity = "1";
+      requestAnimationFrame(function(){
+        body.style.transition = "height .22s cubic-bezier(.4,0,.2,1), opacity .16s ease";
+        body.style.height = "0px"; body.style.opacity = "0";
+      });
+      const done = function(){ card.open = false; body.style.cssText = ""; card.__anim = null; };
+      card.__anim = done;
+      body.addEventListener("transitionend", function te(e){
+        if (e.propertyName !== "height") return;
+        body.removeEventListener("transitionend", te);
+        if (card.__anim === done) done();
+      });
+    }
+  }
+
+  cards.forEach(function(card){
+    card.querySelector("summary").addEventListener("click", function(e){
+      e.preventDefault();
+      const opening = !card.open;
+      if (opening) cards.forEach(function(o){ if (o !== card && o.open) slide(o, false); });
+      slide(card, opening);
+    });
+  });
+
+  window.__openAll = function(){
+    cards.forEach(function(c){ slide(c, true, true); });
+  };
+
+  document.addEventListener("input", render);
+  document.addEventListener("change", function(e){
+    if (e.target && (e.target.id === "ay" || e.target.id === "b_turnoverType")) syncYearUI();
+    render();
+  });
+
+  /* Keep the sticky offset of the computation sheet in step with the real
+     masthead height, which changes whenever its controls rewrap. */
+  const mast = document.querySelector(".masthead");
+  function syncMastOffset(){
+    if (!mast) return;
+    const h = Math.ceil(mast.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty("--mast-h", h + "px");
+  }
+  window.__syncMastOffset = syncMastOffset;
+  syncMastOffset();
+  window.addEventListener("resize", syncMastOffset);
+  if (window.ResizeObserver && mast) new ResizeObserver(syncMastOffset).observe(mast);
+
+  /* Anything pointing off-site opens in a new tab, so a part-finished return
+     is never lost to a stray click. Applied after each language swap too,
+     since the reference text is re-injected from its translation. */
+  function markExternalLinks(){
+    document.querySelectorAll('a[href^="http"]').forEach(function(a){
+      if (a.hostname && a.hostname !== location.hostname){
+        a.target = "_blank";
+        a.rel = (a.rel && a.rel.indexOf("noopener") > -1) ? a.rel : (a.rel ? a.rel + " noopener" : "noopener noreferrer");
+      }
+    });
+  }
+  window.__markExternalLinks = markExternalLinks;
+  markExternalLinks();
+
+  /* Deal the reference cards into columns shortest-first. Heights are read
+     back after each insertion, so the running totals stay honest as the cards
+     land, and the columns finish within a card's height of one another. */
+  const refGrid = document.querySelector(".ref-grid");
+  let refCards = refGrid ? Array.prototype.slice.call(refGrid.querySelectorAll(".ref-card")) : [];
+  function layoutRefs(){
+    if (!refGrid || !refCards.length) return;
+    const w = refGrid.clientWidth;
+    /* Two wide columns, not three narrow ones. Seven cards of similar height
+       will not divide evenly into three, so a column always trailed; across
+       two they balance to within a line or so, and prose-heavy cards read
+       better at the wider measure anyway. */
+    const n = w >= 900 ? 2 : 1;
+    if (refGrid.dataset.cols === String(n) && refGrid.classList.contains("balanced")) return;
+    refGrid.dataset.cols = String(n);
+    refGrid.classList.add("balanced");
+    refGrid.textContent = "";
+    const cols = [], totals = [];
+    for (let i = 0; i < n; i++){
+      const c = document.createElement("div");
+      c.className = "ref-col";
+      refGrid.appendChild(c);
+      cols.push(c); totals.push(0);
+    }
+    /* Measure every card at its final column width first, then place the
+       tallest ones before the short ones. Placing in document order lets one
+       long card land last with nowhere to balance it, which is what left a
+       column trailing several hundred pixels below its neighbours; taking the
+       tall cards first gives the short ones somewhere useful to go. */
+    refCards.forEach(function(c){ cols[0].appendChild(c); });
+    const heights = refCards.map(function(c){ return c.getBoundingClientRect().height + 16; });
+    const idx = refCards.map(function(_, i){ return i; })
+                        .sort(function(a, b){ return heights[b] - heights[a]; });
+    /* Tallest-first placement gets close but is greedy, so it can settle on a
+       split a swap away from a better one. A few refinement passes try moving
+       or exchanging cards between the tallest and shortest columns and keep
+       any change that narrows the gap between them. */
+    const bucket = cols.map(function(){ return []; });
+    idx.forEach(function(i){
+      let k = 0;
+      for (let j = 1; j < n; j++) if (totals[j] < totals[k]) k = j;
+      bucket[k].push(i); totals[k] += heights[i];
+    });
+    const spread = function(){ return Math.max.apply(null, totals) - Math.min.apply(null, totals); };
+    for (let pass = 0; pass < 40 && n > 1; pass++){
+      let hi = 0, lo = 0;
+      for (let j = 1; j < n; j++){ if (totals[j] > totals[hi]) hi = j; if (totals[j] < totals[lo]) lo = j; }
+      if (hi === lo) break;
+      const before = spread();
+      let done = false;
+      for (let a = 0; a < bucket[hi].length && !done; a++){
+        const ia = bucket[hi][a];
+        totals[hi] -= heights[ia]; totals[lo] += heights[ia];
+        if (spread() < before){ bucket[lo].push(bucket[hi].splice(a, 1)[0]); done = true; break; }
+        totals[hi] += heights[ia]; totals[lo] -= heights[ia];
+        for (let b = 0; b < bucket[lo].length; b++){
+          const ib = bucket[lo][b], d = heights[ia] - heights[ib];
+          totals[hi] -= d; totals[lo] += d;
+          if (spread() < before){
+            bucket[hi][a] = ib; bucket[lo][b] = ia; done = true; break;
+          }
+          totals[hi] += d; totals[lo] -= d;
+        }
+      }
+      if (!done) break;
+    }
+    bucket.forEach(function(list, k){
+      list.sort(function(a, b){ return a - b; });
+      list.forEach(function(i){ cols[k].appendChild(refCards[i]); });
+    });
+  }
+  window.__layoutRefs = function(){ if (refGrid){ refGrid.dataset.cols = ""; layoutRefs(); } };
+  layoutRefs();
+  let refTimer = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(refTimer);
+    refTimer = setTimeout(function(){ refGrid.dataset.cols = ""; layoutRefs(); }, 160);
+  });
+
+  syncYearUI();
+  render();
+})();
+</script>
+</body>
+</html>
