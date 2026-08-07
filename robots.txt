@@ -1,0 +1,5 @@
+# https://bajeess.github.io/calculator/
+User-agent: *
+Allow: /
+
+Sitemap: https://bajeess.github.io/calculator/sitemap.xml
