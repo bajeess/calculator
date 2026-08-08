@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bajeess.github.io/calculator/income-tax.html</loc>
     <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bajeess.github.io/calculator/income-tax.html"/>
-    <xhtml:link rel="alternate" hreflang="bn" href="https://bajeess.github.io/calculator/income-tax.html?lang=bn"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bajeess.github.io/calculator/income-tax.html"/>
   </url>
   <url>
     <loc>https://bajeess.github.io/calculator/income-tax.html?lang=bn</loc>
     <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://bajeess.github.io/calculator/income-tax.html"/>
-    <xhtml:link rel="alternate" hreflang="bn" href="https://bajeess.github.io/calculator/income-tax.html?lang=bn"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://bajeess.github.io/calculator/income-tax.html"/>
   </url>
 </urlset>
