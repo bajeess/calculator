@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title id="pgTitle">Calculators for Bangladesh — tax and finance tools that show their working</title>
+<meta name="description" id="pgDesc" content="Free, private calculators for Bangladeshi taxpayers. Every figure traced to the rule it comes from, in English and Bangla. Nothing stored, no sign-up.">
+<link rel="canonical" id="canonicalLink" href="https://bajeess.github.io/calculator/">
+<link rel="alternate" hreflang="en" href="https://bajeess.github.io/calculator/">
+<link rel="alternate" hreflang="bn" href="https://bajeess.github.io/calculator/?lang=bn">
+<link rel="alternate" hreflang="x-default" href="https://bajeess.github.io/calculator/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Calculators for Bangladesh">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="bn_BD">
+<meta property="og:url" id="ogUrl" content="https://bajeess.github.io/calculator/">
+<meta property="og:title" id="ogTitle" content="Calculators for Bangladesh — tools that show their working">
+<meta property="og:description" id="ogDesc" content="Free, private calculators for Bangladeshi taxpayers. Every figure traced to the rule it comes from, in English and Bangla.">
+<meta property="og:image" content="https://bajeess.github.io/calculator/income-tax.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calculators for Bangladesh">
+<meta name="twitter:description" content="Tax and finance calculators that show their working. English and Bangla, free, nothing stored.">
+<meta name="twitter:image" content="https://bajeess.github.io/calculator/income-tax.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": "https://bajeess.github.io/calculator/#hub",
+  "name": "Calculators for Bangladesh",
+  "url": "https://bajeess.github.io/calculator/",
+  "inLanguage": ["en", "bn"],
+  "description": "Free, private tax and finance calculators for Bangladesh, each citing the rule behind every figure.",
+  "hasPart": [
+    {
+      "@type": "WebApplication",
+      "name": "Income Tax Calculator \u2014 Bangladeshi individuals",
+      "url": "https://bajeess.github.io/calculator/income-tax.html",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Any modern web browser",
+      "inLanguage": ["en", "bn"],
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BDT" }
+    }
+  ]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Baloo+Da+2:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F6F9; --surface:#FFFFFF; --surface-2:#EDF0F5;
+  --ink:#14181F; --ink-2:#4E5763; --ink-3:#6A727E;
+  --brand:#0F6B4E; --brand-soft:#E2F0EA; --brand-line:#B5D6C7;
+  --income:#1C6FA8; --income-soft:#E3EFF7; --income-line:#B2D2E7;
+  --relief:#9A6A05; --relief-soft:#FAEFD6; --relief-line:#E5C98D;
+  --charge:#B02532; --charge-soft:#FCE8EA; --charge-line:#EFB7BD;
+  --credit:#0F6B4E; --credit-soft:#E2F0EA;
+  --seal-bg:#0F6B4E; --seal-ink:#FFFFFF; --seal-line:rgba(255,255,255,.18);
+  --sheet-head:#1A1E2B; --sheet-head-ink:#F2F4F8;
+  --line:#DDE2EA; --line-2:#C6CDD8;
+  --s0:#6E7885; --s5:#1C8A70; --s10:#12775A; --s15:#4A7A26; --s20:#846A0E; --s25:#9C531B; --s30:#B03A32; --s35:#8C2450;
+  --shadow:0 1px 2px rgba(20,24,31,.05), 0 8px 24px -12px rgba(20,24,31,.18);
+  --radius:10px; --radius-s:6px;
+  --font-display:'Space Grotesk','Baloo Da 2','Noto Sans Bengali',ui-sans-serif,system-ui,sans-serif;
+  --font-body:'Public Sans','Baloo Da 2','Noto Sans Bengali',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono','Noto Sans Bengali',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+;--ext-ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 3h12v12h-2.6V7.45L5.9 19.95 4.05 18.1 16.55 5.6H9z'/%3E%3C/svg%3E");--field-h:38px;--ctl-h:32px;--btn-w:78px}
+/* Four themes on two axes: bright or dark, and full colour or tinted. The two
+   full-colour themes let each meaning carry its own hue — blue for income,
+   amber for relief, red for a charge, green for a credit — while the two
+   tinted themes hold the same meanings at low chroma for anyone who finds the
+   full palette noisy. Every theme sets the identical variable set, so nothing
+   downstream needs to know which one is active. */
+[data-theme="paper"]{            /* warm cream ground, ink-blue brand, accents at full strength */
+  --paper:#F1E7D4; --surface:#FBF4E6; --surface-2:#E9DCC4;
+  --ink:#2A2318; --ink-2:#5A4F3E; --ink-3:#736452;
+  --brand:#1C6446; --brand-soft:#E1EDE4; --brand-line:#B2D0BC;
+  --income:#1F5C90; --income-soft:#E1ECF6; --income-line:#AECAE2;
+  --relief:#9A6512; --relief-soft:#F7E9CC; --relief-line:#DEC08A;
+  --charge:#A32C2C; --charge-soft:#F8E3DF; --charge-line:#E0B3AC;
+  --credit:#1F6B4A; --credit-soft:#E2EFE5;
+  --seal-bg:#1C6446; --seal-ink:#FBF4E6; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#2E2719; --sheet-head-ink:#F6EEDF;
+  --line:#DCCDB2; --line-2:#C5B294;
+  --s0:#7A6E5C; --s5:#20805E; --s10:#1F7D5A; --s15:#4B6D2C; --s20:#82550C; --s25:#96491A; --s30:#A32C2C; --s35:#87335C;
+  --shadow:0 1px 2px rgba(42,35,24,.06), 0 8px 24px -12px rgba(42,35,24,.20);
+}
+[data-theme="midnight"]{         /* neutral ink ground, no hue in the greys; colour only in the accents */
+  --paper:#0B0B0C; --surface:#141517; --surface-2:#1D1F22;
+  --ink:#EDEEF0; --ink-2:#A9ACB2; --ink-3:#8B929E;
+  --brand:#3ED9A4; --brand-soft:#10231C; --brand-line:#215040;
+  --income:#68B6F5; --income-soft:#101C26; --income-line:#204154;
+  --relief:#F3C04C; --relief-soft:#241F10; --relief-line:#4E4118;
+  --charge:#FF7E82; --charge-soft:#251517; --charge-line:#512C2F;
+  --credit:#3ED9A4; --credit-soft:#10231C;
+  --seal-bg:#3ED9A4; --seal-ink:#0B0B0C; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#191B1E; --sheet-head-ink:#F1F2F4;
+  --line:#212326; --line-2:#31343A;
+  --s0:#828A98; --s5:#57E7BE; --s10:#3ED9A4; --s15:#93DE5F; --s20:#F3C04C; --s25:#FF974E; --s30:#FF7071; --s35:#F268AA;
+  --shadow:0 1px 2px rgba(0,0,0,.6), 0 10px 30px -12px rgba(0,0,0,.85);
+}
+[data-theme="graphite"]{         /* deep petrol — a cool blue-slate dark, softer than true ink */
+  --paper:#0D1519; --surface:#152026; --surface-2:#1D2C34;
+  --ink:#E6EEF1; --ink-2:#A5B6BD; --ink-3:#8298A1;
+  --brand:#4FD1A6; --brand-soft:#122822; --brand-line:#255043;
+  --income:#63B9E8; --income-soft:#102630; --income-line:#22485C;
+  --relief:#EEC069; --relief-soft:#23241A; --relief-line:#4C482B;
+  --charge:#F0868C; --charge-soft:#2A1D22; --charge-line:#553339;
+  --credit:#4FD1A6; --credit-soft:#132A26;
+  --seal-bg:#4FD1A6; --seal-ink:#0D1519; --seal-line:rgba(255,255,255,.20);
+  --sheet-head:#16242B; --sheet-head-ink:#EDF4F7;
+  --line:#1E2C33; --line-2:#2C3E47;
+  --s0:#8A9AA3; --s5:#66E0BB; --s10:#4FD1A6; --s15:#9BD66C; --s20:#EEC069; --s25:#EE9A62; --s30:#F0868C; --s35:#DA7FB4;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -12px rgba(0,0,0,.72);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);
+     font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+
+.wrap{max-width:960px;margin:0 auto;padding:0 22px}
+
+/* ---------- masthead ---------- */
+.masthead{border-bottom:1px solid var(--line);background:var(--surface);
+          position:sticky;top:0;z-index:40}
+.mast-in{max-width:960px;margin:0 auto;padding:12px 22px;display:flex;
+         align-items:center;gap:12px;flex-wrap:wrap}
+.wordmark{display:flex;align-items:center;gap:12px;margin-right:auto}
+.seal{width:32px;height:32px;flex:none;border-radius:9px;background:var(--seal-bg);
+      color:var(--seal-ink);display:grid;place-items:center;font-size:17.5px;
+      font-weight:600;line-height:1;box-shadow:inset 0 0 0 1px var(--seal-line)}
+.wordmark h1{font-family:var(--font-display);font-size:16.5px;font-weight:700;
+             letter-spacing:-.02em;line-height:1.24}
+.wordmark p{font-size:12px;color:var(--ink-3);line-height:1.4}
+.seg{display:inline-flex;align-items:stretch;border:1px solid var(--line-2);
+     border-radius:var(--radius-s);background:var(--surface-2);padding:2px;gap:2px;
+     height:34px;box-sizing:border-box}
+.seg-b{font:inherit;font-family:var(--font-body);font-size:12.5px;font-weight:600;
+       line-height:1;border:0;background:transparent;color:var(--ink-2);cursor:pointer;
+       border-radius:calc(var(--radius-s) - 2px);display:inline-flex;align-items:center;
+       justify-content:center;padding:0 11px;white-space:nowrap}
+.seg-b[aria-pressed="true"]{background:var(--surface);color:var(--brand);font-weight:700;
+       box-shadow:0 1px 2px rgba(16,30,25,.16),inset 0 0 0 1px var(--brand-line)}
+#langSeg .seg-b{min-width:56px}
+.seg-ico .seg-b{padding:0;width:32px}
+.seg-ico .seg-b svg{width:16px;height:16px;fill:currentColor;display:block}
+#themeSeg .seg-b[data-theme-val="light"]{color:var(--s20)}
+#themeSeg .seg-b[data-theme-val="paper"]{color:var(--s25)}
+#themeSeg .seg-b[data-theme-val="midnight"]{color:var(--income)}
+#themeSeg .seg-b[data-theme-val="graphite"]{color:var(--s5)}
+
+/* ---------- hero ---------- */
+.hero{padding:52px 0 34px}
+.hero h2{font-family:var(--font-display);font-size:42px;font-weight:700;
+         letter-spacing:-.035em;line-height:1.06}
+.hero h2 em{font-style:normal;color:var(--brand)}
+.hero p{font-size:18px;color:var(--ink-2);margin-top:16px;max-width:34em}
+
+/* ---------- tool cards ---------- */
+.tools{display:grid;gap:16px;padding-bottom:10px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+      border-top:3px solid var(--accent,var(--brand));padding:24px 26px;
+      box-shadow:var(--shadow);display:block;text-decoration:none;
+      transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+a.tool:hover{transform:translateY(-2px);box-shadow:0 6px 22px -10px rgba(16,30,25,.28)}
+.tool-top{display:flex;align-items:flex-start;gap:14px}
+.tool-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;
+         --tone:var(--accent,var(--brand));
+         background:color-mix(in srgb,var(--tone) 12%,var(--surface));
+         border:1px solid color-mix(in srgb,var(--tone) 38%,var(--surface))}
+.tool-ic svg{width:22px;height:22px;fill:none;stroke:var(--tone);stroke-width:2;
+             stroke-linecap:round;stroke-linejoin:round}
+.tool h3{font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.2;
+         letter-spacing:-.015em}
+.tool .sub{font-size:14px;color:var(--ink-3);font-family:var(--font-mono);margin-top:3px}
+.tool .desc{font-size:15.5px;color:var(--ink-2);margin-top:13px;line-height:1.5}
+.tool ul{list-style:none;margin-top:13px;display:flex;flex-wrap:wrap;gap:7px}
+.tool ul li{font-size:12.5px;font-family:var(--font-mono);padding:5px 11px;border-radius:999px;
+            background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.tool .go{display:inline-flex;align-items:center;gap:7px;margin-top:16px;
+          font-size:15px;font-weight:600;color:var(--brand)}
+.tool .go svg{width:15px;height:15px;fill:currentColor}
+.tag{font-size:11.5px;font-family:var(--font-mono);padding:4px 9px;border-radius:999px;
+     background:var(--relief-soft);color:var(--relief);border:1px solid var(--relief-line);
+     white-space:nowrap;margin-left:auto;flex:none}
+.tag.live{background:var(--brand-soft);color:var(--brand);border-color:var(--brand-line)}
+
+.soon h3{font-size:18px}
+.soon{opacity:.86}
+.soon .desc{margin-top:10px;font-size:14.8px}
+
+/* ---------- sections ---------- */
+.sec-h{font-family:var(--font-display);font-size:14px;font-weight:700;
+       letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+       margin:38px 0 14px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+
+/* ---------- footer ---------- */
+.foot{margin-top:46px;border-top:1px solid var(--line);background:var(--surface)}
+.foot-in{max-width:960px;margin:0 auto;padding:30px 22px 40px}
+.foot p{font-size:14.5px;color:var(--ink-2);max-width:44em}
+.links{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr));
+       gap:10px;margin-top:20px;max-width:560px}
+.lnk{display:flex;align-items:center;gap:10px;text-decoration:none;padding:11px 13px;
+     border-radius:var(--radius);border:1px solid var(--line-2);color:var(--ink);
+     background:var(--surface);transition:border-color .16s ease,transform .16s ease}
+.lnk:hover{border-color:var(--lnk,var(--brand));transform:translateY(-2px)}
+.lnk-ic{width:30px;height:30px;flex:none;border-radius:8px;display:grid;place-items:center;
+        background:var(--surface-2);color:var(--lnk,var(--brand))}
+.lnk-ic svg{width:16px;height:16px;fill:currentColor;display:block}
+.lnk-n{font-size:12.5px;font-weight:600}
+.lnk-h{font-size:11.5px;color:var(--ink-3);font-family:var(--font-mono)}
+.lnk-gh{--lnk:#24292F} .lnk-li{--lnk:#0A66C2} .lnk-fb{--lnk:#1877F2}
+[data-theme="midnight"] .lnk-gh,[data-theme="graphite"] .lnk-gh{--lnk:#E8EAED}
+[data-theme="midnight"] .lnk-li,[data-theme="graphite"] .lnk-li{--lnk:#5CADEB}
+[data-theme="midnight"] .lnk-fb,[data-theme="graphite"] .lnk-fb{--lnk:#6BA6F7}
+.note{margin-top:24px;font-size:13.2px;color:var(--ink-3);line-height:1.6;max-width:46em}
+
+@media (max-width:640px){
+  .hero{padding:38px 0 26px}
+  .hero h2{font-size:32px}
+  .hero p{font-size:16.5px}
+  .tool{padding:20px}
+  .mast-in{gap:8px}
+  .wordmark{flex:1 1 100%}
+}
+@media (max-width:1080px),(pointer:coarse){
+  .seg{height:42px;padding:3px}
+  .seg-b{min-height:34px}
+  .seg-ico .seg-b{width:38px}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-in">
+    <div class="wordmark">
+      <div class="seal">৳</div>
+      <div>
+        <h1 data-bn="ক্যালকুলেটর">Calculators</h1>
+        <p data-bn="বাংলাদেশের কর ও অর্থ">Tax and finance, for Bangladesh</p>
+      </div>
+    </div>
+    <div class="seg" id="langSeg" role="group" aria-label="Language">
+      <button type="button" class="seg-b" data-lang="en">English</button>
+      <button type="button" class="seg-b" data-lang="bn">বাংলা</button>
+    </div>
+    <div class="seg seg-ico" id="themeSeg" role="group" aria-label="Theme">
+      <button type="button" class="seg-b" data-theme-val="light" title="Light" aria-label="Light">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><g stroke="currentColor" stroke-width="1.9" stroke-linecap="round" fill="none"><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></g></svg></button>
+      <button type="button" class="seg-b" data-theme-val="paper" title="Paper" aria-label="Paper">
+        <svg viewBox="0 0 24 24"><path d="M6 2.6h8.2L19 7.4V21a.9.9 0 0 1-.9.9H6a.9.9 0 0 1-.9-.9V3.5A.9.9 0 0 1 6 2.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.8 2.8v4.8h4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.3 12.5h7.4M8.3 16h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      <button type="button" class="seg-b" data-theme-val="midnight" title="Midnight" aria-label="Midnight">
+        <svg viewBox="0 0 24 24"><path d="M20.8 13.4A8.7 8.7 0 1 1 10.6 3.2a6.9 6.9 0 0 0 10.2 10.2z"/><circle cx="17.4" cy="5.4" r="1.15"/></svg></button>
+      <button type="button" class="seg-b" data-theme-val="graphite" title="Graphite" aria-label="Graphite">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 3a9 9 0 0 1 0 18z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <h2 data-bn="অঙ্কটা কত, আর <em>কীভাবে এল</em>।">The number, and <em>how it got there</em>.</h2>
+    <p data-bn="বাংলাদেশের কর ও অর্থ হিসাবের জন্য কিছু ক্যালকুলেটর। প্রতিটি লাইনে কোন নিয়ম থেকে অঙ্কটা এল তা দেখানো থাকে, যাতে আইনের সঙ্গে মিলিয়ে নিতে পারেন। সব কিছু আপনার ব্রাউজারেই চলে — কিছু সংরক্ষণ হয় না, সাইন-আপ লাগে না।">Calculators for tax and money matters in Bangladesh. Each one shows which rule every figure came from, so you can check it against the law. Everything runs in your browser — nothing stored, no sign-up.</p>
+  </section>
+
+  <div class="tools">
+    <a class="tool" style="--accent:var(--brand)" href="income-tax.html">
+      <div class="tool-top">
+        <span class="tool-ic"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 11h16M4 16h11M4 21h7"/></svg></span>
+        <div>
+          <h3 data-bn="আয়কর ক্যালকুলেটর">Income Tax Calculator</h3>
+          <div class="sub" data-bn="ব্যক্তি করদাতা · করবর্ষ ২০২৬-২৭">Individuals · Assessment year 2026-27</div>
+        </div>
+        <span class="tag live" data-bn="চালু">Live</span>
+      </div>
+      <div class="desc" data-bn="আয়ের উৎস অনুযায়ী ধাপে ধাপে হিসাব — চাকরি, ভাড়া, কৃষি, ব্যবসা, মূলধনী মুনাফা, আর্থিক সম্পদ ও অন্যান্য উৎস। বিনিয়োগ রেয়াত, ন্যূনতম কর ও সারচার্জ সঠিক ক্রমে। শেষে রেকর্ডের জন্য পরিষ্কার একটি হিসাব সংরক্ষণ করতে পারবেন।">Works through every head of income — employment, rent, agriculture, business, capital gains, financial assets and other sources — then the investment rebate, minimum tax and surcharge in the right order. Save a clean computation for your records.</div>
+      <ul>
+        <li data-bn="আয়কর আইন ২০২৩">Income Tax Act 2023</li>
+        <li data-bn="অর্থ আইন ২০২৬">Finance Act 2026</li>
+        <li data-bn="২০২৬-২৭ → ২০৩০-৩১">AY 2026-27 → 2030-31</li>
+        <li data-bn="ইংরেজি ও বাংলা">English &amp; বাংলা</li>
+      </ul>
+      <span class="go"><span data-bn="হিসাব শুরু করুন">Open the calculator</span>
+        <svg viewBox="0 0 24 24"><path d="M13.2 4.6 20.6 12l-7.4 7.4-1.7-1.7 4.5-4.5H3.4v-2.4h12.6l-4.5-4.5z"/></svg></span>
+    </a>
+  </div>
+
+  <div class="sec-h" data-bn="পরিকল্পনায় আছে">Planned</div>
+  <div class="tools">
+    <div class="tool soon" style="--accent:var(--income)">
+      <div class="tool-top">
+        <span class="tool-ic"><svg viewBox="0 0 24 24"><path d="M6.5 3.5h8l5 5v12h-13z"/><path d="M14 3.5v5.5h5"/><path d="M9.5 13h5M9.5 16.5h3.5"/></svg></span>
+        <div>
+          <h3 data-bn="উৎসে কর কর্তনের হার">Withholding tax rate finder</h3>
+          <div class="sub" data-bn="ধারা ৮৯–১৫১">Sections 89–151</div>
+        </div>
+        <span class="tag" data-bn="পরিকল্পনায়">Planned</span>
+      </div>
+      <div class="desc" data-bn="কোন ধরনের পরিশোধে কত হারে উৎসে কর কাটতে হবে, কোন ধারায়, রিটার্ন দাখিলের প্রমাণে হার বদলায় কি না, আর কর্তনটি চূড়ান্ত না সমন্বয়যোগ্য।">Pick the nature of the payment and get the rate, the section it comes from, whether proof of return submission changes it, and whether the deduction is final or adjustable.</div>
+    </div>
+
+    <div class="tool soon" style="--accent:var(--relief)">
+      <div class="tool-top">
+        <span class="tool-ic"><svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 10.2V20h13v-9.8"/><path d="M10 20v-5.5h4V20"/></svg></span>
+        <div>
+          <h3 data-bn="সম্পত্তি রেজিস্ট্রেশন খরচ">Property registration cost</h3>
+          <div class="sub" data-bn="স্ট্যাম্প শুল্ক, ফি ও উৎসে কর">Stamp duty, fees and source tax</div>
+        </div>
+        <span class="tag" data-bn="পরিকল্পনায়">Planned</span>
+      </div>
+      <div class="desc" data-bn="সাব-রেজিস্ট্রি অফিসে আসলে কত টাকা লাগবে — স্ট্যাম্প শুল্ক, রেজিস্ট্রেশন ফি, স্থানীয় সরকার কর এবং ধারা ১২৫ অনুযায়ী উৎসে কর, এলাকা ও সম্পত্তির ধরন অনুযায়ী।">What you actually pay at the sub-registry office — stamp duty, registration fee, local government tax and the source tax under section 125, by area and property type.</div>
+    </div>
+
+    <div class="tool soon" style="--accent:var(--plum,var(--charge))">
+      <div class="tool-top">
+        <span class="tool-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="14" rx="2.2"/><path d="M3.5 10h17M7.5 14.5h4"/></svg></span>
+        <div>
+          <h3 data-bn="বেতনের মাসিক উৎসে কর">Monthly payroll TDS</h3>
+          <div class="sub" data-bn="নিয়োগকর্তার জন্য · ধারা ৮৬">For employers · Section 86</div>
+        </div>
+        <span class="tag" data-bn="পরিকল্পনায়">Planned</span>
+      </div>
+      <div class="desc" data-bn="কর্মীর বার্ষিক আয় থেকে গড় হার বের করে প্রতি মাসে কত কর কাটতে হবে — একই স্তর ও অব্যাহতির হিসাব, উল্টো দিক থেকে।">How much to deduct from each salary every month, using the average rate on the employee's estimated annual income — the same slabs and exclusions, worked the other way round.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot-in">
+    <p data-bn="প্রতিটি ক্যালকুলেটর সম্পূর্ণ আপনার ব্রাউজারে চলে। আপনি যা লেখেন তা কোথাও পাঠানো বা সংরক্ষণ করা হয় না — কোনো অ্যাকাউন্ট নেই, কুকি নেই, ট্র্যাকিং নেই।">Every calculator here runs entirely in your browser. Nothing you type is sent anywhere or stored — no account, no cookies, no tracking.</p>
+    <div class="links">
+      <a class="lnk lnk-gh" href="https://github.com/bajeess" target="_blank" rel="noopener me">
+        <span class="lnk-ic"><svg viewBox="0 0 24 24"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg></span>
+        <span><span class="lnk-n">GitHub</span><br><span class="lnk-h">@bajeess</span></span></a>
+      <a class="lnk lnk-li" href="https://www.linkedin.com/in/bajeess/" target="_blank" rel="noopener me">
+        <span class="lnk-ic"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg></span>
+        <span><span class="lnk-n">LinkedIn</span><br><span class="lnk-h">in/bajeess</span></span></a>
+      <a class="lnk lnk-fb" href="https://www.facebook.com/bajeess/" target="_blank" rel="noopener me">
+        <span class="lnk-ic"><svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></span>
+        <span><span class="lnk-n">Facebook</span><br><span class="lnk-h">@bajeess</span></span></a>
+    </div>
+    <p class="note" data-bn="এগুলো হিসাব মেলানোর সহায়ক — আইনি, কর, আর্থিক বা বিনিয়োগ পরামর্শ নয়। জটিল কোনো বিষয়ে যোগ্য পেশাজীবীর পরামর্শ নিন। কোনো নিয়ম ভুল বা বাদ পড়েছে মনে হলে জানাবেন — সংশোধনের চেষ্টা করব।">These are aids for checking your own arithmetic, not legal, tax, financial or investment advice. For anything genuinely complicated, talk to someone qualified. If a rule looks wrong or missing, do tell me — I'll try to put it right.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var LANG = "en";
+  var PAGE = "https://bajeess.github.io/calculator/";
+  var META = {
+    en: { t: "Calculators for Bangladesh — tax and finance tools that show their working",
+          d: "Free, private calculators for Bangladeshi taxpayers. Every figure traced to the rule it comes from, in English and Bangla. Nothing stored, no sign-up." },
+    bn: { t: "বাংলাদেশের ক্যালকুলেটর — কর ও অর্থের হিসাব, নিয়মসহ",
+          d: "বাংলাদেশি করদাতাদের জন্য বিনামূল্যের ক্যালকুলেটর। প্রতিটি অঙ্ক কোন নিয়ম থেকে এল তা দেখানো থাকে, বাংলা ও ইংরেজিতে। কিছু সংরক্ষণ হয় না, সাইন-আপ লাগে না।" }
+  };
+  function $(id){ return document.getElementById(id); }
+  function applyLang(){
+    var bn = LANG === "bn";
+    document.querySelectorAll("[data-bn]").forEach(function(el){
+      if (el.dataset.en === undefined) el.dataset.en = el.innerHTML;
+      el.innerHTML = bn ? el.dataset.bn : el.dataset.en;
+    });
+    var m = META[LANG], url = bn ? PAGE + "?lang=bn" : PAGE;
+    document.documentElement.lang = LANG;
+    document.title = m.t;
+    $("pgDesc").setAttribute("content", m.d);
+    $("canonicalLink").setAttribute("href", url);
+    $("ogUrl").setAttribute("content", url);
+    $("ogTitle").setAttribute("content", m.t);
+    $("ogDesc").setAttribute("content", m.d);
+    /* Carry the choice through to the calculator, so a reader who has picked
+       Bangla here does not have to pick it again on the next page. */
+    document.querySelectorAll('a[href="income-tax.html"]').forEach(function(a){
+      a.setAttribute("href", bn ? "income-tax.html?lang=bn" : "income-tax.html");
+    });
+    try { history.replaceState(null, "", bn ? "?lang=bn" : location.pathname); } catch(e){}
+  }
+  var langBtns = [].slice.call(document.querySelectorAll("#langSeg .seg-b"));
+  function setLang(v){
+    LANG = v;
+    langBtns.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.lang === v)); });
+    applyLang();
+  }
+  langBtns.forEach(function(b){ b.addEventListener("click", function(){ setLang(b.dataset.lang); }); });
+
+  var themeBtns = [].slice.call(document.querySelectorAll("#themeSeg .seg-b"));
+  function setTheme(v){
+    document.documentElement.setAttribute("data-theme", v);
+    themeBtns.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.themeVal === v)); });
+  }
+  themeBtns.forEach(function(b){ b.addEventListener("click", function(){ setTheme(b.dataset.themeVal); }); });
+  setTheme(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "midnight" : "light");
+
+  var wanted = (new URLSearchParams(location.search).get("lang") || "").toLowerCase();
+  setLang(wanted === "bn" ? "bn" : "en");
+})();
+</script>
+</body>
+</html>
