@@ -188,9 +188,10 @@ body.swapping main,body.swapping aside,body.swapping .refs,body.swapping .coloph
 .masthead{border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:60}
 .masthead-in{max-width:1360px;margin:0 auto;padding:8px 20px;display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap}
 .wordmark{display:flex;align-items:center;gap:9px;margin-right:auto;min-width:0}
-.seal{width:32px;height:32px;flex:none;border-radius:8px;background:var(--seal-bg);color:var(--seal-ink);
+.seal{width:32px;height:32px;text-decoration:none;flex:none;border-radius:8px;background:var(--seal-bg);color:var(--seal-ink);
       display:grid;place-items:center;font-size:17.5px;line-height:1;font-weight:600;
-      box-shadow:inset 0 0 0 1px var(--seal-line)}
+      box-shadow:inset 0 0 0 1px var(--seal-line);transition:transform .14s ease,box-shadow .14s ease}
+a.seal:hover{transform:translateY(-1px);box-shadow:inset 0 0 0 1px var(--seal-line),0 4px 12px -4px rgba(16,30,25,.45)}
 /* The masthead was titling the page at 14.5px while the card headings under
    it ran at 15.5px, so the top of the page read as the smallest thing on it.
    It now sits just above the card titles, with the strapline lifted off the
@@ -223,6 +224,8 @@ select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid
 #themeSeg .seg-b[data-theme-val="graphite"]{color:var(--s5)}
 #actionSeg #sampleBtn{color:var(--relief)}
 #actionSeg #resetBtn{color:var(--charge)}
+#actionSeg #undoBtn{color:var(--brand)}
+#actionSeg #undoBtn[disabled]{color:var(--ink-3);opacity:.42;cursor:default;filter:none}
 #themeSeg .seg-b[aria-pressed="true"],#actionSeg .seg-b:hover{filter:saturate(1.25)}
 .btn .btn-ic{width:15px;height:15px;flex:none}
 /* Icon-only controls carry their meaning in a tooltip and an aria-label, and
@@ -455,6 +458,16 @@ input:focus,select:focus{border-color:var(--brand)}
 /* Every input, select and money field shares one height token, so rows line
    up across a card regardless of which control sits in them. */
 .f input,.f select{height:var(--field-h);box-sizing:border-box}
+/* One count per engine band. The surcharge is a per-vehicle charge with the
+   cheapest vehicle exempted, so a single "how many" plus a single rate cannot
+   express a mixed fleet — and asking which car is "the first" has no answer in
+   the Act. Counting each band is the smallest input that is always exact. */
+.carspan{grid-column:1/-1}
+.cars{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(132px,100%),1fr));gap:8px}
+.car{display:flex;flex-direction:column;gap:3px;min-width:0}
+.car span{font-size:11.5px;color:var(--ink-3);font-family:var(--font-mono);white-space:nowrap;
+          overflow:hidden;text-overflow:ellipsis}
+.car input{height:var(--field-h);box-sizing:border-box}
 .f select{padding-top:0;padding-bottom:0}
 /* Embedded links are marked as leaving the page: a small corner-arrow after
    the text, and every one opens in a new tab so a half-filled return is never
@@ -541,6 +554,22 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 .privacy li::before{content:'';position:absolute;left:3px;top:11px;width:5px;height:5px;border-radius:50%;background:var(--brand)}
 .vers{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;gap:16px;flex-wrap:wrap}
 .vers b{color:var(--ink-2);font-weight:600}
+/* A way back to the index, at the point where someone has finished reading. */
+.all-calc{display:flex;align-items:center;gap:15px;margin-top:30px;padding:18px 22px;
+          text-decoration:none;color:var(--ink);background:var(--surface);
+          border:1px solid var(--line-2);border-radius:var(--radius);
+          transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease}
+.all-calc:hover{border-color:var(--brand);transform:translateY(-2px);
+                box-shadow:0 6px 20px -10px rgba(16,30,25,.30)}
+.ac-ic{width:38px;height:38px;flex:none;border-radius:11px;background:var(--seal-bg);
+       color:var(--seal-ink);display:grid;place-items:center;font-size:20px;font-weight:600;line-height:1}
+.ac-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ac-tx b{font-family:var(--font-display);font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+.ac-tx span{font-size:13px;color:var(--ink-3);line-height:1.45}
+.ac-go{width:19px;height:19px;fill:var(--brand);flex:none;margin-left:auto;
+       transition:transform .16s ease}
+.all-calc:hover .ac-go{transform:translateX(3px)}
+@media (max-width:520px){.all-calc{padding:15px 16px;gap:12px}.ac-tx b{font-size:14.5px}}
 
 /* mobile running total */
 .mobile-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--sheet-head);color:var(--sheet-head-ink);padding:9px 20px;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -4px 20px rgba(0,0,0,.22)}
@@ -752,7 +781,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 <header class="masthead">
   <div class="masthead-in">
     <div class="wordmark">
-      <div class="seal">৳</div>
+      <a class="seal" id="hubLink" href="./" title="All calculators" aria-label="All calculators">৳</a>
       <div>
         <h1 data-bn="আয়কর ক্যালকুলেটর">Income Tax Calculator</h1>
         <p id="lawline">Income Tax Act 2023 · Finance Act 2026</p>
@@ -779,6 +808,8 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 2.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4L3.1 5.9l2.4-.9zM18 12.6l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/><path d="M14.8 4.4l4.8 4.8M16.9 2.3l1.4 1.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M13.4 5.8L4 15.2a1.3 1.3 0 0 0 0 1.8l3 3a1.3 1.3 0 0 0 1.8 0l9.4-9.4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
         <button type="button" class="seg-b" id="resetBtn" data-bn-title="সব মুছে ফেলুন" title="Clear every field" aria-label="Clear every field">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.6 12a8.4 8.4 0 1 1 2.6 6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3.2 5.6v4.9h4.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="seg-b" id="undoBtn" disabled data-bn-title="শেষ পরিবর্তন ফিরিয়ে আনুন" title="Undo the last reset or sample fill" aria-label="Undo the last reset or sample fill">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h11.5a4.5 4.5 0 0 1 0 9H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.6 5.2 3.6 9l4 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
       <button class="btn accent" id="printBtn" type="button" data-bn-title="রিপোর্ট সংরক্ষণ বা প্রিন্ট" title="Save or print the report">
         <svg viewBox="0 0 24 24" aria-hidden="true" class="btn-ic"><path d="M12 3v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.6 10.2L12 14.6l4.4-4.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.8 16.4v2.9a1.7 1.7 0 0 0 1.7 1.7h13a1.7 1.7 0 0 0 1.7-1.7v-2.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -843,6 +874,10 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
             <option value="first" data-bn="এবারই প্রথম রিটার্ন দিচ্ছি">Filing for the first time</option>
           </select>
         </div>
+        <div class="f" id="lastAssessedWrap">
+          <label for="p_lastAssessed"><span data-bn="সর্বশেষ নিরূপিত রিটার্নের মোট আয়">Total income in your latest assessed return</span> <span class="hint" data-bn="অগ্রিম কর প্রযোজ্য কিনা এটাই ঠিক করে — জানা না থাকলে ফাঁকা রাখুন">this decides whether advance tax applies — leave blank if unknown</span></label>
+          <div class="money"><input type="number" id="p_lastAssessed" min="0" step="1000" placeholder="0"></div>
+        </div>
         <div class="f" id="locWrap">
           <label for="p_location"><span data-bn="কোথায় থাকেন">Place of residence</span> <span class="hint" data-bn="শুধু করবর্ষ ২০২৫-২৬ এর ন্যূনতম করের জন্য">AY 2025-26 minimum tax only</span></label>
           <select id="p_location">
@@ -867,18 +902,17 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
       <div class="subhead" data-bn="নিট সম্পদ ও সম্পত্তি — সারচার্জের হিসাবের জন্য">Net wealth and assets — for surcharge</div>
       <div class="grid">
         <div class="f"><label for="p_netWealth"><span data-bn="সম্পদ বিবরণী অনুযায়ী নিট সম্পদ">Net wealth per statement of assets</span> <span class="hint" data-bn="মোট সম্পদ থেকে দায় বাদ দিয়ে">assets minus liabilities</span></label><div class="money"><input type="number" id="p_netWealth" min="0" step="1" placeholder="0"></div></div>
-        <div class="f"><label for="p_cars"><span data-bn="নিজের নামে নিবন্ধিত গাড়ির সংখ্যা">Motor cars registered in your name</span></label><input type="number" id="p_cars" min="0" step="1" value="0" placeholder="0"></div>
-        <div class="f">
-          <label for="p_carCC"><span data-bn="প্রথমটির পর গাড়িগুলোর মধ্যে সর্বোচ্চ ইঞ্জিন ক্ষমতা">Highest engine capacity among cars beyond the first</span> <span class="hint" data-bn="এই হার প্রতিটি বাড়তি গাড়িতে লাগবে">this rate applies to every additional car</span></label>
-          <select id="p_carCC">
-            <option value="25000" data-bn="১,৫০০ সিসি পর্যন্ত">Up to 1,500 cc</option>
-            <option value="50000" data-bn="১,৫০১ – ২,০০০ সিসি">1,501 – 2,000 cc</option>
-            <option value="75000" data-bn="২,০০১ – ২,৫০০ সিসি">2,001 – 2,500 cc</option>
-            <option value="150000" data-bn="২,৫০১ – ৩,০০০ সিসি">2,501 – 3,000 cc</option>
-            <option value="200000" data-bn="৩,০০১ – ৩,৫০০ সিসি">3,001 – 3,500 cc</option>
-            <option value="350000" data-bn="৩,৫০০ সিসির বেশি">Above 3,500 cc</option>
-            <option value="0" data-bn="বৈদ্যুতিক গাড়ি — তফসিলে সিসি-ভিত্তিক কোনো ধাপ নেই; যাচাই করে নিন">Electric vehicle — no cc band in the schedule; verify</option>
-          </select>
+        <div class="f carspan">
+          <label><span data-bn="নিজের নামে নিবন্ধিত গাড়ি — ইঞ্জিন ক্ষমতা অনুযায়ী কয়টি">Motor cars registered in your name, by engine capacity</span> <span class="hint" data-bn="সবচেয়ে কম সারচার্জের গাড়িটি বাদ, বাকিগুলোর প্রত্যেকটির নিজস্ব ধাপে">the car attracting the lowest surcharge is exempt; the rest are charged at their own band</span></label>
+          <div class="cars">
+            <div class="car"><span data-bn="১,৫০০ সিসি পর্যন্ত">Up to 1,500 cc</span><input type="number" id="p_car25000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="১,৫০১ – ২,০০০">1,501 – 2,000 cc</span><input type="number" id="p_car50000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="২,০০১ – ২,৫০০">2,001 – 2,500 cc</span><input type="number" id="p_car75000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="২,৫০১ – ৩,০০০">2,501 – 3,000 cc</span><input type="number" id="p_car150000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="৩,০০১ – ৩,৫০০">3,001 – 3,500 cc</span><input type="number" id="p_car200000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="৩,৫০০ সিসির বেশি">Above 3,500 cc</span><input type="number" id="p_car350000" min="0" step="1" placeholder="0"></div>
+            <div class="car"><span data-bn="বৈদ্যুতিক">Electric</span><input type="number" id="p_car0" min="0" step="1" placeholder="0"></div>
+          </div>
         </div>
       </div>
       <label class="check"><input type="checkbox" id="p_bigHouse"><span data-bn="আমার নামে ৮,০০০ বর্গফুটের বেশি আয়তনের বাড়ি বা ফ্ল্যাট আছে">I own house property with an aggregate area above 8,000 sq ft</span></label>
@@ -1235,7 +1269,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
           <tr><td data-bn="প্রতিবন্ধী ব্যক্তির জন্য আইনে নির্ধারিত প্রবেশগম্যতা না রাখা শিক্ষাপ্রতিষ্ঠান">Educational institutions without required disability access</td><td class="num" data-bn="২.৫%">2.5%</td></tr>
         </tbody>
       </table></div>
-      <p class="srcs" data-bn="সারচার্জ বসে সাধারণ করের উপর; চূড়ান্ত নিষ্পত্তির কর এই ভিত্তির বাইরে থাকে। করবর্ষ ২০২৬-২৭ থেকে ন্যূনতম করও এর মধ্যে ধরা হয় না। প্রথম গাড়ির পর প্রতিটি গাড়িতে ২৫,০০০ থেকে ৩,৫০,০০০ টাকা পরিবেশ সারচার্জ লাগে; বাড়তি গাড়িগুলোর মধ্যে সর্বোচ্চ ইঞ্জিন-ক্ষমতার হারটি প্রতিটি বাড়তি গাড়ির জন্য ব্যবহৃত হয়। এটি নিবন্ধন বা ফিটনেস নবায়নের সময় দিতে হয় এবং ফেরত বা সমন্বয়যোগ্য নয়, তাই এখানে স্মারক হিসেবে দেখানো হয়েছে।">The surcharge is charged on regular tax; final-settlement taxes stay outside the base. From AY 2026-27 minimum tax is also excluded. Environmental surcharge of Tk 25,000 to Tk 3,50,000 applies to each car beyond the first, using the highest engine-capacity band among those additional cars for every such car. It is paid at registration or fitness renewal and is neither refundable nor adjustable, so it is shown as a memorandum only.</p>
+      <p class="srcs" data-bn="সারচার্জ বসে সাধারণ করের উপর; চূড়ান্ত নিষ্পত্তির কর এই ভিত্তির বাইরে থাকে। করবর্ষ ২০২৬-২৭ থেকে ন্যূনতম করও এর মধ্যে ধরা হয় না। প্রথম গাড়ির পর প্রতিটি গাড়িতে ২৫,০০০ থেকে ৩,৫০,০০০ টাকা পরিবেশ সারচার্জ প্রতিটি গাড়ির ইঞ্জিন ক্ষমতা অনুযায়ী আলাদা করে হিসাব হয়। একাধিক গাড়ি থাকলে সবচেয়ে কম সারচার্জের গাড়িটি অব্যাহতি পায়, বাকি প্রতিটি নিজের ধাপ অনুযায়ী। এটি নিবন্ধন বা ফিটনেস নবায়নের সময় দিতে হয় এবং ফেরত বা সমন্বয়যোগ্য নয়, তাই এখানে স্মারক হিসেবে দেখানো হয়েছে।">The surcharge is charged on regular tax; final-settlement taxes stay outside the base. From AY 2026-27 minimum tax is also excluded. Environmental surcharge of Tk 25,000 to Tk 3,50,000 is charged per vehicle by engine capacity. Where someone owns more than one, the vehicle attracting the lowest surcharge is exempt and every other is charged at its own band. It is paid at registration or fitness renewal and is neither refundable nor adjustable, so it is shown as a memorandum only.</p>
     </div>
 
     <div class="ref-card a-relief">
@@ -1301,7 +1335,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
   <div class="disclaimer">
     <p data-bn="<b>কোনো অঙ্কের উপর ভরসা করার আগে এটুকু পড়ুন।</b> এটি শুধু হিসাব মেলানোর একটি সহায়ক — আইনি, কর, আর্থিক, বিনিয়োগ বা হিসাবরক্ষণ বিষয়ক পরামর্শ নয়, আর পরামর্শ হিসেবে ব্যবহারও করা যাবে না। এখানকার কিছুই সঞ্চয়পত্র, ডিপিএস, শেয়ার, মিউচুয়াল ফান্ড, জীবন বিমা বা অন্য কোনো পণ্য কেনার সুপারিশ নয়; কর রেয়াত পাওয়া যায় বলেই কোনো বিনিয়োগ আপনার জন্য ঠিক — এমনটা ভাবার কারণ নেই।"><b>Read this before you rely on a number.</b> This is a computation aid. It is not legal, tax, financial, investment or accounting advice, and must not be relied on as such. Nothing here is a recommendation to buy or hold any savings certificate, DPS, share, mutual fund, insurance policy or other product; the fact that an investment attracts a rebate does not make it suitable for you.</p>
     <p data-bn="যেসব তথ্যের উপর কঠিন সিদ্ধান্তগুলো নির্ভর করে, সেগুলো এই পাতা দেখতে পায় না — আপনি নিবাসী কি না, কোনো প্রাপ্তি আসলে কোন ধরনের আয়, কোনো খরচ বাদ দেওয়া যাবে কি না, বা কোনো নির্দিষ্ট এসআরও আপনার বেলায় কীভাবে খাটবে। কয়েকটি বিষয় ইচ্ছে করেই সরল রাখা হয়েছে: অংশীদারি ফার্মের মুনাফার ভাগ, বিদেশে দেওয়া করের ক্রেডিট, বছরের পর বছর লোকসান সমন্বয় ও জের টানা, কম হারে করযোগ্য আয়ের সঙ্গে রেয়াতের সম্পর্ক, তামাকজাত পণ্য উৎপাদনকারী ব্যক্তির ৪৫% হার ও ২.৫% সারচার্জ, এবং করমুক্ত বা কম-হারের প্রাপ্তিতে টার্নওভার করের আনুপাতিক সমন্বয় এখানে ধরা হয়নি।">It cannot see the facts that decide hard cases — residential status, what kind of income a receipt really is, whether an expense is admissible, or how a particular SRO applies to you. Several provisions are simplified: partnership share of profit, foreign tax credit, set-off and carry-forward of losses across years, the interaction of reduced-rate income with the rebate, the 45% rate and 2.5% surcharge on an individual manufacturing tobacco products, and the proportional scaling of turnover tax where receipts are exempt or taxed at a reduced rate are not modelled.</p>
-    <p data-bn="৬ আগস্ট ২০২৬ পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে সর্বশেষ এনবিআর উপকরণের সঙ্গে মিলিয়ে নিন এবং প্রয়োজনে যোগ্য পরামর্শ নিন।">Checked to 6 August 2026 against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — verify against current NBR material, and take qualified advice, before you file.</p>
+    <p data-bn="১০ আগস্ট ২০২৬ পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে সর্বশেষ এনবিআর উপকরণের সঙ্গে মিলিয়ে নিন এবং প্রয়োজনে যোগ্য পরামর্শ নিন।">Checked to 10 August 2026 against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — verify against current NBR material, and take qualified advice, before you file.</p>
   </div>
 
 </section>
@@ -1344,10 +1378,19 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
       </ul>
       <div class="vers">
         <span><b data-bn="প্রকাশ">Created</b> <span data-bn="জুলাই ২০২৬">July 2026</span></span>
-        <span><b data-bn="সর্বশেষ পরিবর্তন">Last updated</b> <span data-bn="৬ আগস্ট ২০২৬">6 August 2026</span></span>
+        <span><b data-bn="সর্বশেষ পরিবর্তন">Last updated</b> <span data-bn="১০ আগস্ট ২০২৬">10 August 2026</span></span>
       </div>
     </div>
   </div>
+
+  <a class="all-calc" id="allCalc" href="./">
+    <span class="ac-ic" aria-hidden="true">৳</span>
+    <span class="ac-tx">
+      <b data-bn="সব ক্যালকুলেটর দেখুন">See all calculators</b>
+      <span data-bn="বাংলাদেশের কর ও অর্থের জন্য আরও কিছু হিসাবের সহায়ক">More tools for tax and money matters in Bangladesh</span>
+    </span>
+    <svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 4.6 20.6 12l-7.4 7.4-1.7-1.7 4.5-4.5H3.4v-2.4h12.6l-4.5-4.5z"/></svg>
+  </a>
 </section>
 
 <div class="mobile-bar">
@@ -1485,10 +1528,10 @@ const RULE_DEFAULTS = {
      as non-refundable minimum tax. Only ss.138 and 139 collections, and
      withholding from persons exempt from filing under s.166(2), stay final.
      Advance tax on a private car under s.153 is therefore now adjustable and
-     refundable. Dividend is the one item still settled finally, at 15%. */
-  /* Nothing in Part 7 is barred from refund for an individual from AY 2026-27.
-     Dividend is withheld under s.117, which is not among the ss.138/139 final
-     collections, so an excess is refundable or adjustable like any other. */
+     refundable, and so is dividend withholding under s.117 — dividend carries a
+     flat 15% rate, but that is a rate rule, not a final-settlement rule, so an
+     excess deduction still comes back. Nothing in Part 7 is barred from refund
+     for an individual from AY 2026-27. */
   nonRefundableCredits: [],
   /* The Finance Act 2026 took capital gains on the transfer of property out of
      the final-tax net, so the s.125 collection at deed registration is now an
@@ -1584,7 +1627,8 @@ const T = {
   manualRefund:["Refund requires assessment — another income head is present","ফেরতের জন্য কর নির্ধারণ লাগবে — অন্য খাতের আয় আছে"],
   s125NoGain:["Section 125 tax entered without a matching gain held over five years — check the entry","পাঁচ বছরের বেশি রাখা সম্পদের মুনাফা ছাড়াই ধারা ১২৫-এর কর লেখা হয়েছে — ঘরটি মিলিয়ে দেখুন"],
   finalOnly:["Tax shown arises only from final-settlement income; the minimum tax test looks at total income","দেখানো কর কেবল চূড়ান্ত নিষ্পত্তির আয় থেকে; ন্যূনতম কর যাচাই হয় মোট আয়ের উপর"],
-  advApplies:["Advance tax likely applies — check against your last assessed income","অগ্রিম কর সম্ভবত প্রযোজ্য — সর্বশেষ নির্ধারিত আয়ের সঙ্গে মিলিয়ে নিন"],
+  advApplies:["Quarterly advance tax applies under section 154","ধারা ১৫৪ অনুযায়ী ত্রৈমাসিক অগ্রিম কর প্রযোজ্য"],
+  advNoTest:["Advance tax — enter your latest assessed income to test this","অগ্রিম কর — যাচাই করতে সর্বশেষ নিরূপিত আয় লিখুন"],
   agriRejected:["Agricultural allowance not applied — the stated source conditions are not met","কৃষি ছাড় প্রয়োগ হয়নি — ঘোষিত আয়ের উৎসের শর্ত পূরণ হয়নি"],
   lifeMissing:["Life-insurance premium excluded — enter the sum assured and apply the cap per policy","জীবন বিমার প্রিমিয়াম বাদ গেছে — বিমা অঙ্ক লিখুন এবং প্রতিটি পলিসিতে আলাদা সীমা প্রয়োগ করুন"],
   yes:["yes","হ্যাঁ"],
@@ -1897,7 +1941,17 @@ function compute(){
     ? Math.max(0, turnoverMin - taxOnBusiness) : 0;
 
   const netWealth = nn("p_netWealth");
-  const cars = whole("p_cars", 0);
+  /* Build the fleet as a list of per-vehicle surcharges, drop the cheapest —
+     the Act exempts the vehicle attracting the lowest charge, not "the first"
+     one — and charge every other at its own band. */
+  const CAR_BANDS = [0, 25000, 50000, 75000, 150000, 200000, 350000];
+  const fleet = [];
+  CAR_BANDS.forEach(function(rate){
+    const n = whole("p_car" + rate, 0);
+    for (let i = 0; i < n; i++) fleet.push(rate);
+  });
+  fleet.sort(function(a, b){ return a - b; });
+  const cars = fleet.length;
   let scRate = 0, scKey = "";
   if (netWealth > 500000000){ scRate = 0.35; scKey = "scW50"; }
   else if (netWealth > 200000000){ scRate = 0.30; scKey = "scW20"; }
@@ -1908,7 +1962,8 @@ function compute(){
   const surchargeBase = cfg.surchargeIncludesMinTax ? netRegular : afterRebate;
   out.surcharge = {rate: scRate, key: scKey, base: surchargeBase,
                    amount: Math.round(surchargeBase * scRate)};
-  out.envSurcharge = cars > 1 ? (cars - 1) * (parseFloat(val("p_carCC")) || 0) : 0;
+  out.envSurcharge = fleet.slice(1).reduce(function(a, b){ return a + b; }, 0);
+  out.fleet = fleet;
 
   const totalTax = netRegular + finalTaxes + out.surcharge.amount;
   out.totalTax = totalTax;
@@ -1992,8 +2047,18 @@ function compute(){
   out.advanceThreshold = firstAssessment && cfg.advanceFirstTimeThreshold
     ? cfg.advanceFirstTimeThreshold : cfg.advanceTaxThreshold;
   out.advanceFirstTime = firstAssessment;
-  out.needsAdvanceTax = !hasCapitalGain && !hasOneTimeReceipt && !cultivationOnly &&
-                        totalIncome > out.advanceThreshold;
+  /* s.154 tests a continuing taxpayer against the income of the latest assessed
+     year, not against the year being computed here — the two can point opposite
+     ways, so the calculator asks for that figure rather than substituting this
+     year's. Left blank, the test cannot be run and the memo says so instead of
+     guessing. A first-time filer has no assessed year, so the estimate for the
+     current year is the right input for them. */
+  const lastAssessed = nn("p_lastAssessed");
+  const testIncome = firstAssessment ? totalIncome : lastAssessed;
+  out.advanceTested = firstAssessment || lastAssessed > 0;
+  out.advanceBasis = firstAssessment ? "estimate" : "assessed";
+  out.needsAdvanceTax = out.advanceTested && !hasCapitalGain && !hasOneTimeReceipt &&
+                        !cultivationOnly && testIncome > out.advanceThreshold;
   out.advanceException = hasCapitalGain ? "capital" : hasOneTimeReceipt ? "nonRecurring" : cultivationOnly ? "cultivation" : "";
   return out;
 }
@@ -2177,6 +2242,7 @@ function render(){
   if (r.agri.claimed && !r.agri.eligible) h += row(t("agriRejected"), t("yes"), "muted");
   if (r.investment.lifeMissing) h += row(t("lifeMissing"), t("yes"), "muted");
   if (r.needsAdvanceTax) h += row(t("advApplies"), t("yes"), "muted");
+  else if (!r.advanceTested) h += row(t("advNoTest"), "—", "muted");
   h += row(t("perMonth"), tk(r.grandTotal / 12), "muted");
   h += row(t("effRate"), pc(r.effectiveRate.toFixed(2)), "muted");
 
@@ -2262,7 +2328,7 @@ function pdFigures(){
       } else {
         const v = parseFloat(el.value);
         if (!isFinite(v) || v === 0) return;
-        const plain = ["p_disabledKids","p_cars","e_carMonths","r_salamiYears"].indexOf(el.id) >= 0;
+        const plain = ["p_disabledKids","e_carMonths","r_salamiYears"].indexOf(el.id) >= 0 || /^p_car\d+$/.test(el.id);
         rows += '<tr><td>' + esc(name) + '</td><td class="pd-v">' +
                 (plain ? group(v) : tk(v)) + '</td></tr>';
       }
@@ -2361,6 +2427,8 @@ function syncYearUI(){
      as though it did something, so it comes out of the form entirely. */
   $("locWrap").style.display = cfg.minTax.mode === "location" ? "" : "none";
   $("firstWrap").style.display = cfg.minTax.mode === "flat" ? "" : "none";
+  /* Only a continuing taxpayer has an assessed year to look back on. */
+  $("lastAssessedWrap").style.display = val("p_first") === "first" ? "none" : "";
   $("fileWindowWrap").style.display = cfg.filingCalendar ? "" : "none";
   $("goldWrap").style.display = cfg.goldCG ? "" : "none";
 
@@ -2518,7 +2586,6 @@ function fillSample(){
 
   /* Withholding on salary, roughly what a payroll office would deduct. */
   $("p_netWealth").value = Math.round(gross * rnd(3, 9, 1) / 100000) * 100000;
-  $("p_cars").value = 0;
 
   document.querySelectorAll("select").forEach(function(s){
     if (s.id !== "ay")
@@ -2603,24 +2670,71 @@ function fillSample(){
   setLang(wanted === "bn" ? "bn" : "en");
   langBtns.forEach(function(b){ b.addEventListener("click", function(){ setLang(b.dataset.lang); }); });
 
-  $("sampleBtn").addEventListener("click", fillSample);
+  $("sampleBtn").addEventListener("click", function(){ pushHistory(); fillSample(); });
   /* One action: the browser's own print dialogue, where "Save as PDF" is the
      default destination on every desktop platform and "Print" reaches a
      printer. Labelling it Save with a download mark matches what almost
      everyone actually does with it. */
   $("printBtn").addEventListener("click", function(){ buildPrintDoc(); window.print(); });
   window.addEventListener("beforeprint", buildPrintDoc);
-  $("resetBtn").addEventListener("click", function(){
+  /* Clearing a long return by accident is worth guarding against, but a
+     confirmation dialogue asks the question before anyone knows they made a
+     mistake. The reset is simply reversible instead: every field is captured
+     first, and for the next fifteen seconds the same button offers the undo.
+     If the window lapses, or anything is typed, the snapshot is dropped and
+     the button goes back to being a reset. */
+  /* Undo covers the two actions the browser cannot take back: clearing the
+     form, and overwriting it with sample figures. Typing is deliberately left
+     alone — every field already has the browser's own undo on Ctrl+Z, and
+     shadowing that with a custom history would step through the form one
+     character at a time and fight a shortcut people already rely on. The
+     stack holds the last few bulk changes, so several in a row all reverse. */
+  const undoBtn = $("undoBtn"), resetBtn = $("resetBtn");
+  const history = [];
+
+  function snapshot(){
+    const v = {};
+    document.querySelectorAll("input, select").forEach(function(el){
+      if (!el.id || el.id === "ay") return;
+      v[el.id] = (el.type === "checkbox") ? el.checked : el.value;
+    });
+    return v;
+  }
+  function pushHistory(){
+    history.push(snapshot());
+    if (history.length > 10) history.shift();
+    undoBtn.disabled = false;
+  }
+  function restore(v){
+    Object.keys(v).forEach(function(id){
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === "checkbox") el.checked = v[id]; else el.value = v[id];
+    });
+    syncYearUI(); render();
+  }
+  undoBtn.addEventListener("click", function(){
+    if (!history.length) return;
+    restore(history.pop());
+    undoBtn.disabled = history.length === 0;
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  function clearAll(){
     document.querySelectorAll("input").forEach(function(i){
       if (i.type === "checkbox") i.checked = false;
       else if (i.id === "e_carMonths") i.value = 12;
       else if (i.id === "r_salamiYears") i.value = 5;
-      else if (i.id === "p_disabledKids" || i.id === "p_cars") i.value = 0;
+      else if (i.id === "p_disabledKids") i.value = 0;
       else i.value = "";
     });
     document.querySelectorAll("select").forEach(function(s){
       if (s.id !== "ay") s.selectedIndex = (s.id === "p_window") ? 1 : 0;
     });
+  }
+  resetBtn.addEventListener("click", function(){
+    pushHistory();
+    clearAll();
     syncYearUI(); render();
     window.scrollTo({top:0, behavior:"smooth"});
   });
@@ -2687,7 +2801,7 @@ function fillSample(){
 
   document.addEventListener("input", render);
   document.addEventListener("change", function(e){
-    if (e.target && (e.target.id === "ay" || e.target.id === "b_turnoverType")) syncYearUI();
+    if (e.target && (e.target.id === "ay" || e.target.id === "b_turnoverType" || e.target.id === "p_first")) syncYearUI();
     render();
   });
 
@@ -2708,6 +2822,11 @@ function fillSample(){
      is never lost to a stray click. Applied after each language swap too,
      since the reference text is re-injected from its translation. */
   function markExternalLinks(){
+    const hubHref = (LANG === "bn") ? "./?lang=bn" : "./";
+    ["hubLink","allCalc"].forEach(function(id){
+      const el = document.getElementById(id);
+      if (el) el.setAttribute("href", hubHref);
+    });
     document.querySelectorAll('a[href^="http"]').forEach(function(a){
       if (a.hostname && a.hostname !== location.hostname){
         a.target = "_blank";
