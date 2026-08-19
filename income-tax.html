@@ -45,7 +45,7 @@
       "inLanguage": ["en", "bn"],
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BDT" },
-      "description": "A head-by-head income tax computation for individual taxpayers in Bangladesh for assessment year 2026-27, under the Income Tax Act 2023 as amended by the Finance Act 2026. Covers the seven heads of income, the investment rebate under section 78, minimum tax and the wealth surcharge, and cites the rule behind every line.",
+      "description": "A head-by-head income tax computation for individual taxpayers in Bangladesh for assessment year 2026-27, under the Income Tax Act 2023 as amended by the Finance Act 2026. Covers the seven heads of income, the investment rebate under section 78, minimum tax and the wealth surcharge, with reference notes setting out the provisions behind each head.",
       "featureList": [
         "Seven heads of income computed separately",
         "Investment rebate under section 78",
@@ -498,7 +498,8 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 .srcs{font-size:12.5px;color:var(--ink-3);margin-top:9px;line-height:1.65}
 .disclaimer{margin-top:20px;background:var(--relief-soft);border:1px solid var(--relief-line);border-left:3px solid var(--relief);border-radius:var(--radius);padding:16px 20px;font-size:13.2px;color:var(--ink)}
 .disclaimer b{font-family:var(--font-display);color:var(--relief)}
-.disclaimer p{margin:0 0 9px} .disclaimer p:last-child{margin-bottom:0}
+.disclaimer p{margin:0 0 9px}
+ .disclaimer p:last-child{margin-bottom:0}
 
 /* ---------- Colophon ---------- */
 .colophon{max-width:1360px;margin:0 auto;padding:0 22px 56px}
@@ -555,27 +556,26 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 .vers{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;gap:16px;flex-wrap:wrap}
 .vers b{color:var(--ink-2);font-weight:600}
 /* A way back to the index, at the point where someone has finished reading. */
-/* This sits at the very end of a long page, after the disclaimer and the
-   privacy note, and it is only a way back to the other calculators — not a
-   call to action. As a raised card with a filled seal and a drop shadow it
-   competed with the computation for attention and read like an advertisement
-   bolted to the foot of the page. It is now a quiet rule with a line of text
-   above it: the same link, the same target, at the weight the content
-   deserves. Hover moves the arrow and darkens the text, and nothing lifts. */
-.all-calc{display:flex;align-items:baseline;gap:10px;margin-top:26px;padding:15px 2px 0;
-          text-decoration:none;color:var(--ink-2);background:none;
-          border:0;border-top:1px solid var(--line);border-radius:0;
-          transition:color .16s ease}
-.all-calc:hover{color:var(--brand)}
-.ac-ic{flex:none;color:var(--brand);font-family:var(--font-display);
-       font-size:15px;font-weight:600;line-height:1.4;opacity:.85}
-.ac-tx{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0}
-.ac-tx b{font-family:var(--font-display);font-size:14.5px;font-weight:600;letter-spacing:-.01em;color:inherit}
-.ac-tx span{font-size:12.5px;color:var(--ink-3);line-height:1.45}
-.ac-go{width:15px;height:15px;fill:currentColor;flex:none;margin-left:auto;
-       align-self:center;transition:transform .16s ease}
-.all-calc:hover .ac-go{transform:translateX(3px)}
-@media (max-width:520px){.all-calc{gap:8px}.ac-tx b{font-size:14px}.ac-tx span{width:100%}}
+/* A way back to the other tools, sitting after the disclaimer at the very end
+   of a long page. It is not a call to action, so it does not get a card, a
+   shadow, or a filled seal — those made it read like an advertisement bolted to
+   the foot of the document. What is left is a centred link on a hairline rule,
+   sized like body text: findable when looked for, silent otherwise. The arrow
+   slides on hover, which is the only movement it needs. */
+.pill{display:inline-flex;align-items:center;gap:7px;margin:0;padding:7px 16px;
+          text-decoration:none;color:var(--ink-3);background:none;border:0;border-radius:999px;
+          font-family:var(--font-display);font-size:13.5px;font-weight:600;letter-spacing:-.01em;
+          transition:color .16s ease,background-color .16s ease}
+.pill:hover{color:var(--brand);background:var(--surface-2,rgba(0,0,0,.03))}
+.pill b{font-weight:inherit;font-size:inherit}
+.pill-ic{width:14px;height:14px;fill:currentColor;flex:none;transition:transform .16s ease}
+.pill:hover .pill-ic{transform:translateX(3px)}
+.pill-row{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:2px 4px;
+          border-top:1px solid var(--line);margin-top:30px;padding-top:26px}
+/* The share control is a button, not a link, so it needs the anchor's reset. */
+button.pill{font:inherit;font-family:var(--font-display);font-size:13.5px;font-weight:600;cursor:pointer}
+.pill-ic-lead{margin-right:-1px;transform:none}
+.pill:hover .pill-ic-lead{transform:none}
 
 /* mobile running total */
 .mobile-bar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--sheet-head);color:var(--sheet-head-ink);padding:9px 20px;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 -4px 20px rgba(0,0,0,.22)}
@@ -817,6 +817,10 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
         <button type="button" class="seg-b" id="undoBtn" disabled data-bn-title="শেষ পরিবর্তন ফিরিয়ে আনুন" title="Undo the last reset or sample fill" aria-label="Undo the last reset or sample fill">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h11.5a4.5 4.5 0 0 1 0 9H9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.6 5.2 3.6 9l4 3.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </div>
+      <button class="btn" id="shareBtn" type="button" data-bn-title="এই পাতাটির লিংক শেয়ার করুন" title="Share a link to this page">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="btn-ic"><circle cx="18" cy="5.4" r="2.7" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="6" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="18" cy="18.6" r="2.7" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8.4 10.7 15.6 6.7M8.4 13.3l7.2 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span data-bn="শেয়ার" id="shareLabel">Share</span>
+      </button>
       <button class="btn accent" id="printBtn" type="button" data-bn-title="রিপোর্ট সংরক্ষণ বা প্রিন্ট" title="Save or print the report">
         <svg viewBox="0 0 24 24" aria-hidden="true" class="btn-ic"><path d="M12 3v11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.6 10.2L12 14.6l4.4-4.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.8 16.4v2.9a1.7 1.7 0 0 0 1.7 1.7h13a1.7 1.7 0 0 0 1.7-1.7v-2.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         <span data-bn="সংরক্ষণ">Save</span>
@@ -838,7 +842,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 <main>
   <div class="lede">
     <h2 data-bn="আয়ের উৎস অনুযায়ী ধাপে ধাপে হিসাব করুন">Work through the return, head by head</h2>
-    <p data-bn="আয়বর্ষে আপনি যা যা পেয়েছেন, তা এখানে লিখুন। লেখার সঙ্গে সঙ্গেই হিসাব বদলে যাবে, আর প্রতিটি লাইনে কোন নিয়ম থেকে অঙ্কটা এল তা দেখানো থাকবে — ফলে নিজের রিটার্নের সঙ্গে মিলিয়ে নিতে পারবেন।">Enter what you received during the income year. The computation updates as you type, and every line shows the rule it comes from — so you can check the arithmetic against your own return.</p>
+    <p data-bn="আয়বর্ষে আপনি যা যা পেয়েছেন, তা এখানে লিখুন। লেখার সঙ্গে সঙ্গেই হিসাব বদলে যাবে, আর প্রতিটি খাতের পেছনের বিধানগুলো রেফারেন্স নোটে দেওয়া আছে — ফলে নিজের রিটার্নের সঙ্গে মিলিয়ে নিতে পারবেন।">Enter what you received during the income year. The computation updates as you type, and the reference notes set out the provisions behind each head — so you can check the arithmetic against your own return.</p>
   </div>
 
   <!-- A · Profile -->
@@ -864,7 +868,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
         <div class="f">
           <label for="p_residence"><span data-bn="আপনি নিবাসী না অনিবাসী">Residential status</span></label>
           <select id="p_residence">
-            <option value="resident" data-bn="নিবাসী (বছরের বেশির ভাগ সময় দেশে ছিলেন)">Resident</option>
+            <option value="resident" data-bn="নিবাসী — আয়বর্ষে ১৮৩ দিন, অথবা ৯০ দিন সহ আগের চার বছরে ৩৬৫ দিন">Resident — 183 days, or 90 days plus 365 over the preceding four years</option>
             <option value="nrb" data-bn="অনিবাসী, তবে বাংলাদেশি নাগরিক">Non-resident Bangladeshi citizen</option>
             <option value="nrForeign" data-bn="অনিবাসী বিদেশি নাগরিক">Non-resident, not a Bangladeshi citizen</option>
           </select>
@@ -904,6 +908,9 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
           </select>
         </div>
       </div>
+
+      <div class="note" data-bn="<b>নিবাসী</b> — ধারা ২ এর দুটি শর্তের যেকোনো একটি: আয়বর্ষে ১৮৩ দিন বা তার বেশি দেশে থাকা, অথবা ওই বছরে ৯০ দিনের সঙ্গে আগের চার বছরে মোট ৩৬৫ দিন। তাই বছরের বেশির ভাগ সময় বাইরে থেকেও কেউ নিবাসী হতে পারেন। নিবাসীর বৈশ্বিক আয় আর অনিবাসীর বাংলাদেশ-উৎসের আয় করযোগ্য — এই পার্থক্য এখানে আলাদা করে ধরা হয়নি, তাই কেবল করযোগ্য অঙ্কগুলোই লিখুন।"><b>Residence</b> follows either test in section 2: 183 days or more in Bangladesh during the income year, or 90 days or more in that year plus 365 days across the four preceding years — so you can be resident despite spending most of the year abroad. This page does not vary the territorial scope of income by residence: a resident is charged on worldwide income, a non-resident on Bangladesh-source or Bangladesh-received income. Enter only the amounts chargeable in your case.</div>
+      <div class="note" data-bn="<b>বিদেশ থেকে রিটার্ন</b> — ধারা ২ এর ‘করদিবস’ সংজ্ঞা অনুযায়ী বিদেশে অবস্থানরত স্বাভাবিক ব্যক্তির করদিবস বাংলাদেশে ফেরার দিন থেকে ৯০তম দিন, যদি তিনি উচ্চশিক্ষার ছুটিতে, প্রেষণে বা লিয়েনে, অথবা বৈধ ভিসা ও পারমিট নিয়ে উপার্জনের জন্য বিদেশে থাকেন। নির্দিষ্ট তারিখের আগে লিখিত আবেদনে কর কমিশনার আরও সর্বোচ্চ ৯০ দিন দিতে পারেন, আর দিনটি সরকারি ছুটিতে পড়লে পরবর্তী কার্যদিবস। উপরের সময়সীমাগুলো এসব ধরে না — তাই এমন ক্ষেত্রে দেরির জরিমানা বেশি দেখাবে।"><b>Filing from abroad</b> — the definition of Tax Day in section 2 gives a natural person residing abroad the 90th day from the day of return to Bangladesh, where that person is on leave for higher education, on deputation or lien, or holds a valid visa and permit to earn. The Commissioner may allow a further 90 days on written application made before the due date, and a Tax Day falling on a public holiday moves to the next working day. The fixed windows above model none of these, so the late-filing charge will read high in such a case.</div>
 
       <div class="subhead" data-bn="নিট সম্পদ ও সম্পত্তি — সারচার্জের হিসাবের জন্য">Net wealth and assets — for surcharge</div>
       <div class="grid">
@@ -987,6 +994,7 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
       <div class="grid">
         <div class="f"><label for="r_rent" data-bn="সারা বছরে পাওয়া বা পাওনা ভাড়া">Annual rent received or receivable</label><div class="money"><input type="number" id="r_rent" min="0" step="1" placeholder="0"></div></div>
         <div class="f"><label for="r_tenantCharge" data-bn="ভাড়াটিয়া নিজে যে সেবা, মেরামত বা রক্ষণাবেক্ষণ খরচ দিয়েছেন">Service, repair or maintenance charges borne by the tenant</label><div class="money"><input type="number" id="r_tenantCharge" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_annual"><span data-bn="বার্ষিক মূল্য">Annual value</span> <span class="hint" data-bn="খালি রাখলে পাওয়া ভাড়াই ধরা হবে">leave blank to use the rent above</span></label><div class="money"><input type="number" id="r_annual" min="0" step="1" placeholder="0"></div></div>
         <div class="f"><label for="r_vacancy"><span data-bn="খালি থাকার ছাড়">Vacancy allowance</span> <span class="hint" data-bn="বিদ্যুৎ বিল দেখাতে হবে">needs utility bills</span></label><div class="money"><input type="number" id="r_vacancy" min="0" step="1" placeholder="0"></div></div>
         <div class="f">
           <label for="r_use" data-bn="সম্পত্তিটি কী কাজে ভাড়া দেওয়া">Use of the property</label>
@@ -1004,16 +1012,9 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
       </div>
       <div class="subhead" data-bn="বিশেষ ভাড়া আয় — অগ্রিম ও সালামি">Special rental income — advances and premiums</div>
       <div class="grid">
-        <div class="f"><label for="r_advNonBank"><span data-bn="ব্যাংক ট্রান্সফার ছাড়া নেওয়া সমন্বয়যোগ্য অগ্রিম, এই বছরে">Adjustable advance taken this year otherwise than by bank transfer</span> <span class="hint" data-bn="মোট ৫ লক্ষ টাকা ছাড়ালে পুরোটাই আয়">whole amount is income if the total exceeds Tk 5 lakh</span></label><div class="money"><input type="number" id="r_advNonBank" min="0" step="1" placeholder="0"></div></div>
-        <div class="f"><label for="r_advUnadjusted"><span data-bn="মেয়াদ শেষেও সমন্বয় হয়নি এমন অগ্রিম">Advance still unadjusted after the permitted period</span> <span class="hint" data-bn="৫ বছর বা চুক্তির মেয়াদ, যেটি কম">five years or the contract term, whichever is shorter</span></label><div class="money"><input type="number" id="r_advUnadjusted" min="0" step="1" placeholder="0"></div></div>
-        <div class="f"><label for="r_salami"><span data-bn="ফেরত দিতে হবে না এমন অগ্রিম">Non-adjustable advance received</span> <span class="hint" data-bn="সালামি বা প্রিমিয়াম, যে নামেই হোক">salami or premium, whatever called</span></label><div class="money"><input type="number" id="r_salami" min="0" step="1" placeholder="0"></div></div>
-        <div class="f">
-          <label for="r_salamiSpread" data-bn="ওই অগ্রিম কীভাবে ধরবেন">How to bring that advance in</label>
-          <select id="r_salamiSpread">
-            <option value="spread5" data-bn="প্রাপ্তির বছর ও পরের ৪ বছরে সমান ভাগে">Equal fifths, over the year of receipt and the next four</option>
-            <option value="full" data-bn="পুরোটাই প্রাপ্তির বছরে">All of it in the year of receipt</option>
-          </select>
-        </div>
+        <div class="f"><label for="r_deposit" data-bn="ফেরতযোগ্য বা সমন্বয়যোগ্য জামানত ও অগ্রিমের বছর শেষের স্থিতি">Year-end balance of refundable or adjustable deposits and advances</label><div class="money"><input type="number" id="r_deposit" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_salami"><span data-bn="ফেরত দিতে হবে না এমন অঙ্ক">Non-refundable amount received</span> <span class="hint" data-bn="সালামি, প্রিমিয়াম, যে নামেই হোক">salami or premium, however called</span></label><div class="money"><input type="number" id="r_salami" min="0" step="1" placeholder="0"></div></div>
+        <div class="f"><label for="r_salamiYears"><span data-bn="লিজ বা ভাড়ার মেয়াদ, বছরে">Lease or rental term in years</span> <span class="hint" data-bn="এই মেয়াদ বা ৫ বছর, যেটি কম, তত ভাগে">spread over this or 5 years, whichever is less</span></label><input type="number" id="r_salamiYears" min="1" max="99" step="1" value="5"></div>
         <div class="f"><label for="r_advRefund"><span data-bn="আগের বছরের অগ্রিম এই বছরে ফেরত দেওয়া হয়েছে">Advance from an earlier year refunded this year</span> <span class="hint" data-bn="ভাড়া থেকে আয় থেকে বিয়োজনযোগ্য">deductible from income from rent</span></label><div class="money"><input type="number" id="r_advRefund" min="0" step="1" placeholder="0"></div></div>
       </div>
       <div class="note relief" id="rentAdvNote"></div>
@@ -1353,7 +1354,8 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
 
   <div class="disclaimer">
     <p data-bn="<b>কোনো অঙ্কের উপর ভরসা করার আগে এটুকু পড়ুন।</b> এটি শুধু হিসাব মেলানোর একটি সহায়ক — আইনি, কর, আর্থিক, বিনিয়োগ বা হিসাবরক্ষণ বিষয়ক পরামর্শ নয়, আর পরামর্শ হিসেবে ব্যবহারও করা যাবে না। এখানকার কিছুই সঞ্চয়পত্র, ডিপিএস, শেয়ার, মিউচুয়াল ফান্ড, জীবন বিমা বা অন্য কোনো পণ্য কেনার সুপারিশ নয়; কর রেয়াত পাওয়া যায় বলেই কোনো বিনিয়োগ আপনার জন্য ঠিক — এমনটা ভাবার কারণ নেই।"><b>Read this before you rely on a number.</b> This is a computation aid. It is not legal, tax, financial, investment or accounting advice, and must not be relied on as such. Nothing here is a recommendation to buy or hold any savings certificate, DPS, share, mutual fund, insurance policy or other product; the fact that an investment attracts a rebate does not make it suitable for you.</p>
-    <p data-bn="যেসব তথ্যের উপর কঠিন সিদ্ধান্তগুলো নির্ভর করে, সেগুলো এই পাতা দেখতে পায় না — আপনি নিবাসী কি না, কোনো প্রাপ্তি আসলে কোন ধরনের আয়, কোনো খরচ বাদ দেওয়া যাবে কি না, বা কোনো নির্দিষ্ট এসআরও আপনার বেলায় কীভাবে খাটবে। কয়েকটি বিষয় ইচ্ছে করেই সরল রাখা হয়েছে: অংশীদারি ফার্মের মুনাফার ভাগ, বিদেশে দেওয়া করের ক্রেডিট, বছরের পর বছর লোকসান সমন্বয় ও জের টানা, কম হারে করযোগ্য আয়ের সঙ্গে রেয়াতের সম্পর্ক, তামাকজাত পণ্য উৎপাদনকারী ব্যক্তির ৪৫% হার ও ২.৫% সারচার্জ, এবং করমুক্ত বা কম-হারের প্রাপ্তিতে টার্নওভার করের আনুপাতিক সমন্বয় এখানে ধরা হয়নি।">It cannot see the facts that decide hard cases — residential status, what kind of income a receipt really is, whether an expense is admissible, or how a particular SRO applies to you. Several provisions are simplified: partnership share of profit, foreign tax credit, set-off and carry-forward of losses across years, the interaction of reduced-rate income with the rebate, the 45% rate and 2.5% surcharge on an individual manufacturing tobacco products, and the proportional scaling of turnover tax where receipts are exempt or taxed at a reduced rate are not modelled. Sharecropping under section 43(2), where a landowner takes the crop on an আধি, বর্গা or ভাগা share, is also outside the deemed-cost basis and is not modelled. Two further things are worth knowing before you rely on the total. Where a business pays the turnover minimum, the Act does not say how much of your regular tax counts as tax on the business, so this page apportions it by the business share of total income; that apportionment is a reasonable reading, not a rule you will find in the statute, and a different one would change the figure. And the rate card runs to assessment year 2030-31 because the Finance Act 2026 legislated five years of rates at once, but only the rates were legislated — the surrounding rules for those later years are assumed to continue unchanged, which later Finance Acts may well contradict. The balance shown is the result of the rules this page models, not a certified liability.</p>
+    <p data-bn="কঠিন ক্ষেত্রগুলো নির্ভর করে এমন কিছু তথ্যের উপর, যা এই পাতা দেখতে পায় না — আপনি নিবাসী কি না, কোনো প্রাপ্তি আসলে কোন ধরনের আয়, কোনো খরচ বাদ দেওয়া যাবে কি না, বা কোনো এসআরও আপনার বেলায় কীভাবে খাটবে। নিচের বিষয়গুলো সরল রাখা হয়েছে বা ধরা হয়নি: [১] অংশীদারি ফার্মের মুনাফার ভাগ, [২] বিদেশে দেওয়া করের ক্রেডিট, [৩] লোকসান সমন্বয় ও জের টানা, [৪] কম হারের আয়ের সঙ্গে রেয়াতের সম্পর্ক, [৫] তামাক: ৪৫% হার ও ২.৫% সারচার্জ, [৬] করমুক্ত বা কম-হারের প্রাপ্তিতে টার্নওভার কর, [৭] আধি, বর্গা বা ভাগা বন্দোবস্ত, [৮] নিবাসী ও অনিবাসীর আয়ের আওতা।">Hard cases turn on facts this page cannot see: your residential status, what a receipt really is, whether an expense is allowed, or how a particular SRO applies to you. These are simplified or left out: [1] partnership share of profit, [2] foreign tax credit, [3] loss set-off and carry-forward, [4] reduced-rate income with the rebate, [5] tobacco: 45% rate, 2.5% surcharge, [6] turnover tax on exempt or reduced-rate receipts, [7] Aadhi, Borga or Bhaga share arrangements, [8] resident and non-resident income scope.</p>
+    <p data-bn="দুটি অনুমান জেনে রাখা ভালো। ব্যবসায় টার্নওভার ন্যূনতম কর বসলে নিয়মিত করের কতটা ব্যবসার কর হিসেবে ধরা হবে তা আইনে বলা নেই, তাই মোট আয়ে ব্যবসার অংশ অনুপাতে ভাগ করা হয়েছে — এটি যুক্তিসঙ্গত পাঠ, আইনের নিয়ম নয়। আর অর্থ আইন ২০২৬ একসঙ্গে পাঁচ বছরের হার ঠিক করেছে বলে হারের তালিকা ২০৩০-৩১ পর্যন্ত আছে, তবে ঠিক হয়েছে কেবল হারই; ওই বছরগুলোর বাকি নিয়ম অপরিবর্তিত ধরা হয়েছে। এখানে দেখানো অঙ্ক এই পাতার মডেল করা নিয়মের ফল, প্রত্যয়িত করদায় নয়।">Two assumptions are worth knowing. Where a business pays the turnover minimum, the Act does not say how much regular tax counts as tax on that business, so this page splits it by the business share of total income — a fair reading, not a rule in the statute. And the rate card runs to 2030-31 because the Finance Act 2026 set five years of rates at once, but only the rates; the other rules for those years are assumed unchanged. The balance shown follows the rules this page models. It is not a certified liability.</p>
     <p data-bn="১৯ আগস্ট ২০২৬ পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে সর্বশেষ এনবিআর উপকরণের সঙ্গে মিলিয়ে নিন এবং প্রয়োজনে যোগ্য পরামর্শ নিন।">Checked to 19 August 2026 against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — verify against current NBR material, and take qualified advice, before you file.</p>
   </div>
 
@@ -1366,8 +1368,8 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
   <div class="colophon-in">
     <div>
       <p class="sig" data-bn="সজীবের একটি প্রকল্প, <span class=&quot;amp&quot;>ক্লড</span> দিয়ে তৈরি">A project by Sajeeb, built with <span class="amp">Claude</span></p>
-      <p class="blurb" data-bn="আয়করের নিয়মগুলো ছড়িয়ে থাকে অনেক জায়গায় — আইন, তফসিল, এসআরও, পরিপত্র, আর প্রতি বছরের অর্থ আইন। ফলে নিজের করটা ঠিক কীভাবে হিসাব হলো, সেটা বুঝে ওঠা সবসময় সহজ হয় না। এই পাতাটা সেই ধাপগুলো এক জায়গায় সাজিয়ে দেখানোর একটা চেষ্টা।">Working out your own tax means pulling together the Act, its schedules, a stack of SROs, the year's Paripatra and the latest Finance Act — and it isn't always obvious how the figure on your return was arrived at. This page is an attempt to lay those steps out in one place, in the order they actually happen.</p>
-      <p class="blurb" data-bn="নিয়ম বদলালে পাতাটি ঠিক করে নেওয়ার ইচ্ছা আছে। কোথাও ভুল চোখে পড়লে, কিংবা কোনো নিয়ম বাদ পড়েছে মনে হলে, অনুগ্রহ করে জানাবেন — সংশোধনের চেষ্টা করব। এ ছাড়া যেকোনো প্রয়োজনে নির্দ্বিধায় যোগাযোগ করতে পারেন।">I intend to keep this current as the rules change. If you spot an error, or a rule that should be here and isn't, please do let me know and I'll try to put it right. Otherwise, you're always welcome to connect.</p>
+      <p class="blurb" data-bn="এই পাতাটি করসংক্রান্ত বিধিবিধানগুলো এক জায়গায় এনে চূড়ান্ত অঙ্কটি যে হিসাবগুলো থেকে আসে, সেগুলো যে ক্রমে ঘটে সেই ক্রমেই দেখানোর একটি চেষ্টা। কোনো ক্যালকুলেটরই সবার জন্য নির্ভুল নয়। বেশির ভাগ ব্যক্তি করদাতার কাজে লাগে, এভাবেই এটি তৈরি করা হয়েছে।">This page is an attempt to put all the tax-related regulations together and show the calculations that derive the final figure, in the order they actually happen. No calculator is right for everyone. It was built to be useful to the great majority of individual taxpayers.</p>
+      <p class="blurb" data-bn="নিয়ম বদলালে পাতাটি হালনাগাদ রাখার ইচ্ছা আছে। কোনো ভুল চোখে পড়লে অনুগ্রহ করে জানাবেন। যেকোনো প্রয়োজনে নির্দ্বিধায় যোগাযোগ করুন।">The intention is to keep the page updated as the rules change. Please report any errors you find. Feel free to connect.</p>
       <div class="links">
         <a class="lnk lnk-gh" href="https://github.com/bajeess" target="_blank" rel="noopener me">
           <span class="lnk-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.73.5.5 5.73.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.1c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.24 2.76.12 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg></span>
@@ -1402,14 +1404,16 @@ table.ref tr.hl td{color:var(--charge);font-weight:600}
     </div>
   </div>
 
-  <a class="all-calc" id="allCalc" href="./">
-    <span class="ac-ic" aria-hidden="true">৳</span>
-    <span class="ac-tx">
-      <b data-bn="আরও সহায়ক দেখুন">Check more tools</b>
-      <span data-bn="বাংলাদেশের কর ও অর্থের জন্য">for tax and money matters in Bangladesh</span>
-    </span>
-    <svg class="ac-go" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 4.6 20.6 12l-7.4 7.4-1.7-1.7 4.5-4.5H3.4v-2.4h12.6l-4.5-4.5z"/></svg>
+  <div class="pill-row">
+  <button class="pill" id="shareBtnFoot" type="button">
+    <svg class="pill-ic pill-ic-lead" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5.4" r="2.7" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="6" cy="12" r="2.7" fill="none" stroke="currentColor" stroke-width="2.1"/><circle cx="18" cy="18.6" r="2.7" fill="none" stroke="currentColor" stroke-width="2.1"/><path d="M8.4 10.7 15.6 6.7M8.4 13.3l7.2 4" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
+    <b data-bn="এই পাতাটি শেয়ার করুন" id="shareLabelFoot">Share this page</b>
+  </button>
+  <a class="pill" id="allCalc" href="./">
+    <b data-bn="আরও সহায়ক দেখুন">Check more tools</b>
+    <svg class="pill-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.2 4.6 20.6 12l-7.4 7.4-1.7-1.7 4.5-4.5H3.4v-2.4h12.6l-4.5-4.5z"/></svg>
   </a>
+  </div>
 </section>
 
 <div class="mobile-bar">
@@ -1437,7 +1441,7 @@ const CFG = {
     salaryCap:500000,
     rebate:{incomePct:0.03,investPct:0.15,cap:1000000},
     minTax:{mode:"location",dhakaCtg:5000,otherCC:4000,other:3000},
-    surchargeIncludesMinTax:true, advanceTaxThreshold:600000, specialRentFA2026:false,
+    surchargeIncludesMinTax:true, advanceTaxThreshold:600000,
     s125IsMinimumTax:true, turnoverCarryForward:false,
     turnoverMinThreshold:30000000,
     turnoverRates:{general:0.0025,tobacco:0.03,beverage:0.03,mobile:0.02,nttn:0.0025,newManufacturing:0.0025,excluded:0.0025},
@@ -1474,8 +1478,8 @@ const CFG = {
     listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
   },
   "2028-29": {
-    label:"Assessment year 2028-29 · income year 2027-28", labelBn:"করবর্ষ ২০২৮-২৯ · আয়বর্ষ ২০২৭-২৮",
-    short:"Assessment year 2028-29", shortBn:"করবর্ষ ২০২৮-২৯",
+    label:"Assessment year 2028-29 (estimation) · income year 2027-28", labelBn:"করবর্ষ ২০২৮-২৯ · আয়বর্ষ ২০২৭-২৮",
+    short:"Assessment year 2028-29 · estimation", shortBn:"করবর্ষ ২০২৮-২৯ · প্রাক্কলন",
     incomeYear:"1 July 2027 – 30 June 2028", incomeYearBn:"১ জুলাই ২০২৭ – ৩০ জুন ২০২৮",
     law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
     thresholds:{general:450000,female:500000,senior65:500000,thirdGender:575000,disabled:575000,freedomFighter:600000},
@@ -1488,8 +1492,8 @@ const CFG = {
     listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
   },
   "2029-30": {
-    label:"Assessment year 2029-30 · income year 2028-29", labelBn:"করবর্ষ ২০২৯-৩০ · আয়বর্ষ ২০২৮-২৯",
-    short:"Assessment year 2029-30", shortBn:"করবর্ষ ২০২৯-৩০",
+    label:"Assessment year 2029-30 (estimation) · income year 2028-29", labelBn:"করবর্ষ ২০২৯-৩০ · আয়বর্ষ ২০২৮-২৯",
+    short:"Assessment year 2029-30 · estimation", shortBn:"করবর্ষ ২০২৯-৩০ · প্রাক্কলন",
     incomeYear:"1 July 2028 – 30 June 2029", incomeYearBn:"১ জুলাই ২০২৮ – ৩০ জুন ২০২৯",
     law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
     thresholds:{general:450000,female:500000,senior65:500000,thirdGender:575000,disabled:575000,freedomFighter:600000},
@@ -1502,8 +1506,8 @@ const CFG = {
     listedCGExempt:5000000, listedCGRate:0.15, ltcgRate:0.15, lotteryRate:0.25
   },
   "2030-31": {
-    label:"Assessment year 2030-31 · income year 2029-30", labelBn:"করবর্ষ ২০৩০-৩১ · আয়বর্ষ ২০২৯-৩০",
-    short:"Assessment year 2030-31", shortBn:"করবর্ষ ২০৩০-৩১",
+    label:"Assessment year 2030-31 (estimation) · income year 2029-30", labelBn:"করবর্ষ ২০৩০-৩১ · আয়বর্ষ ২০২৯-৩০",
+    short:"Assessment year 2030-31 · estimation", shortBn:"করবর্ষ ২০৩০-৩১ · প্রাক্কলন",
     incomeYear:"1 July 2029 – 30 June 2030", incomeYearBn:"১ জুলাই ২০২৯ – ৩০ জুন ২০৩০",
     law:"Income Tax Act 2023 · Finance Act 2026", lawBn:"আয়কর আইন ২০২৩ · অর্থ আইন ২০২৬",
     thresholds:{general:500000,female:550000,senior65:550000,thirdGender:625000,disabled:625000,freedomFighter:650000},
@@ -1536,8 +1540,7 @@ const RULE_DEFAULTS = {
   agriDeemedCostPct: 0.60,
   /* Section 39(3) and (4) as replaced apply from AY 2026-27 (Paripatra 2025-26,
      paragraphs 11.1 and 11.2). AY 2025-26 keeps the earlier treatment. */
-  specialRentFA2026: true,
-  advNonBankThreshold: 500000,
+  depositSpecialRentPct: 0.10,
   /* Seventh Schedule / s.135 and the separate developer-benefit line. */
   sponsorCGRate: 0.10,
   devCGRate: 0.15,
@@ -1606,8 +1609,7 @@ const T = {
   agExempt:["Less non-assessable allowance","বাদ করমুক্ত ছাড়"],
   ag20AGross:["Specified farm businesses — paragraph (20A)","নির্দিষ্ট খামার ব্যবসা — দফা (২০ক)"],
   ag20AExempt:["Less paragraph (20A) allowance","বাদ দফা (২০ক) ছাড়"],
-  rentAdvNonBank:["Adjustable advance outside banking channel","ব্যাংক চ্যানেলের বাইরে নেওয়া সমন্বয়যোগ্য অগ্রিম"],
-  rentAdvUnadj:["Advance unadjusted after the permitted period","মেয়াদ শেষেও অসমন্বিত অগ্রিম"],
+  rentAnnualUsed:["Annual value used in place of rent received","ভাড়ার বদলে ব্যবহৃত বার্ষিক মূল্য"],
   rentAdvRefund:["Less advance refunded this year","বাদ এই বছরে ফেরত দেওয়া অগ্রিম"],
   agNet:["Agricultural income","কৃষি থেকে আয়"],
   biz:["4 · Business or profession","৪ · ব্যবসা বা পেশা"],
@@ -1691,6 +1693,10 @@ const T = {
   mtOtherCC:["other city corporation","অন্য সিটি কর্পোরেশন"],
   mtOther:["outside city corporations","সিটি কর্পোরেশনের বাইরে"],
   fwJulSep:["Early-filing incentive, 1 Jul – 30 Sep","আগাম জমার প্রণোদনা, ১ জুলাই – ৩০ সেপ্টেম্বর"],
+  fwAbroadNote:["Tax Day may fall later — see the note on filing from abroad","করদিবস পরে হতে পারে — বিদেশ থেকে জমার নোট দেখুন"],
+  shareIdle:["Share","শেয়ার"],
+  shareIdleFoot:["Share this page","এই পাতাটি শেয়ার করুন"],
+  shareDone:["Link copied","লিংক কপি হয়েছে"],
   fwJanMar:["Additional tax, filed 1 Jan – 31 Mar","অতিরিক্ত কর, ১ জানুয়ারি – ৩১ মার্চে জমা"],
   fwAprJun:["Additional tax, filed 1 Apr – 30 Jun","অতিরিক্ত কর, ১ এপ্রিল – ৩০ জুনে জমা"],
   fwLateVol:["Additional tax, late voluntary return","অতিরিক্ত কর, স্বেচ্ছায় বিলম্বে জমা"],
@@ -1712,7 +1718,7 @@ const T = {
   pdCurrency:["Currency","মুদ্রা"],
   pdBDT:["Bangladeshi Taka (৳)","বাংলাদেশি টাকা (৳)"],
   pdComputation:["Computation","বিস্তারিত গণনা"],
-  pdCompNote:["Each line shows the rule it follows. Sub-lines are components of the total above them.","প্রতিটি লাইনে কোন নিয়ম অনুসরণ করা হয়েছে তা দেখানো আছে; ছোট লাইনগুলো উপরের মোট অঙ্কের উপাদান"],
+  pdCompNote:["Sub-lines are components of the total above them. The provisions behind the computation are set out in the reference notes rather than against each line.","ছোট লাইনগুলো উপরের মোট অঙ্কের উপাদান। কোন বিধান থেকে অঙ্কগুলো এসেছে তা প্রতিটি লাইনের পাশে নয়, রেফারেন্স নোটে দেওয়া আছে"],
   pdFigures:["Figures entered","প্রদত্ত তথ্য"],
   pdFigNote:["Only the fields that were filled in appear here. Anything left blank was treated as nil.","যে ঘরগুলোতে তথ্য দেওয়া হয়েছে কেবল সেগুলোই এখানে আছে; খালি ঘরগুলো শূন্য ধরা হয়েছে"],
   pdRefs:["Rates, rules and references","হার, নিয়ম ও সূত্র"],
@@ -1780,7 +1786,16 @@ function compute(){
   const employment = Math.max(0, empGross - empExclusion);
   out.emp = {gross: empGross, exclusion: empExclusion};
 
-  const grv = Math.max(0, nn("r_rent") + nn("r_tenantCharge") - nn("r_vacancy"));
+  /* Section 37 as replaced by the Finance Act 2026, section 35: gross rental
+     value is annual value plus tenant-borne service, repair and maintenance
+     charges, less the vacancy allowance. The starting point is the annual
+     value — the reasonable annual rent of the property — not the rent actually
+     received, so a property let below its reasonable rent is charged on the
+     higher figure. NBR's own worked examples take annual value to be the rent
+     where the letting is at arm's length, which is why the field falls back to
+     the rent above when left blank. */
+  const annualValue = nn("r_annual") > 0 ? nn("r_annual") : nn("r_rent");
+  const grv = Math.max(0, annualValue + nn("r_tenantCharge") - nn("r_vacancy"));
   const repairRate = parseFloat(val("r_use")) || 0.25;
   const stdDeduction = Math.round(grv * repairRate);
   const otherRentDed = nn("r_insurance") + nn("r_interest") + nn("r_tax");
@@ -1795,20 +1810,27 @@ function compute(){
      year received, which the taxpayer may elect to spread equally over that
      year and the next four. Its second proviso makes any later refund
      deductible in computing income from rent. */
-  let specialRent;
+  /* Section 39(3) and (4) as replaced by the Finance Act 2026, section 37,
+     effective 1 July 2026. Sub-section (3): where a refundable or adjustable
+     deposit, security deposit or advance is received against a lease or
+     letting, 10% of the year-end balance of the total so received is special
+     rental income. Sub-section (4): a non-refundable or non-adjustable amount —
+     salami, premium, or anything else however called — is special rental income
+     in full in the year received, which the taxpayer may spread across the
+     lease term or five years, whichever is less; a later refund is deductible
+     in computing income from rent for the year of refund.
+
+     The Finance Ordinance 2025 had replaced these sub-sections with a
+     bank-transfer and Tk 5 lakh test, and that is what the 2025-26 Paripatra
+     describes. It was itself replaced before it took effect, so it governs no
+     assessment year and must not be modelled. Sub-section (6) denies any
+     deduction, loss set-off or Third Schedule allowance against special rental
+     income and charges it at regular rates, which is how it already flows. */
+  const salamiYears = whole("r_salamiYears", 1, 5) || 5;
   const advRefund = nn("r_advRefund");
-  const advNonBank = nn("r_advNonBank");
-  const advNonBankIncome = advNonBank > cfg.advNonBankThreshold ? advNonBank : 0;
-  const nonAdj = nn("r_salami");
-  const nonAdjIncome = val("r_salamiSpread") === "full" ? nonAdj : Math.round(nonAdj / 5);
-  if (cfg.specialRentFA2026){
-    specialRent = advNonBankIncome + nn("r_advUnadjusted") + nonAdjIncome;
-  } else {
-    /* Sub-sections (3) and (4) as replaced take effect from AY 2026-27. For
-       AY 2025-26 the earlier text governed; rather than model an unverified
-       rule, the same inputs are read and the note flags the limitation. */
-    specialRent = advNonBankIncome + nn("r_advUnadjusted") + nonAdjIncome;
-  }
+  const advNonBankIncome = 0;
+  const nonAdjIncome = nn("r_salami") > 0 ? Math.round(nn("r_salami") / salamiYears) : 0;
+  const specialRent = Math.round(nn("r_deposit") * cfg.depositSpecialRentPct) + nonAdjIncome;
   const rentOrdinary = grv - stdDeduction - otherRentDed - advRefund;
 
   const agGross = nn("a_gross");
@@ -1817,7 +1839,7 @@ function compute(){
      expenditure. The page previously used 50%, which overstated the head and
      therefore the tax for every farmer on the deemed basis. Section 43(2)
      disapplies the section entirely where a landowner takes the crop on an
-     আধি/বর্গা/ভাগা share basis; that case is not modelled. */
+     Aadhi/Borga/Bhaga share basis; that case is not modelled. */
   const agCost = val("a_basis") === "deemed" ? Math.round(agGross * cfg.agriDeemedCostPct) : nn("a_cost");
   /* The deemed basis is a fixed half of receipts and can never exceed them, but
      an actual cost of production can. Clamping the head at zero silently threw
@@ -1912,8 +1934,8 @@ function compute(){
   const rentLossUsed = rentHeadRaw < 0 ? Math.min(-rentHeadRaw, ordinaryBeforeRent) : 0;
   const rentLossCarry = rentHeadRaw < 0 ? Math.max(0, -rentHeadRaw - rentLossUsed) : 0;
   const rentContribution = totalIncome - ordinaryBeforeRent;
-  out.rentAdv = {nonBank: advNonBankIncome, unadjusted: nn("r_advUnadjusted"),
-                 nonAdj: nonAdjIncome, refund: advRefund};
+  out.rentAdv = {deposit: nn("r_deposit"), nonAdj: nonAdjIncome, refund: advRefund,
+                 annualUsed: nn("r_annual") > 0 && nn("r_annual") !== nn("r_rent") ? annualValue : 0};
   out.rent = {grv: grv, std: stdDeduction, stdRate: repairRate, other: otherRentDed,
               ordinary: rentOrdinary, special: specialRent, raw: rentHeadRaw, lossUsed: rentLossUsed,
               lossCarry: rentLossCarry, contribution: rentContribution};
@@ -2423,7 +2445,7 @@ function pdFigures(){
         if (hint) hint.remove();
         name = c.textContent.replace(/\s+/g, " ").trim();
       }
-      const alwaysShow = ["r_use","a_basis","b_turnoverType","r_salamiSpread"].indexOf(el.id) >= 0;
+      const alwaysShow = ["r_use","a_basis","b_turnoverType"].indexOf(el.id) >= 0;
       if (el.tagName === "SELECT"){
         if (!isProfile && !alwaysShow && el.selectedIndex === 0) return;
         rows += '<tr><td>' + esc(name) + '</td><td class="pd-v">' +
@@ -2431,7 +2453,7 @@ function pdFigures(){
       } else {
         const v = parseFloat(el.value);
         if (!isFinite(v) || v === 0) return;
-        const plain = ["p_disabledKids","e_carMonths"].indexOf(el.id) >= 0 || /^p_car\d+$/.test(el.id);
+        const plain = ["p_disabledKids","e_carMonths","r_salamiYears"].indexOf(el.id) >= 0 || /^p_car\d+$/.test(el.id);
         rows += '<tr><td>' + esc(name) + '</td><td class="pd-v">' +
                 (plain ? group(v) : tk(v)) + '</td></tr>';
       }
@@ -2571,14 +2593,12 @@ function syncYearUI(){
   $("finNote").innerHTML = cfg.sanchayFinal
     ? (bn ? "লভ্যাংশ সাধারণ স্তরভিত্তিক আয়ে ঢোকে; উৎসে কাটা কর ন্যূনতম কর হিসেবে ফেরতযোগ্য নয়। এই পুরোনো করবর্ষে সঞ্চয়পত্রের মুনাফা <b>চূড়ান্ত কর</b> — তাই মোট আয়ের বাইরে রাখা হয়েছে এবং কাটা করই চূড়ান্ত দায় হিসেবে দেখানো হয়।"
           : "Dividend enters ordinary slab income; the tax deducted is minimum tax and is not refundable in this earlier year. Savings-certificate profit is <b>final tax</b> in this year, so it stays outside total income and the tax already deducted is shown as the final liability.")
-    : (bn ? "অর্থ আইন ২০২৬ সঞ্চয়পত্রের মুনাফাকে চূড়ান্ত করের তালিকা থেকে বাদ দিয়েছে — তাই তা <b>সাধারণ স্তরভিত্তিক আয়ে</b> ঢোকে এবং কাটা কর সমন্বয়যোগ্য ও ফেরতযোগ্য। লভ্যাংশ উল্টো পথে গেছে: সপ্তম তফসিল অনুযায়ী স্বাভাবিক ব্যক্তির লভ্যাংশে <b>১৫% চূড়ান্ত কর</b>, উৎসেও কাটা হয় ১৫%। তাই লভ্যাংশ মোট আয়ের বাইরে থাকে, রেয়াতের ভিত্তিতেও ধরা হয় না, আর ১৫%-এর বেশি কাটা থাকলেও ফেরত হয় না। যাঁর প্রান্তিক হার ১৫%-এর বেশি তাঁর লাভ, কম হলে বাড়তি বোঝা।"
-          : "The Finance Act 2026 took savings-certificate profit out of the final-tax net, so it enters <b>ordinary slab income</b> and the tax deducted is adjustable and refundable. Dividend moved the other way: under the Seventh Schedule a natural person pays <b>15% as a final rate</b>, matching the 15% withheld at source. Dividend therefore stays outside total income, outside the rebate base, and generates no refund. This helps anyone whose marginal slab is above 15% and costs anyone below it.");
+    : (bn ? "অর্থ আইন ২০২৬ সঞ্চয়পত্রের মুনাফাকে চূড়ান্ত করের তালিকা থেকে বাদ দিয়েছে — তাই তা <b>সাধারণ স্তরভিত্তিক আয়ে</b> ঢোকে এবং কাটা কর সমন্বয়যোগ্য ও ফেরতযোগ্য। লভ্যাংশ উল্টো পথে গেছে: সপ্তম তফসিল অনুযায়ী স্বাভাবিক ব্যক্তির লভ্যাংশে <b>১৫% চূড়ান্ত কর</b>, উৎসেও কাটা হয় ১৫%। তাই লভ্যাংশ মোট আয়ের বাইরে থাকে এবং রেয়াতের ভিত্তিতেও ধরা হয় না। কর্তনটি চূড়ান্ত নিষ্পত্তি কি না তা নিয়ে দ্বিমত আছে — ধারা ১৬৩ এর চূড়ান্ত করের তালিকায় লভ্যাংশ নেই — তাই এখানে ১৫%-কে হারের নিয়ম ধরা হয়েছে এবং কর্তিত কর সমন্বয়যোগ্য, বাড়তি থাকলে ফেরতযোগ্য। যাঁর প্রান্তিক হার ১৫%-এর বেশি তাঁর লাভ, কম হলে বাড়তি বোঝা।"
+          : "The Finance Act 2026 took savings-certificate profit out of the final-tax net, so it enters <b>ordinary slab income</b> and the tax deducted is adjustable and refundable. Dividend moved the other way: under the Seventh Schedule a natural person pays <b>15% as a final rate</b>, matching the 15% withheld at source. Dividend therefore stays outside total income and outside the rebate base. Whether the deduction is also a final settlement is contested — the section 163 final-tax list does not name it — so this calculator treats the 15% as a rate rule and the tax deducted as adjustable, meaning an excess can be refunded. Keeping dividend out of the slab ladder helps anyone whose marginal rate is above 15% and costs anyone below it.");
 
-  $("rentAdvNote").innerHTML = cfg.specialRentFA2026
-    ? (bn ? "ধারা ৩৯(৩): ব্যাংক ট্রান্সফার ছাড়া নেওয়া সমন্বয়যোগ্য অগ্রিমের মোট অঙ্ক <b>৫ লক্ষ টাকা ছাড়ালে পুরোটাই</b> ওই বছরের বিশেষ ভাড়া আয়, এর বিপরীতে কোনো কর্তন নেই। ব্যাংক ট্রান্সফারে নিলে অগ্রিমটি প্রাপ্তির পরের ৫ বছর বা চুক্তির মেয়াদ — যেটি কম — এর মধ্যে সমন্বয় করতে হবে; মেয়াদ শেষেও যেটুকু অসমন্বিত থাকে কেবল সেটুকুই আয়। ধারা ৩৯(৪): ফেরত দিতে হবে না এমন অগ্রিম বা সালামি প্রাপ্তির বছরেই আয়, তবে করদাতা চাইলে ওই বছর ও পরের ৪ বছরে সমান ভাগে ধরতে পারেন। পরে ফেরত দিলে ওই বছরের ভাড়া থেকে আয় থেকে তা বাদ যায়।"
-           : "Section 39(3): an adjustable advance taken outside the banking channel becomes special rental income <b>in full where the aggregate exceeds Tk 5 lakh</b>, with no deduction against it. Taken by bank transfer, it must instead be adjusted within five years of receipt or the contract term, whichever is shorter, and only what remains unadjusted afterwards is income. Section 39(4): a non-adjustable advance or salami is income in the year received, though the taxpayer may elect to spread it equally over that year and the next four. A later refund is deducted from that year's income from rent.")
-    : (bn ? "ধারা ৩৯ এর প্রতিস্থাপিত উপ-ধারা (৩) ও (৪) ২০২৬-২৭ করবর্ষ থেকে কার্যকর। এই করবর্ষে আগের বিধান খাটত, যা এখানে আলাদা করে ধরা হয়নি — তাই বিশেষ ভাড়া আয়ের অঙ্কটি নির্দেশক হিসেবে দেখুন।"
-           : "The replaced sub-sections (3) and (4) of section 39 take effect from assessment year 2026-27. The earlier text governed this year and is not separately modelled, so treat the special rental figure as indicative.");
+  $("rentAdvNote").innerHTML = bn
+    ? "ধারা ৩৯(৩): ফেরতযোগ্য বা সমন্বয়যোগ্য জামানত, নিরাপত্তা জামানত ও অগ্রিমের অর্থবছর শেষের স্থিতির <b>১০%</b> বিশেষ ভাড়া আয়। ধারা ৩৯(৪): ফেরত দিতে হবে না এমন অঙ্ক — সালামি, প্রিমিয়াম, যে নামেই হোক — প্রাপ্তির বছরেই পুরোটা আয়, তবে করদাতা চাইলে লিজ বা ভাড়ার মেয়াদ অথবা ৫ বছর, যেটি কম, সেই মেয়াদে ভাগ করে নিতে পারেন। পরে ফেরত দিলে ওই বছরের ‘ভাড়া হইতে আয়’ থেকে তা বিয়োজনযোগ্য। ধারা ৩৯(৬): বিশেষ ভাড়া আয়ের বিপরীতে কোনো বিয়োজন বা তৃতীয় তফসিলের ভাতা নেই, নিয়মিত হারেই কর।"
+    : "Section 39(3): <b>10%</b> of the year-end balance of refundable or adjustable deposits, security deposits and advances is special rental income. Section 39(4): a non-refundable amount — salami, premium, however called — is income in full in the year received, though the taxpayer may spread it across the lease term or five years, whichever is less. A later refund is deducted from that year\'s income from rent. Section 39(6): no deduction or Third Schedule allowance is available against special rental income, and it is charged at regular rates.";
 
   $("agriEligibilityNote").innerHTML = bn
     ? "ষষ্ঠ তফসিল অংশ ১ এর দফা (২০) অনুযায়ী ৫ লাখ টাকার কৃষি ছাড় তখনই মিলবে যখন কৃষি ও আর্থিক পরিসম্পদ ছাড়া অন্য কোনো খাতে আয় নেই। ব্যাংক সুদ, সঞ্চয়পত্রের মুনাফা বা লভ্যাংশ যত বেশিই হোক ছাড়টি নষ্ট করে না — সুদের পুরোনো ২০,০০০ টাকার সীমা আর নেই। কিন্তু চাকরি, ভাড়া, ব্যবসা, মূলধনী মুনাফা বা অন্যান্য উৎসে সামান্য আয় থাকলেই ছাড়টি চলে যায়; সেক্ষেত্রে টিক চিহ্ন থাকলেও ক্যালকুলেটর তা প্রয়োগ করবে না। একাধিক কৃষি উৎস থাকলেও ছাড় মোট কৃষি আয়ের উপর একবারই।"
@@ -2688,7 +2708,7 @@ function fillSample(){
   if (Math.random() < 0.45){
     const rent = rnd(180000, 480000, 6000);
     $("r_rent").value = rent;
-    $("r_advNonBank").value = 0;
+    $("r_deposit").value = Math.round(rent / 12 * 3 / 1000) * 1000;
     $("t_rent").value = Math.round(rent * 0.05 / 100) * 100;
   }
   if (Math.random() < 0.3) $("fa_dividend").value = rnd(10000, 90000, 1000);
@@ -2744,7 +2764,7 @@ function fillSample(){
      every access is guarded and failure simply falls back to the old
      behaviour. */
   const THEME_KEY = "itc-theme";
-  const THEMES = ["light","paper","dusk","midnight"];
+  const THEMES = themeBtns.map(function(b){ return b.dataset.themeVal; });
   function readTheme(){
     try { const v = localStorage.getItem(THEME_KEY);
           return THEMES.indexOf(v) >= 0 ? v : null; } catch (e) { return null; }
@@ -2802,9 +2822,73 @@ function fillSample(){
     setMeta(v);
     if (window.__syncMastOffset) window.__syncMastOffset();
   }
-  const wanted = (new URLSearchParams(location.search).get("lang") || "").toLowerCase();
-  setLang(wanted === "bn" ? "bn" : "en");
-  langBtns.forEach(function(b){ b.addEventListener("click", function(){ setLang(b.dataset.lang); }); });
+  /* Three sources, in order of authority. An explicit ?lang in the address is
+     deliberate — someone followed a Bengali link — and wins. Failing that, a
+     stored choice from a previous visit. Failing both, English. The stored
+     value holds a two-letter language code and nothing else, so it identifies
+     nobody, and setMeta writes the address bar back on every change so the two
+     never drift apart. */
+  const LANG_KEY = "itc-lang";
+  function readLang(){
+    try { const v = localStorage.getItem(LANG_KEY);
+          return (v === "bn" || v === "en") ? v : null; } catch (e) { return null; }
+  }
+  const urlLang = (new URLSearchParams(location.search).get("lang") || "").toLowerCase();
+  const startLang = (urlLang === "bn" || urlLang === "en") ? urlLang : (readLang() || "en");
+  setLang(startLang);
+  langBtns.forEach(function(b){ b.addEventListener("click", function(){
+    setLang(b.dataset.lang);
+    try { localStorage.setItem(LANG_KEY, b.dataset.lang); } catch (e) {}
+  }); });
+
+  /* Share sends the address and the title, and nothing else. Everything typed
+     into this page stays in the browser, so a share that carried the figures
+     would break that promise and hand someone's salary and net wealth to a
+     messaging app. location.href is used rather than a fixed constant so a
+     reader on the Bengali page shares the Bengali page.
+
+     navigator.share gives the native sheet where it exists, which is most
+     phones. It rejects when the reader cancels, so the rejection is swallowed
+     rather than treated as failure. Elsewhere the link goes to the clipboard,
+     which can be refused, so there is a manual selection fallback beneath that.
+     The button reports back by swapping its own label for a moment — no toast
+     layer, no new element to position. */
+  let shareResetTimer = null;
+  function flashShared(){
+    const pairs = [["shareLabel", "shareIdle"], ["shareLabelFoot", "shareIdleFoot"]];
+    pairs.forEach(function(p){ const e = $(p[0]); if (e) e.textContent = t("shareDone"); });
+    clearTimeout(shareResetTimer);
+    shareResetTimer = setTimeout(function(){
+      pairs.forEach(function(p){ const e = $(p[0]); if (e) e.textContent = t(p[1]); });
+    }, 2200);
+  }
+  function copyLink(url){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(flashShared, function(){ legacyCopy(url); });
+    } else { legacyCopy(url); }
+  }
+  function legacyCopy(url){
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      if (ok) flashShared(); else window.prompt(t("shareIdleFoot"), url);
+    } catch (e) { window.prompt(t("shareIdleFoot"), url); }
+  }
+  function sharePage(){
+    const url = location.href;
+    if (navigator.share){
+      navigator.share({ title: document.title, url: url }).catch(function(){});
+      return;
+    }
+    copyLink(url);
+  }
+  ["shareBtn", "shareBtnFoot"].forEach(function(id){
+    const b = $(id); if (b) b.addEventListener("click", sharePage);
+  });
 
   $("sampleBtn").addEventListener("click", function(){ pushHistory(); fillSample(); });
   /* One action: the browser's own print dialogue, where "Save as PDF" is the
