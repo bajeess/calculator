@@ -294,7 +294,7 @@ select.mast{font:inherit;font-size:12.5px;padding:0 30px 0 10px;border:1px solid
 }
 .lede{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brand);border-radius:var(--radius);padding:17px 22px;margin-bottom:20px;box-shadow:var(--shadow)}
 .lede h2{font-family:var(--font-display);font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0 0 5px;line-height:1.3}
-.lede p{margin:0;color:var(--ink-2);font-size:14px;max-width:72ch}
+.lede p{margin:0;color:var(--ink-2);font-size:14px}
 
 /* ---------- Cards ---------- */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
@@ -426,7 +426,15 @@ input:focus,select:focus{border-color:var(--brand)}
 /* ---------- References ---------- */
 .refs{max-width:1360px;margin:0 auto;padding:0 22px 40px}
 .refs h2{font-family:var(--font-display);font-size:20px;font-weight:800;letter-spacing:-.02em;margin:28px 0 4px}
-.refs .lead{color:var(--ink-2);font-size:14px;margin:0 0 18px;max-width:76ch}
+.refs-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+           gap:10px 30px;margin:0 0 18px}
+.refs-head>div{min-width:0;flex:1 1 460px}
+.refs h2{margin-bottom:4px}
+.refs .lead{color:var(--ink-2);font-size:14px;margin:0;max-width:76ch}
+.refs .asat{flex:0 1 auto;font-size:12.5px;color:var(--ink-3);line-height:1.55;
+            max-width:38ch;text-align:right;padding-bottom:2px}
+.refs .asat b{color:var(--ink-2);font-weight:600}
+@media (max-width:820px){.refs .asat{text-align:left}}
 /* Neither a grid nor CSS columns balances this set: a grid stretches every
    card in a row to the tallest, and columns fill top to bottom in order, so
    whichever card lands last leaves a long tail of empty space. The cards are
@@ -1230,8 +1238,13 @@ button.pill{font:inherit;font-family:var(--font-display);font-size:13.5px;font-w
 
 <!-- ================= REFERENCES ================= -->
 <section class="refs">
-  <h2 data-bn="হার, নিয়ম ও সূত্র">Rates, rules and references</h2>
-  <p class="lead" data-bn="ক্যালকুলেটর যেসব অঙ্ক ব্যবহার করে তার সবই এখানে দেওয়া আছে, যাতে রিটার্ন জমা দেওয়ার আগে আইনের সঙ্গে মিলিয়ে নিতে পারেন। বাংলাদেশে আয়বর্ষ চলে ১ জুলাই থেকে ৩০ জুন পর্যন্ত; তার পরের বছরটাই করবর্ষ, যখন রিটার্ন জমা পড়ে ও কর নির্ধারণ হয়।">Every figure the calculator uses is listed here so you can check it against the law before you file. Bangladesh's income year runs 1 July to 30 June; the assessment year that follows it is the year the return is filed and assessed.</p>
+  <div class="refs-head">
+    <div>
+    <h2 data-bn="হার, নিয়ম ও সূত্র">Rates, rules and references</h2>
+    <p class="lead" data-bn="ক্যালকুলেটর যেসব অঙ্ক ব্যবহার করে তার সবই এখানে দেওয়া আছে, যাতে রিটার্ন জমা দেওয়ার আগে আইনের সঙ্গে মিলিয়ে নিতে পারেন। বাংলাদেশে আয়বর্ষ চলে ১ জুলাই থেকে ৩০ জুন পর্যন্ত; তার পরের বছরটাই করবর্ষ, যখন রিটার্ন জমা পড়ে ও কর নির্ধারণ হয়।">Every figure the calculator uses is listed here so you can check it against the law before you file. Bangladesh's income year runs 1 July to 30 June; the assessment year that follows it is the year the return is filed and assessed.</p>
+    </div>
+    <p class="asat" data-bn="<b>১৯ আগস্ট ২০২৬</b> পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে এনবিআরের সর্বশেষ উপকরণের সঙ্গে মিলিয়ে নিন।"><b>Checked to 19 August 2026</b> against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — check current NBR material before you file.</p>
+  </div>
 
   <div class="ref-grid">
     <div class="ref-card a-income">
@@ -1356,7 +1369,6 @@ button.pill{font:inherit;font-family:var(--font-display);font-size:13.5px;font-w
     <p data-bn="<b>কোনো অঙ্কের উপর ভরসা করার আগে এটুকু পড়ুন।</b> এটি শুধু হিসাব মেলানোর একটি সহায়ক — আইনি, কর, আর্থিক, বিনিয়োগ বা হিসাবরক্ষণ বিষয়ক পরামর্শ নয়, আর পরামর্শ হিসেবে ব্যবহারও করা যাবে না। এখানকার কিছুই সঞ্চয়পত্র, ডিপিএস, শেয়ার, মিউচুয়াল ফান্ড, জীবন বিমা বা অন্য কোনো পণ্য কেনার সুপারিশ নয়; কর রেয়াত পাওয়া যায় বলেই কোনো বিনিয়োগ আপনার জন্য ঠিক — এমনটা ভাবার কারণ নেই।"><b>Read this before you rely on a number.</b> This is a computation aid. It is not legal, tax, financial, investment or accounting advice, and must not be relied on as such. Nothing here is a recommendation to buy or hold any savings certificate, DPS, share, mutual fund, insurance policy or other product; the fact that an investment attracts a rebate does not make it suitable for you.</p>
     <p data-bn="কঠিন ক্ষেত্রগুলো নির্ভর করে এমন কিছু তথ্যের উপর, যা এই পাতা দেখতে পায় না — আপনি নিবাসী কি না, কোনো প্রাপ্তি আসলে কোন ধরনের আয়, কোনো খরচ বাদ দেওয়া যাবে কি না, বা কোনো এসআরও আপনার বেলায় কীভাবে খাটবে। নিচের বিষয়গুলো সরল রাখা হয়েছে বা ধরা হয়নি: [১] অংশীদারি ফার্মের মুনাফার ভাগ, [২] বিদেশে দেওয়া করের ক্রেডিট, [৩] লোকসান সমন্বয় ও জের টানা, [৪] কম হারের আয়ের সঙ্গে রেয়াতের সম্পর্ক, [৫] তামাক: ৪৫% হার ও ২.৫% সারচার্জ, [৬] করমুক্ত বা কম-হারের প্রাপ্তিতে টার্নওভার কর, [৭] আধি, বর্গা বা ভাগা বন্দোবস্ত, [৮] নিবাসী ও অনিবাসীর আয়ের আওতা।">Hard cases turn on facts this page cannot see: your residential status, what a receipt really is, whether an expense is allowed, or how a particular SRO applies to you. These are simplified or left out: [1] partnership share of profit, [2] foreign tax credit, [3] loss set-off and carry-forward, [4] reduced-rate income with the rebate, [5] tobacco: 45% rate, 2.5% surcharge, [6] turnover tax on exempt or reduced-rate receipts, [7] Aadhi, Borga or Bhaga share arrangements, [8] resident and non-resident income scope.</p>
     <p data-bn="দুটি অনুমান জেনে রাখা ভালো। ব্যবসায় টার্নওভার ন্যূনতম কর বসলে নিয়মিত করের কতটা ব্যবসার কর হিসেবে ধরা হবে তা আইনে বলা নেই, তাই মোট আয়ে ব্যবসার অংশ অনুপাতে ভাগ করা হয়েছে — এটি যুক্তিসঙ্গত পাঠ, আইনের নিয়ম নয়। আর অর্থ আইন ২০২৬ একসঙ্গে পাঁচ বছরের হার ঠিক করেছে বলে হারের তালিকা ২০৩০-৩১ পর্যন্ত আছে, তবে ঠিক হয়েছে কেবল হারই; ওই বছরগুলোর বাকি নিয়ম অপরিবর্তিত ধরা হয়েছে। এখানে দেখানো অঙ্ক এই পাতার মডেল করা নিয়মের ফল, প্রত্যয়িত করদায় নয়।">Two assumptions are worth knowing. Where a business pays the turnover minimum, the Act does not say how much regular tax counts as tax on that business, so this page splits it by the business share of total income — a fair reading, not a rule in the statute. And the rate card runs to 2030-31 because the Finance Act 2026 set five years of rates at once, but only the rates; the other rules for those years are assumed unchanged. The balance shown follows the rules this page models. It is not a certified liability.</p>
-    <p data-bn="১৯ আগস্ট ২০২৬ পর্যন্ত অর্থ আইন ২০২৬-এর সঙ্গে মিলিয়ে দেখা হয়েছে। পরে জারি হওয়া এসআরও, সাধারণ আদেশ বা পরিপত্রে নিয়ম বদলাতে পারে — জমা দেওয়ার আগে সর্বশেষ এনবিআর উপকরণের সঙ্গে মিলিয়ে নিন এবং প্রয়োজনে যোগ্য পরামর্শ নিন।">Checked to 19 August 2026 against the enacted Finance Act 2026. Later SROs, general orders or Paripatra may change the result — verify against current NBR material, and take qualified advice, before you file.</p>
   </div>
 
 </section>
